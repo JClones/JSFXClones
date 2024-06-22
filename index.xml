@@ -69,7 +69,7 @@ Reaper
 ReaPack Extension
 }}}
  installed, you can add the repository to Reaper with this URL:\par}
-{\pard \ql \f0 \sa180 \li0 \fi0 \f1 https://raw.githubusercontent.com/JClones/JSFXClones/master/index.xml\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \f1 https://github.com/JClones/JSFXClones/raw/master/index.xml\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 If you {\b don't} have ReaPack installed, you can also add these plugins on a per-file basis. Also you may use {\field{\*\fldinst{HYPERLINK "https://github.com/jpcima/ysfx"}}{\fldrslt{\ul
 ysfx
 }}}
@@ -79,38 +79,10 @@ ReaJS
  to run JSFX plugin in another DAW.\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 \b \fs36 JClones_L2\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 JClones_L2 is a clone of a highly regarded audio plugin known for its capabilities in mastering and dynamic range control. Featuring a state-of-the-art brickwall limiter with look-ahead technology, it ensures peak control and prevents clipping. Its intelligent release control adapts to the audio signal, providing smooth and transparent limiting without manual adjustments. The plugin also includes advanced dithering and noise shaping options to preserve audio quality when reducing bit depth.\par}
-{\pard \ql \f0 \sa180 \li0 \fi0 \b \fs32 Main Controls\par}
-{\pard \ql \f0 \sa180 \li0 \fi0 \b \fs28 Threshold:\par}
-{\pard \ql \f0 \sa180 \li0 \fi0 {\b Function:} Sets the level at which the limiting begins.\par}
-{\pard \ql \f0 \sa180 \li0 \fi0 {\b Range:} Typically ranges from 0 dB down to -30 dB.\par}
-{\pard \ql \f0 \sa180 \li0 \fi0 {\b Usage:} Lowering the threshold increases the amount of gain reduction applied, making the audio louder but reducing its dynamic range. Start with a moderate setting and adjust according to the desired loudness and dynamic control.\par}
-{\pard \ql \f0 \sa180 \li0 \fi0 \b \fs28 Ceiling (Output Ceiling):\par}
-{\pard \ql \f0 \sa180 \li0 \fi0 {\b Function:} Determines the maximum output level after processing.\par}
-{\pard \ql \f0 \sa180 \li0 \fi0 {\b Range:} Can be set from 0 dB down to -30 dB.\par}
-{\pard \ql \f0 \sa180 \li0 \fi0 {\b Usage:} Setting the output ceiling slightly below 0 dB (commonly around -0.1 dB to -0.3 dB) prevents clipping and allows headroom for digital playback systems. Adjust based on your final output format requirements.\par}
-{\pard \ql \f0 \sa180 \li0 \fi0 \b \fs28 Release:\par}
-{\pard \ql \f0 \sa180 \li0 \fi0 {\b Function:} Controls the speed at which the limiter stops reducing gain after the input signal drops below the threshold.\par}
-{\pard \ql \f0 \sa180 \li0 \fi0 {\b Range:} Ranges from 0.01 ms to 1,000 ms.\par}
-{\pard \ql \f0 \sa180 \li0 \fi0 {\b Usage:} Short release times (fast) are suitable for transient-rich material like drums but can introduce distortion if too short. Longer release times (slow) provide a smoother sound but can cause pumping. It\u8217's often effective to use the "Auto Release" (Auto Release Control) mode, which dynamically adjusts the release time to suit the incoming audio.\par}
-{\pard \ql \f0 \sa180 \li0 \fi0 \b \fs32 Advanced Controls\par}
-{\pard \ql \f0 \sa180 \li0 \fi0 \b \fs28 Quantize:\par}
-{\pard \ql \f0 \sa180 \li0 \fi0 {\b Function:} Sets the target bit depth for the processed audio.\par}
-{\pard \ql \f0 \sa180 \li0 \fi0 {\b Options:} Choices include 24-bit, 22-bit, 20-bit, 18-bit, and 16-bit.\par}
-{\pard \ql \f0 \sa180 \li0 \fi0 {\b Usage:} Choose the bit depth based on the final delivery format. For instance, 16-bit is standard for CD audio. If no bit depth reduction is required, set it to 24-bit.\par}
-{\pard \ql \f0 \sa180 \li0 \fi0 \b \fs28 Dither:\par}
-{\pard \ql \f0 \sa180 \li0 \fi0 {\b Function:} Adds low-level noise to mask quantization distortion when reducing bit depth.\par}
-{\pard \ql \f0 \sa180 \li0 \fi0 {\b Options:} Type 1 and Type 2.\par}
-{\pard \ql \f0 \sa180 \li0 \fi0 {\b Type 1:} Suitable for most material; provides a good balance between noise and distortion masking.\par}
-{\pard \ql \f0 \sa180 \li0 \fi0 {\b Type 2:} Used for recordings with very low-level detail and high dynamic range; it has a slightly different noise character.\par}
-{\pard \ql \f0 \sa180 \li0 \fi0 {\b Usage:} Choose the dither type based on the material and the desired noise profile. Typically, Type 1 is a safe choice for most applications.\par}
-{\pard \ql \f0 \sa180 \li0 \fi0 \b \fs28 Shaping:\par}
-{\pard \ql \f0 \sa180 \li0 \fi0 {\b Function:} Adjusts the frequency spectrum of the dithering noise to make it less audible.\par}
-{\pard \ql \f0 \sa180 \li0 \fi0 {\b Options:} None, Moderate, Normal, and Ultra.\par}
-{\pard \ql \f0 \sa180 \li0 \fi0 {\b None:} Applies no noise shaping.\par}
-{\pard \ql \f0 \sa180 \li0 \fi0 {\b Moderate:} Minimal shaping, less aggressive than other options.\par}
-{\pard \ql \f0 \sa180 \li0 \fi0 {\b Normal:} Standard shaping that is effective in most cases.\par}
-{\pard \ql \f0 \sa180 \li0 \fi0 {\b Ultra:} Aggressive shaping for critical listening and mastering.\par}
-{\pard \ql \f0 \sa180 \li0 \fi0 {\b Usage:} Choose the level of noise shaping based on the final output medium and the need to minimize audible noise. \u8220"Normal\u8221" is generally effective, but for critical mastering, \u8220"Ultra\u8221" might be preferable.\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\field{\*\fldinst{HYPERLINK "https://github.com/JClones/JSFXClones/blob/master/JClones_L2.md"}}{\fldrslt{\ul
+Detailed Description
+}}}
+\par}
 }
 ]]></description>
   </metadata>

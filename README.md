@@ -5,9 +5,8 @@ Free [JSFX](https://www.reaper.fm/sdk/js/) clones of popular audio plugins (with
 If you have the [ReaPack Extension](https://reapack.com/) installed, you can add the repository to Reaper with this URL:
 
 ```
-https://raw.githubusercontent.com/JClones/JSFXClones/master/index.xml
+https://github.com/JClones/JSFXClones/raw/master/index.xml
 ```
-<br>
 
 If you **don't** have ReaPack installed, you can also add these plugins on a per-file basis. Also you may use [ysfx](https://github.com/jpcima/ysfx) or [ReaJS](https://www.reaper.fm/reaplugs/) to run JSFX plugin in another DAW. 
 
@@ -15,4 +14,4 @@ If you **don't** have ReaPack installed, you can also add these plugins on a per
 
 JClones_L2 is a clone of a highly regarded audio plugin known for its capabilities in mastering and dynamic range control. Featuring a state-of-the-art brickwall limiter with look-ahead technology, it ensures peak control and prevents clipping. Its intelligent release control adapts to the audio signal, providing smooth and transparent limiting without manual adjustments. The plugin also includes advanced dithering and noise shaping options to preserve audio quality when reducing bit depth.
 
-[Parameters Description](https://github.com/JClones/JSFXClones/blob/master/JClones_L2.md)
+[Detailed Description](https://github.com/JClones/JSFXClones/blob/master/JClones_L2.md)
