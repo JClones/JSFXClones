@@ -69,7 +69,7 @@ Reaper
 ReaPack Extension
 }}}
  installed, you can add the repository to Reaper with this URL:\par}
-{\pard \ql \f0 \sa180 \li0 \fi0 \f1 https://raw.githubusercontent.com/JClones/JSFXClones/master/index.xml\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \f1 https://github.com/JClones/JSFXClones/raw/master/index.xml\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 If you {\b don't} have ReaPack installed, you can also add these plugins on a per-file basis. Also you may use {\field{\*\fldinst{HYPERLINK "https://github.com/jpcima/ysfx"}}{\fldrslt{\ul
 ysfx
 }}}
@@ -80,7 +80,7 @@ ReaJS
 {\pard \ql \f0 \sa180 \li0 \fi0 \b \fs36 JClones_L2\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 JClones_L2 is a clone of a highly regarded audio plugin known for its capabilities in mastering and dynamic range control. Featuring a state-of-the-art brickwall limiter with look-ahead technology, it ensures peak control and prevents clipping. Its intelligent release control adapts to the audio signal, providing smooth and transparent limiting without manual adjustments. The plugin also includes advanced dithering and noise shaping options to preserve audio quality when reducing bit depth.\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 {\field{\*\fldinst{HYPERLINK "https://github.com/JClones/JSFXClones/blob/master/JClones_L2.md"}}{\fldrslt{\ul
-Parameters Description
+Detailed Description
 }}}
 \par}
 }
