@@ -38,3 +38,6 @@ Adjust this control to fine-tune the tonal character of the enhancement based on
 
 **Usage:** Use this control to balance the processed signal’s level with other elements in your mix. It ensures that the overall volume remains consistent and prevents clipping. Start with the output at a neutral level and adjust as needed to match your mix.
 
+### Band Split Mode:
+
+Band Split Mode allows for independent processing of three frequency bands (Low, Mid, and High), providing a more detailed and nuanced approach to enhancing different parts of the audio spectrum.
