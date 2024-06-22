@@ -1,0 +1,749 @@
+desc:       JClones_L2
+version:    1.0.0
+author:     JClones
+tags:       limiter
+link:       https://github.com/JClones/JSFXClones
+screenshot: https://github.com/JClones/JSFXClones/blob/main/assets/screenshots/JClones_L2.png
+about:
+ # JClones_L2
+ 
+ Some text to be here...
+ 
+// ----------------------------------------------------------------------------
+
+// limiter parameters:
+slider1:0<-30,0,0.1>Threshold, dB
+slider2:0<-30,0,0.1>Ceiling, dB
+slider3:1<0,1,1{Off,On}>Auto Release
+slider4:2<0,5,1{0.01,0.1,1.0,10.0,100,1000}>Release, ms
+
+// dithering parameters:
+slider5:4<0,4,1{16,18,20,22,24}>Quantize
+slider6:1<0,2,1{None,Type1,Type2}>Dither
+slider7:2<0,3,1{None,Moderate,Normal,Ultra}>Shaping
+
+@init
+
+// for allocator
+function allocate(size) local(result)
+(
+  result = __memory_Index__;
+  __memory_Index__ += size;
+  result;
+);
+
+function DB_TO_K(x)
+(
+  10 ^ (x / 20)
+);
+
+/*
+ * DelayLineMin
+ */
+ 
+DelayLineMin_PAD_SIZE = 8;
+ 
+function DelayLineMin_PAD_FLOOR(x)
+(
+  floor(x / DelayLineMin_PAD_SIZE) * DelayLineMin_PAD_SIZE;
+);
+
+function DelayLineMin_PAD_CEIL(x)
+(
+  ceil(x / DelayLineMin_PAD_SIZE) * DelayLineMin_PAD_SIZE;
+);
+ 
+function DelayLineMin_PAD_DIV(x)
+(
+  x / DelayLineMin_PAD_SIZE;
+);
+
+function DelayLineMin_init(delay_line_size) local(len, total_len, len_pad, second_len)
+(
+  len = delay_line_size;
+  total_len = 0;
+  
+  while (len > 1) (
+  
+    len_pad = DelayLineMin_PAD_CEIL(len);
+    second_len = DelayLineMin_PAD_DIV(len_pad);
+    
+    total_len += len_pad;
+    
+    len = second_len;
+  );
+  
+  this.min_position = total_len;
+  total_len += 1;
+  
+  // allocate the line
+  this.delay_line = allocate(total_len);
+  this.delay_line_size = delay_line_size;
+);
+
+function DelayLineMin_reset(default_value) local(len, total_offset, len_pad, second_len, i, default_value)
+(  
+  // now fill the line (and fill PADs with specific values)
+
+  len = this.delay_line_size;
+  
+  total_offset = 0;
+  
+  while (len > 1) (
+  
+    len_pad = DelayLineMin_PAD_CEIL(len);
+    second_len = DelayLineMin_PAD_DIV(len_pad);
+
+    // fill main values by defaults
+    i = 0;
+    
+    loop(len,
+      this.delay_line[total_offset + i] = default_value;
+      i += 1;
+    );
+
+    // fill padding
+    loop(len_pad - len,
+      this.delay_line[total_offset + i] = 1000000.0;   // the highest maximum value here
+      i += 1;
+    );
+  
+    total_offset += len_pad;
+
+    len = second_len;
+  );
+  
+  this.delay_line[total_offset] = default_value;
+  
+  this.head = 0;
+);
+
+function DelayLineMin_getMinPad(source, destination) local(y, i)
+(
+  // min of 8 values
+  y = source[0];
+  
+  i = 1;
+
+  loop(7,
+    y = min(y, source[i]);
+    i += 1;
+  );
+  
+  destination[0] = y;
+);
+
+function DelayLineMin_pushSample(x) local(position, y, len, total_offset, len_pad, second_len, second_position, position_aligned, source, destination)
+(
+  position = this.head;
+  
+  y = this.delay_line[this.head];
+  
+  this.delay_line[this.head] = x;
+  
+  this.head += 1;
+  
+  (this.head >= this.delay_line_size) ? ( this.head = 0 );
+  
+  // refresh min tree
+  
+  len = this.delay_line_size;
+  
+  total_offset = 0;
+  
+  while (len > 1) (
+  
+    len_pad = DelayLineMin_PAD_CEIL(len);
+    second_len = DelayLineMin_PAD_DIV(len_pad);
+
+    second_position = DelayLineMin_PAD_DIV(position);
+    
+    // get source and destination values
+    
+    position_aligned = DelayLineMin_PAD_FLOOR(position);
+    
+    source = this.delay_line + total_offset + position_aligned;
+    destination = this.delay_line + total_offset + len_pad + second_position;
+    
+    this.DelayLineMin_getMinPad(source, destination);
+    
+    total_offset += len_pad;
+    
+    len = second_len;
+    position = second_position;
+  
+  );
+  
+  y;
+);
+
+// for debugging:
+function DelayLineMin_getMinSlow() local(y, i)
+(
+  y = this.delay_line[0];
+
+  i = 1;
+  
+  loop(this.delay_line_size - 1,
+    y = min(y, this.delay_line[i]);
+    i += 1;
+  );
+  
+  y;
+);
+
+function DelayLineMin_getMin()
+(
+  this.delay_line[this.min_position];
+);
+
+/*
+ * MovingAverageFilter
+ */
+ 
+function MovingAverageFilter_init(size)
+(
+  this.delay_line_size = size;
+  this.delay_line = allocate(size);
+);
+
+function MovingAverageFilter_reset(default_value)
+(
+  memset(this.delay_line, default_value, this.delay_line_size);
+
+  this.head = 0;
+  this.sum = default_value * this.delay_line_size;
+);
+
+function MovingAverageFilter_pushSample(x)
+(
+  this.sum -= this.delay_line[this.head];
+  
+  this.delay_line[this.head] = x;
+
+  this.head += 1;
+  
+  (this.head >= this.delay_line_size) ? ( this.head = 0 );
+  
+  this.sum += x;
+
+  // result:  
+  this.sum / this.delay_line_size
+);
+
+/*
+ * DelayLine
+ */
+ 
+function DelayLine_init(delay_line_size)
+(
+  this.size = delay_line_size;
+  this.line = allocate(delay_line_size);
+  this.head = 0;
+); 
+
+function DelayLine_pushSample(x) local(y)
+(
+  y = this.line[this.head]; 
+  this.line[this.head] = x;
+  this.head = (this.head + 1) % this.size;
+  
+  y
+);
+
+function DelayLine_reset(val)
+(
+  this.head = 0;
+  
+  memset(this.line, val, this.size);
+);
+
+ref20_Fs_mult = srate / -log(0.1);  // for ref 20 dB calculation
+filter1_G_min = exp(-1);            // don't set filter too high
+
+function get_filter1_G(time_ref_20)
+(
+    exp(-1 / (time_ref_20 * ref20_Fs_mult));
+);
+
+// first order filter
+function filter1_G(s, G, x)
+(
+  x + G * (s - x);
+);
+
+/*
+ * IDRDither
+ */
+
+function IDRDither_Init()
+(
+  this.table = allocate(144);   // noise shaping FIR filters
+  
+  // noise shaping FIR filters coefficients (9 taps * 4 modes * 4 sample rates)
+  this.table[0] = 0.0;
+  this.table[1] = 0.0;
+  this.table[2] = 0.0;
+  this.table[3] = 0.0;
+  this.table[4] = 0.0;
+  this.table[5] = 0.0;
+  this.table[6] = 0.0;
+  this.table[7] = 0.0;
+  this.table[8] = 0.0;
+  this.table[9] = -0.054383024;
+  this.table[10] = -0.20654947;
+  this.table[11] = -0.3822527;
+  this.table[12] = -0.39219186;
+  this.table[13] = -0.36627461;
+  this.table[14] = -0.49556099;
+  this.table[15] = -0.29294844;
+  this.table[16] = 0.61599216;
+  this.table[17] = 1.3177642;
+  this.table[18] = -0.07008202299999999;
+  this.table[19] = -0.29561589;
+  this.table[20] = -0.5451639;
+  this.table[21] = -0.5487125;
+  this.table[22] = -0.55320585;
+  this.table[23] = -0.75886502;
+  this.table[24] = -0.25751337;
+  this.table[25] = 1.2202875;
+  this.table[26] = 1.9089777;
+  this.table[27] = -0.10739672;
+  this.table[28] = -0.43569984;
+  this.table[29] = -0.72708491;
+  this.table[30] = -0.66456244;
+  this.table[31] = -0.73261389;
+  this.table[32] = -1.0359325;
+  this.table[33] = -0.16065249;
+  this.table[34] = 1.8239374;
+  this.table[35] = 2.3525222;
+  this.table[36] = 0.0;
+  this.table[37] = 0.0;
+  this.table[38] = 0.0;
+  this.table[39] = 0.0;
+  this.table[40] = 0.0;
+  this.table[41] = 0.0;
+  this.table[42] = 0.0;
+  this.table[43] = 0.0;
+  this.table[44] = 0.0;
+  this.table[45] = -0.1002716;
+  this.table[46] = -0.29584958;
+  this.table[47] = -0.40982519;
+  this.table[48] = -0.38606261;
+  this.table[49] = -0.44715518;
+  this.table[50] = -0.52985251;
+  this.table[51] = -0.10806594;
+  this.table[52] = 0.82622085;
+  this.table[53] = 1.3482654;
+  this.table[54] = -0.11617057;
+  this.table[55] = -0.41429373;
+  this.table[56] = -0.69819106;
+  this.table[57] = -0.8467990399999999;
+  this.table[58] = -0.99510928;
+  this.table[59] = -0.8137319;
+  this.table[60] = 0.33485791;
+  this.table[61] = 1.8264681;
+  this.table[62] = 2.072573;
+  this.table[63] = -0.15380712;
+  this.table[64] = -0.5469209;
+  this.table[65] = -0.91673806;
+  this.table[66] = -1.1670967;
+  this.table[67] = -1.4463654;
+  this.table[68] = -1.0427872;
+  this.table[69] = 0.84138339;
+  this.table[70] = 2.7803198;
+  this.table[71] = 2.624423;
+  this.table[72] = 0.0;
+  this.table[73] = 0.0;
+  this.table[74] = 0.0;
+  this.table[75] = 0.0;
+  this.table[76] = 0.0;
+  this.table[77] = 0.0;
+  this.table[78] = 0.0;
+  this.table[79] = 0.0;
+  this.table[80] = 0.0;
+  this.table[81] = 0.0;
+  this.table[82] = 0.088072546;
+  this.table[83] = 0.36459012;
+  this.table[84] = 0.88040251;
+  this.table[85] = 1.5499839;
+  this.table[86] = 2.1484938;
+  this.table[87] = 2.4151576;
+  this.table[88] = 2.2070139;
+  this.table[89] = 1.5982079;
+  this.table[90] = -0.00390274;
+  this.table[91] = 0.1073065;
+  this.table[92] = 0.63257259;
+  this.table[93] = 1.8682127;
+  this.table[94] = 3.5575584;
+  this.table[95] = 5.014459;
+  this.table[96] = 5.3379144;
+  this.table[97] = 4.3814994;
+  this.table[98] = 2.5787734;
+  this.table[99] = -0.021631265;
+  this.table[100] = 0.1594025;
+  this.table[101] = 1.0213817;
+  this.table[102] = 2.9718205;
+  this.table[103] = 5.5339018;
+  this.table[104] = 7.4154889;
+  this.table[105] = 7.5202313;
+  this.table[106] = 5.7418745;
+  this.table[107] = 3.1130463;
+  this.table[108] = 0.0;
+  this.table[109] = 0.0;
+  this.table[110] = 0.0;
+  this.table[111] = 0.0;
+  this.table[112] = 0.0;
+  this.table[113] = 0.0;
+  this.table[114] = 0.0;
+  this.table[115] = 0.0;
+  this.table[116] = 0.0;
+  this.table[117] = 0.0;
+  this.table[118] = 0.15717715;
+  this.table[119] = 0.54336716;
+  this.table[120] = 1.1581471;
+  this.table[121] = 1.8591082;
+  this.table[122] = 2.4045727;
+  this.table[123] = 2.5688185;
+  this.table[124] = 2.2673639;
+  this.table[125] = 1.6110487;
+  this.table[126] = -0.011899905;
+  this.table[127] = 0.12947208;
+  this.table[128] = 0.63891136;
+  this.table[129] = 1.7815208;
+  this.table[130] = 3.4063984;
+  this.table[131] = 4.8728995;
+  this.table[132] = 5.2856435;
+  this.table[133] = 4.3677134;
+  this.table[134] = 2.6052934;
+  this.table[135] = -0.021628401;
+  this.table[136] = 0.15915684;
+  this.table[137] = 1.0202237;
+  this.table[138] = 2.9688732;
+  this.table[139] = 5.5289454;
+  this.table[140] = 7.4093702;
+  this.table[141] = 7.5145789;
+  this.table[142] = 5.7382228;
+  this.table[143] = 3.1116338;
+  
+  // get sample rate index
+  (srate <= 44100.0) ? (
+      this.sample_rate_index = 0;
+  ) : (
+    (srate <= 48000.0) ? (
+      this.sample_rate_index = 1;
+    ) : (
+      (srate <= 88200.0) ? (
+        this.sample_rate_index = 2;
+      ) : (
+        this.sample_rate_index = 3;
+      );
+    );
+  );
+  
+  // history buffers
+  this.HISTORY_SIZE = 9;
+  
+  this.history_left = allocate(this.HISTORY_SIZE);
+  this.history_right = allocate(this.HISTORY_SIZE);
+);
+
+function IDRDither_reset()
+(
+  this.type1_state = 0;
+
+  this.type2_a = 0.0;
+  this.type2_b = 0.25;
+
+  memset(this.history_left, 0, this.HISTORY_SIZE);
+  memset(this.history_right, 0, this.HISTORY_SIZE);
+
+  this.history_index = 0;
+);
+
+function IDRDither_type1_rand() local(x)
+(
+    this.type1_state = 10368889 * this.type1_state + 1;
+    
+    // emulate 32-bit overflow
+    this.type1_state &= 4294967295;
+    
+    (this.type1_state > 2147483648) ? (
+      // signed from unsigned
+      this.type1_state -= 4294967296;
+    );
+  
+  this.type1_state;
+);
+
+function IDRDither_setMode(bits, dither_type, shaping_type)
+(
+    this.dither_type = dither_type;
+    this.shaping_type = shaping_type;
+
+    this.scaling = 1 << (24 - bits);         // scaling to 24 bit
+);
+
+function IDRDither_processSampleDither(input, rand_type1, rand_type2, history, history_index) local(IR, filtered_error, k, i, x1, x2, x3, out_fp, error)
+(
+  // calculate filter output
+  IR = this.table + (9 * (this.shaping_type + 4 * this.sample_rate_index));      // 9 taps
+
+  filtered_error = 0.0;
+
+  k = 0;
+  i = history_index;
+  
+  loop(9,
+  
+    filtered_error += history[i] * IR[k];
+    
+    k += 1;
+    
+    i += 1;
+    (i >= this.HISTORY_SIZE) ? ( i -= this.HISTORY_SIZE; );
+  );
+
+  // dithering and noise shaping
+
+  (input < -1.0) ? ( input = -1.0; );
+  (input > 1.0) ? ( input = 1.0; );
+
+  x1 = input * 8388608.0;   // 0x800000; convert to 24 bit
+  x2 = x1 + rand_type2 * this.scaling;
+  x3 = x2 + (rand_type1 + 0.5) * this.scaling + filtered_error;
+
+  // truncate to 24 bit
+  out_fp = floor(x3);
+
+  // clip to 24 bit
+  (out_fp > 8388607.0) ? ( out_fp = 8388607.0; );         // 0x7FFFFF
+  (out_fp < -8388608.0) ? ( out_fp = -8388608.0; );       // -0x800000
+
+  // truncate to X bit
+  (this.scaling != 1) ? ( out_fp = floor(out_fp / this.scaling) * this.scaling; );
+
+  // calculate error, push error to filter history
+  error = x2 - out_fp;
+
+  history[history_index] = error;
+
+  out_fp / 8388608.0;     // // 0x800000; back to [-1; 1] range
+);
+
+function IDRDither_processSample(left, right) local(rand_type1_left, rand_type1_right, rand_type2_left, rand_type2_right, a, b)
+(
+    rand_type1_left = 0.0; rand_type1_right = 0.0;
+    rand_type2_left = 0.0; rand_type2_right = 0.0;
+
+    (this.dither_type == 1) ? (
+      // Type 1
+      a = this.IDRDither_type1_rand();
+      b = this.IDRDither_type1_rand();
+
+      rand_type1_left = (a + b) / 4294967296;
+      rand_type1_right = (a - b) / 4294967296;
+    );
+    
+    (this.dither_type == 2) ? (
+      // Type 2
+      this.type2_a -= 0.16666667;        // 1/6
+
+      (this.type2_a < -0.16666667) ? ( this.type2_a = 0.16666667; );
+
+      this.type2_b = -this.type2_b;
+
+      rand_type2_left = this.type2_a + this.type2_b;
+      rand_type2_right = this.type2_a - this.type2_b;
+    );
+
+    this.sample_left = this.IDRDither_processSampleDither(left, rand_type1_left, rand_type2_left, this.history_left, this.history_index);
+    this.sample_right = this.IDRDither_processSampleDither(right, rand_type1_right, rand_type2_right, this.history_right, this.history_index);
+
+    this.history_index += 1;
+
+    (this.history_index >= this.HISTORY_SIZE) ? ( this.history_index -= this.HISTORY_SIZE; );
+);
+
+// continue @init:
+
+(sample_rate != srate) ? (
+
+  sample_rate = srate;
+  
+  // 1. calculate lookahead (L2 compatible)
+  
+  lookahead_size = floor((0.0014 * srate) / 64 + 0.6) * 64;
+
+  // 2. setup memory buffers
+  
+  __memory_Index__ = 0;
+  
+  delay_min_gr.DelayLineMin_init(lookahead_size);  
+  
+  // triangle filter
+  moving_average_gr_1.MovingAverageFilter_init(lookahead_size / 2 + 1);
+  moving_average_gr_2.MovingAverageFilter_init(lookahead_size / 2 + 1);
+  
+  // signal delay
+  delay_line_left.DelayLine_init(lookahead_size);
+  delay_line_right.DelayLine_init(lookahead_size);
+  
+  // 3. setup second stage filter
+  slow_gr_attack_G = get_filter1_G(0.250);
+  slow_gr_release_G = get_filter1_G(0.500);
+  
+  // 4. pre-calculate auto-release constants
+  dynamic_G1 = get_filter1_G(0.281);
+  dynamic_G2 = get_filter1_G(0.057);
+  dynamic_G3 = get_filter1_G(0.00054);
+
+  // 5. setup dithering
+  dither.IDRDither_Init();
+);
+
+// reset everything
+
+delay_min_gr.DelayLineMin_reset(1.0);
+
+moving_average_gr_1.MovingAverageFilter_reset(1.0);
+moving_average_gr_2.MovingAverageFilter_reset(1.0);
+
+delay_line_left.DelayLine_reset();
+delay_line_right.DelayLine_reset();
+
+// reset filters
+slow_gr_s = 1.0;
+fast_gr_s = 1.0;
+dynamic_gr_s = 1.0;
+
+dynamic_release_G = get_filter1_G(0.001);   // start default
+
+dither.IDRDither_reset();
+
+// report latency
+pdc_delay = lookahead_size;
+pdc_bot_ch = 0;
+pdc_top_ch = 2; // delays the first two channels (spl0/spl1).
+
+@slider
+
+// boost input
+input_gain_k = 1.0 / DB_TO_K(slider1);
+threshold_k = 1.0;
+output_gain_k = DB_TO_K(slider2);
+
+use_auto_release = slider3;
+
+release_time_sec = pow(10, slider4 - 5);
+
+fast_gr_G = get_filter1_G(release_time_sec);
+
+// dithering
+
+quantize = slider5;
+dither = slider6;
+shaping = slider7;
+
+dither.IDRDither_setMode(16 + quantize * 2, dither, shaping);
+
+@block
+
+@sample
+
+spl0 *= input_gain_k;
+spl1 *= input_gain_k;
+
+level = max(abs(spl0), abs(spl1));
+
+gr = (level < threshold_k) ? 1.0 : (threshold_k / level);
+
+// hold GR
+delay_min_gr.DelayLineMin_pushSample(gr);
+
+min_gr = delay_min_gr.DelayLineMin_getMin();
+
+(!use_auto_release) ? (
+
+  // manual release
+
+  (min_gr < fast_gr_s) ? (
+    // attack
+    fast_gr_s = min_gr;
+  ) : (
+    // release
+    fast_gr_s = filter1_G(fast_gr_s, fast_gr_G, min_gr);
+  );
+
+  output_gr = fast_gr_s;
+
+) : (
+
+  // auto release mode
+
+  // 1. slow detector
+  (min_gr < slow_gr_s) ? (
+    // attack
+    slow_gr_s = filter1_G(slow_gr_s, slow_gr_attack_G, min_gr);
+  ) : (
+    // release
+    slow_gr_s = filter1_G(slow_gr_s, slow_gr_release_G, min_gr);
+  );
+  
+  // 2. combine both detectors
+  combined_gr = min(min_gr, slow_gr_s);
+
+  (combined_gr < dynamic_gr_s) ? (
+    // attack
+    dynamic_gr_s = combined_gr;
+  ) : (
+  
+    // 3. dynamic release stuff
+
+    // apply old dynamic release
+    dynamic_gr_s = filter1_G(dynamic_gr_s, dynamic_release_G, combined_gr);
+  );
+
+  output_gr = dynamic_gr_s;
+  
+  // calculate new dynamic release for the next call:
+  
+  // 1) depends on gain reduction
+    
+  dynamic_release = pow(1 - output_gr, 4);   // up to 1 second
+  dynamic_release_G1 = max(get_filter1_G(dynamic_release), filter1_G_min);  // limit fast values
+  
+  // 2) depends on slow gain reduction and difference slow/output (crest factor)
+ 
+  dynamic_factor = min(slow_gr_s * 2 - output_gr, 1);
+    
+  // simplified piecewise approximation
+       
+  dynamic_release_G2 = (dynamic_factor < 0.25) ? 1 : (
+    (dynamic_factor < 0.5) ? ( (dynamic_factor - 0.25) / 0.25 * (dynamic_G1 - 1) + 1; ) : (
+      (dynamic_factor < 0.71) ? ( (dynamic_factor - 0.5) / 0.21 * (dynamic_G2 - dynamic_G1) + dynamic_G1; ) :
+      ( (dynamic_factor - 0.71) / 0.29 * (dynamic_G3 - dynamic_G2) + dynamic_G2; )
+    )
+  );
+    
+  dynamic_release_G = dynamic_release_G1 * dynamic_release_G2;
+);
+
+// smooth GR by attack
+output_gr = moving_average_gr_1.MovingAverageFilter_pushSample(output_gr);
+output_gr = moving_average_gr_2.MovingAverageFilter_pushSample(output_gr);
+
+// delay input
+input_left = delay_line_left.DelayLine_pushSample(spl0);
+input_right = delay_line_right.DelayLine_pushSample(spl1);
+
+// compute output
+spl0 = input_left * output_gr * output_gain_k;
+spl1 = input_right * output_gr * output_gain_k;
+
+// apply dithering
+dither.IDRDither_processSample(spl0, spl1);
+
+spl0 = dither.sample_left;
+spl1 = dither.sample_right;
+
