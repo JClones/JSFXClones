@@ -16,7 +16,7 @@ JClones_L2 is a clone of a highly regarded audio plugin known for its capabiliti
 
 [Detailed Description](https://github.com/JClones/JSFXClones/blob/master/JClones_L2.md)
 
-# JClones_OInflator
+# “JClones_OInflator”
 
 JClones_OInflator is a clone of a plugin renowned for its ability to enhance perceived loudness, warmth, and presence in audio without introducing distortion or reducing dynamic range. It operates by applying a unique process of harmonic enhancement that boosts the audio signal's energy, making it sound fuller and more impactful. Ideal for adding depth and richness to any audio source, it remains a go-to tool for professionals seeking to elevate their mixes with controlled and transparent processing.
 
