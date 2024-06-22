@@ -15,3 +15,9 @@ If you **don't** have ReaPack installed, you can also add these plugins on a per
 JClones_L2 is a clone of a highly regarded audio plugin known for its capabilities in mastering and dynamic range control. Featuring a state-of-the-art brickwall limiter with look-ahead technology, it ensures peak control and prevents clipping. Its intelligent release control adapts to the audio signal, providing smooth and transparent limiting without manual adjustments. The plugin also includes advanced dithering and noise shaping options to preserve audio quality when reducing bit depth.
 
 [Detailed Description](https://github.com/JClones/JSFXClones/blob/master/JClones_L2.md)
+
+# JClones_OInflator
+
+JClones_OInflator is a clone of a plugin renowned for its ability to enhance perceived loudness, warmth, and presence in audio without introducing distortion or reducing dynamic range. It operates by applying a unique process of harmonic enhancement that boosts the audio signal's energy, making it sound fuller and more impactful. Ideal for adding depth and richness to any audio source, it remains a go-to tool for professionals seeking to elevate their mixes with controlled and transparent processing.
+
+[Detailed Description](https://github.com/JClones/JSFXClones/blob/master/JClones_OInflator.md)
