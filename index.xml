@@ -56,7 +56,7 @@
 {\colortbl;\red255\green0\blue0;\red0\green0\blue255;}
 \widowctrl\hyphauto
 
-{\pard \ql \f0 \sa180 \li0 \fi0 \b \fs36 JClones JSFX Plugins\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \b \fs36 \u8220"JClones\u8221" JSFX Plugins\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 Free {\field{\*\fldinst{HYPERLINK "https://www.reaper.fm/sdk/js/"}}{\fldrslt{\ul
 JSFX
 }}}
@@ -77,7 +77,7 @@ ysfx
 ReaJS
 }}}
  to run JSFX plugin in another DAW.\par}
-{\pard \ql \f0 \sa180 \li0 \fi0 \b \fs36 JClones_L2\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \b \fs36 \u8220"JClones_L2\u8221"\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 JClones_L2 is a clone of a highly regarded audio plugin known for its capabilities in mastering and dynamic range control. Featuring a state-of-the-art brickwall limiter with look-ahead technology, it ensures peak control and prevents clipping. Its intelligent release control adapts to the audio signal, providing smooth and transparent limiting without manual adjustments. The plugin also includes advanced dithering and noise shaping options to preserve audio quality when reducing bit depth.\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 {\field{\*\fldinst{HYPERLINK "https://github.com/JClones/JSFXClones/blob/master/JClones_L2.md"}}{\fldrslt{\ul
 Detailed Description
