@@ -1,0 +1,179 @@
+desc:       JClones_OInflator
+version:    1.0.0
+author:     JClones
+tags:       waveshaper
+link:       https://github.com/JClones/JSFXClones
+screenshot: https://github.com/JClones/JSFXClones/blob/master/assets/screenshots/JClones_OInflator.png
+about:
+    # JClones_OInflator
+    
+    TODO
+
+// ----------------------------------------------------------------------------
+
+slider1:0<-6,12,0.1>Input, dB
+slider2:0<0,100,0.1>Effect, %
+slider3:0<-50,50,0.1>Curve
+slider4:1<0,1,1{Off,On}>Clip
+slider5:0<0,1,1{Off,On}>BandSplit
+slider6:0<-12,0,0.1>Output, dB
+
+@init
+
+function DB_TO_K(x)
+(
+ 10 ^ (x / 20)
+);
+
+/*
+ * FilterParam
+ */
+
+function FilterParam_generateLPF(freq_k) local(t, a)
+(
+  t = tan(freq_k * $pi);
+  a = 0.5 / (t + 1.0);
+  this.k0 = a * t;
+  this.k1 = a * t;
+  this.k2 = (1.0 - t) * a;
+);
+
+function FilterParam_generateHPF(freq_k) local(t, a)
+(
+  t = tan(freq_k * $pi);
+  a = 0.125 / (t + 1.0);
+  this.k0 = a;
+  this.k1 = -a;
+  this.k2 = (1.0 - t) * 0.5 / (t + 1.0);
+);
+
+/*
+ * OInflator
+ */
+
+function OInflator_applyProcessing(x) local(gr)
+(
+  gr = abs(x) * 2.0 * this.curve + (1.0 - this.curve);
+
+  gr = max(-1.0, min(1.0, gr));
+
+  (1.0 - abs(gr * x)) * (gr * x) * (this.effect * 2.0) + (1.0 - this.effect) * x;
+);
+
+function OInflator_processSample(x) local(y, high, half_mid, mid, low_x, low)
+(
+  x *= this.input_gain;
+
+  x = max(-this.clip_threshold, min(this.clip_threshold, x));
+
+  (!this.multiband) ? (
+  
+    y = this.OInflator_applyProcessing(x);
+
+  ) : (
+    // run crossover:
+    
+    // HIGH:
+    high = (this.high_hpf.k0 * x + this.high_hpf.state) * 2.0;
+    this.high_hpf.state = this.high_hpf.k1 * x + this.high_hpf.k2 * high;
+    high *= 4.0;
+
+    // MID:
+    half_mid = (this.mid_lpf.k0 * x + this.mid_lpf.state) * 2.0;
+    this.mid_lpf.state = this.mid_lpf.k1 * x + this.mid_lpf.k2 * half_mid;
+    half_mid *= 2.0;
+    mid = (this.mid_hpf.k0 * half_mid + this.mid_hpf.state) * 2.0;
+    this.mid_hpf.state = half_mid * this.mid_hpf.k1 + this.mid_hpf.k2 * mid;
+    mid *= 2.0;
+
+    // LOW:
+    low_x = x * 0.5;
+    low = (this.low_lpf.k0 * low_x + this.low_lpf.state) * 2.0;
+    this.low_lpf.state = low_x * this.low_lpf.k1 + this.low_lpf.k2 * low;
+    low *= 2.0;
+
+    // processing:
+    high = this.OInflator_applyProcessing(high);
+    mid = this.OInflator_applyProcessing(mid) * this.mid_gain;
+    low = this.OInflator_applyProcessing(low);
+
+    y = low + mid + high;
+  );
+
+  y * this.output_gain;
+);
+
+function OInflator_setGains(input_gain, output_gain)
+(
+  this.input_gain = input_gain * 0.5;
+  this.output_gain = output_gain * 2.0;
+);
+
+function OInflator_setMode(clip, multiband, effect, curve) local(curve_normalised)
+(
+  this.clip_threshold = clip ? 0.5 : 0.9999999;
+  this.multiband = multiband;
+  this.effect = effect;
+
+  curve_normalised = curve / 100.0 + 0.5;    // curve: -50 .. +50 -> 0 .. 1
+
+  this.curve = 0.5 - curve_normalised * 0.5;
+);
+
+LOW_FREQ_HZ = 240.0;
+HIGH_FREQ_HZ = 2400.0;
+
+function OInflator_setSampleRate()
+(
+  this.high_hpf.FilterParam_generateHPF(HIGH_FREQ_HZ / srate);
+  this.mid_lpf.FilterParam_generateLPF(HIGH_FREQ_HZ / srate);
+  this.mid_hpf.FilterParam_generateHPF(LOW_FREQ_HZ / srate);
+  this.low_lpf.FilterParam_generateLPF(LOW_FREQ_HZ / srate);
+
+  this.mid_gain = 1.0 - tan(LOW_FREQ_HZ * $pi / srate) / tan(HIGH_FREQ_HZ * $pi / srate);
+);
+
+function OInflator_reset()
+(
+  this.low_lpf.state = 0.0;
+  this.mid_lpf.state = 0.0;
+  this.mid_hpf.state = 0.0;
+  this.high_hpf.state = 0.0;
+);
+
+// continue @init:
+
+(sample_rate != srate) ? (
+
+  left.OInflator_setSampleRate();
+  right.OInflator_setSampleRate();
+  
+  sample_rate = srate;
+);
+
+// reset filters
+left.OInflator_reset();
+right.OInflator_reset();
+
+@slider
+
+input_gain = DB_TO_K(slider1);
+effect = slider2;
+curve = slider3;
+clip = slider4;
+bandsplit = slider5;
+output_gain = DB_TO_K(slider6);
+
+left.OInflator_setGains(input_gain, output_gain);
+right.OInflator_setGains(input_gain, output_gain);
+
+left.OInflator_setMode(clip, bandsplit, effect / 100.0, curve);
+right.OInflator_setMode(clip, bandsplit, effect / 100.0, curve);
+
+@block
+
+@sample
+
+spl0 = left.OInflator_processSample(spl0);
+spl1 = right.OInflator_processSample(spl1);
+
