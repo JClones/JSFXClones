@@ -21,3 +21,8 @@ JClones_L2 is a clone of a highly regarded audio plugin known for its capabiliti
 JClones_OInflator is a clone of a plugin renowned for its ability to enhance perceived loudness, warmth, and presence in audio without introducing distortion or reducing dynamic range. It operates by applying a unique process of harmonic enhancement that boosts the audio signal's energy, making it sound fuller and more impactful. Ideal for adding depth and richness to any audio source, it remains a go-to tool for professionals seeking to elevate their mixes with controlled and transparent processing.
 
 [Detailed Description](https://github.com/JClones/JSFXClones/blob/master/JClones_OInflator.md)
+
+# JClones_Phoenix
+JClones_Phoenix is a clone of a renowned audio plugin designed to emulate the sound characteristics of analog tape recording. Created by a company known for its high-quality analog and digital audio equipment, the plugin is widely used by audio engineers and producers to add warmth, depth, and subtle harmonic distortion to digital recordings.
+
+[Detailed Description](https://github.com/JClones/JSFXClones/blob/master/JClones_Phoenix.md)

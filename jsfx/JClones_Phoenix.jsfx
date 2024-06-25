@@ -1,0 +1,354 @@
+desc:       JClones_Phoenix
+version:    1.0.0
+author:     JClones
+tags:       tape saturator
+link:       https://github.com/JClones/JSFXClones
+screenshot: https://github.com/JClones/JSFXClones/blob/master/assets/screenshots/JClones_Phoenix.png
+about:
+    # JClones_Phoenix
+    JClones_Phoenix is a clone of a renowned audio plugin designed to emulate the sound characteristics of analog tape recording. Created by a company known for its high-quality analog and digital audio equipment, the plugin is widely used by audio engineers and producers to add warmth, depth, and subtle harmonic distortion to digital recordings.
+
+    ## Main Parameters
+
+    ### Input Trim
+
+    **Function:** Adjusts the level of the input signal before it is processed by the tape emulation.
+
+    **Range:** Typically ±10 dB.
+
+    **Usage:** Increase the input trim to drive the signal harder into the tape effect, resulting in more pronounced saturation and harmonic distortion. Lower the trim for a cleaner, subtler effect. Use this control to set the initial level of processing intensity.
+
+    ### Process
+
+    **Function:** Controls the amount of tape saturation and harmonic distortion applied to the signal.
+
+    **Range:** Variable from light to heavy saturation.
+
+    **Usage:** Increase the drive to add more analog warmth, compression, and harmonic richness. Higher drive settings emulate the effect of pushing tape harder, which is useful for adding depth and character to instruments and vocals. Adjust to taste depending on the desired level of tape coloration.
+
+    ### Output Trim
+
+    **Function:** Sets the final output level after the tape emulation process.
+
+    **Range:** Typically ±6 dB.
+
+    **Usage:** Use the output trim to balance the level of the processed signal with the rest of your mix. This ensures that the enhanced audio fits seamlessly within the overall mix without causing level inconsistencies or clipping. Adjust to achieve the desired output volume.
+
+    ### Brightness
+
+    **Function:** Affects the way high frequencies are treated during the tape emulation process. It modifies the spectral balance by either enhancing or attenuating the upper frequencies, which can significantly influence the perceived clarity, presence, and airiness of the audio.
+
+    **Options:**
+
+    **Opal:** Designed to offer a neutral to slightly bright high-frequency response.
+
+    **Gold:** Provides a balanced enhancement that brings out a smooth and warm high-frequency presence.
+
+    **Sapphire:** Emphasizes high-frequency clarity and brightness, offering the most pronounced enhancement of the three modes.
+
+    ### Type (Tape Modes):
+
+    **Function:** Selects the specific tape emulation mode.
+
+    **Options:**
+
+    **Luminescent:** Adds brightness and clarity with subtle tape coloration.
+
+    **Iridescent:** Offers a balanced, all-purpose tape sound with moderate warmth.
+
+    **Radiant:** Enhances midrange presence, adding richness and body.
+
+    **Dark Essence:** Provides a darker, more saturated tone, emphasizing low-end warmth.
+
+    **Luster:** Combines tape saturation with compression, producing a smooth and cohesive sound.
+
+    **Usage:** Choose the mode that best suits the desired effect for the audio material. Experiment with different modes to find the perfect tonal character for your mix.
+
+    ### Auto Gain:
+
+    This function is added to JClones version to compensate gain boost in different tape modes.
+
+// ----------------------------------------------------------------------------
+
+// original parameters:
+slider1:0<-10,10,0.01>Input Trim, dB
+slider2:0<0,100,0.01>Process, %
+slider3:0<-6,6,0.01>Output Trim, dB
+slider4:1<0,2,1{Opal,Gold,Sapphire}>Brightness
+slider5:1<0,4,1{Luminiscent,Iridescent,Radiant,Luster,Dark Essence}>Type
+
+// extra parameter:
+slider6:0<0,1,1{Off,On}>Auto Gain
+
+@init
+
+function DB_TO_K(x)
+(
+  10 ^ (x / 20)
+);
+
+/*
+ * Phoenix
+ */
+ 
+function Phoenix_setSampleRate()
+(
+  // original Phoenix has fixed scaling depending on sample rate: {1.0, 0.5, 0.25}
+  this.sr_scale = 1.0 / floor(srate / 44100.0);
+);
+
+function Phoenix_reset()
+(
+  this.s = 0.0;
+  this.prev_x = 0.0;
+);
+
+function Phoenix_setMode(brightness, type)
+(
+  (type == 0) ? (   // Luminescent
+  
+    (brightness == 0) ? ( this.hpf_k = 0.625; this.lpf_k = 0.1875; );   // Opal
+    (brightness == 1) ? ( this.hpf_k = 0.4375; this.lpf_k = 0.3125; );  // Gold
+    (brightness == 2) ? ( this.hpf_k = 0.1875; this.lpf_k = 0.375; );   // Sapphire
+  
+    this.a3 = 0.25;
+    this.f1 = 0.75;
+    this.p20 = 0.3125;
+    this.p24 = 0.0625;
+    this.g0 = 1;
+    this.sat_type = 0;
+
+    this.auto_gain_a1 = -0.416;
+    this.auto_gain_a2 = 0.092;
+
+  );
+  (type == 1) ? (   // Iridescent
+  
+    (brightness == 0) ? ( this.hpf_k = 0.625; this.lpf_k = 0.1875; );   // Opal
+    (brightness == 1) ? ( this.hpf_k = 0.375; this.lpf_k = 0.3125; );  // Gold
+    (brightness == 2) ? ( this.hpf_k = 0.3125; this.lpf_k = 0.5; );   // Sapphire
+  
+    this.a3 = 0.25;
+    this.f1 = 0.875;
+    this.p20 = 0.3125;
+    this.p24 = 0.0625;
+    this.g0 = 1;
+    this.sat_type = 0;
+
+    this.auto_gain_a1 = -0.393;
+    this.auto_gain_a2 = 0.082;
+
+  );
+  (type == 2) ? (   // Radiant
+  
+    (brightness == 0) ? ( this.hpf_k = 0.75; this.lpf_k = 0.125; );   // Opal
+    (brightness == 1) ? ( this.hpf_k = 0.45629901; this.lpf_k = 0.375; );  // Gold
+    (brightness == 2) ? ( this.hpf_k = 0.375; this.lpf_k = 0.5; );   // Sapphire
+  
+    this.a3 = 0.375;
+    this.f1 = 0.75;
+    this.p20 = 0.1875;
+    this.p24 = 0.0125;
+    this.g0 = 0;
+    this.sat_type = 1;
+
+    this.auto_gain_a1 = -0.441;
+    this.auto_gain_a2 = 0.103;
+
+  );
+  (type == 3) ? (   // Luster
+  
+    (brightness == 0) ? ( this.hpf_k = 0.75; this.lpf_k = 0.125; );   // Opal
+    (brightness == 1) ? ( this.hpf_k = 0.45629901; this.lpf_k = 0.375; );  // Gold
+    (brightness == 2) ? ( this.hpf_k = 0.375; this.lpf_k = 0.5625; );   // Sapphire
+  
+    this.a3 = 1.0;
+    this.f1 = 0.6875;
+    this.p20 = 0.27343899;
+    this.p24 = 0.1171875;
+    this.g0 = 0;
+    this.sat_type = 2;
+
+    this.auto_gain_a1 = -0.712;
+    this.auto_gain_a2 = 0.172;
+
+  );
+  (type == 4) ? (   // Dark Essence
+  
+    (brightness == 0) ? ( this.hpf_k = 0.75; this.lpf_k = 0.125; );   // Opal
+    (brightness == 1) ? ( this.hpf_k = 0.45629901; this.lpf_k = 0.375; );  // Gold
+    (brightness == 2) ? ( this.hpf_k = 0.375; this.lpf_k = 0.5625; );   // Sapphire
+  
+    this.a3 = 0.375;
+    this.f1 = 0.75;
+    this.p20 = 0.5625;
+    this.p24 = 0.0125;
+    this.g0 = 0;
+    this.sat_type = 2;
+
+    this.auto_gain_a1 = -0.636;
+    this.auto_gain_a2 = 0.17;
+
+  );
+
+  // sample rate scale
+  this.hpf_k *= this.sr_scale;
+  this.lpf_k *= this.sr_scale;
+  
+  this.model_type = type;
+);
+
+function Phoenix_setProcessing(processing)
+(
+  this.processing = processing;
+  
+  // simple auto-gain compensation
+  this.auto_gain = 1.0 + processing * this.auto_gain_a1 + processing * processing * this.auto_gain_a2;
+);
+
+function Phoenix_sat(x) local(y, x2, x4, x6, x8)
+(
+  y = 0.0;
+  
+  // polynomial approximation instead of table lookup
+  (this.sat_type == 0) ? (
+
+    // hard clip
+    x = max(-1.0, min(x, 1.0));
+
+    x2 = x * x;
+    x4 = x2 * x2;
+    x6 = x4 * x2;
+    x8 = x4 * x4;
+  
+    y = x * 2.827568855 +
+      x2 * 0.0003903798913 +
+      x2 * x * -4.17220229 +
+      x4 * -0.0001107320401 +
+      x4 * x * 0.523459874 +
+      x6 * 0.0002768079893 +
+      x6 * x * -0.423546883 +
+      x8 * -0.001448632 +
+      x8 * x * 3.224580615 +
+      x8 * x2 * 0.002728704 +
+      x8 * x2 * x * -5.495344862 +
+      x8 * x4 * -0.002846356 +
+      x8 * x4 * x * 5.449768693 +
+      x8 * x6 * 0.001310366 +
+      x8 * x6 * x * -2.414078731;
+
+  );
+  (this.sat_type == 1) ? (
+
+    // hard clip
+    x = max(-0.991184403, min(x, 0.990821248));
+
+    x2 = x * x;
+    x4 = x2 * x2;
+    x6 = x4 * x2;
+    x8 = x4 * x4;
+  
+    y = x * 1.501040337 +
+      x2 * -0.0002757478168 +
+      x2 * x * -0.301802438 +
+      x4 * 0.003273802 +
+      x4 * x * 1.786333688 +
+      x6 * -0.046104732 +
+      x6 * x * -24.582679252 +
+      x8 * 0.110553367 +
+      x8 * x * 41.112226106 +
+      x8 * x2 * -0.092987632 +
+      x8 * x2 * x * -16.724196818 +
+      x8 * x4 * 0.01857341 +
+      x8 * x4 * x * -9.331919223 +
+      x8 * x6 * 0.006696015 +
+      x8 * x6 * x * 6.543207186;
+
+  );
+  (this.sat_type == 2) ? (
+
+    // hard clip
+    x = max(-0.991022224, min(x, 0.990984424));
+
+    x2 = x * x;
+    x4 = x2 * x2;
+    x6 = x4 * x2;
+    x8 = x4 * x4;
+  
+    y = x * 2.063930806 +
+      x2 * 0.0002008141989 +
+      x2 * x * -0.414990906 +
+      x4 * -0.003741183 +
+      x4 * x * 2.456380956 +
+      x6 * 0.03108163 +
+      x6 * x * -33.802027499 +
+      x8 * -0.092816819 +
+      x8 * x * 56.531406839 +
+      x8 * x2 * 0.134928028 +
+      x8 * x2 * x * -22.998647073 +
+      x8 * x4 * -0.098216457 +
+      x8 * x4 * x * -12.829323005 +
+      x8 * x6 * 0.028676158 +
+      x8 * x6 * x * 8.996306767;
+
+  );
+  
+  y;
+);
+
+function Phoenix_processSample(x) local(processing, x1, x2, x3, x4, x5, y)
+(
+  processing = this.processing * this.a3;
+
+  x1 = this.hpf_k * x + (x - this.prev_x);
+  x2 = x1 * this.f1 + x1;
+  x3 = (!this.g0) ? x : x2;
+  x4 = (this.model_type == 3) ? this.Phoenix_sat(x2 * processing) : this.Phoenix_sat(x2);
+  x5 = this.Phoenix_sat(x4 * processing * this.p20 + x3);
+
+  this.prev_x = x;
+
+  this.s += (x5 - this.s) * this.lpf_k;
+
+  y = processing * (this.s - x * this.p24);
+
+  (this.model_type == 3) ? ( y *= 0.5 );
+
+  y += x;
+
+  this.use_auto_gain ? ( y *= this.auto_gain );
+
+  y;
+);
+
+// continue @init:
+
+// sample rate stuff
+left.Phoenix_setSampleRate();
+right.Phoenix_setSampleRate();
+
+// reset filters
+left.Phoenix_reset();
+right.Phoenix_reset();
+
+@slider
+
+input_gain = DB_TO_K(slider1);
+output_gain = DB_TO_K(slider3);
+
+left.Phoenix_setMode(slider4, slider5);
+right.Phoenix_setMode(slider4, slider5);
+
+left.Phoenix_setProcessing(slider2 / 100.0);
+right.Phoenix_setProcessing(slider2 / 100.0);
+
+left.use_auto_gain = slider6;
+right.use_auto_gain = slider6;
+
+@block
+
+@sample
+
+spl0 = left.Phoenix_processSample(spl0 * input_gain) * output_gain;
+spl1 = right.Phoenix_processSample(spl1 * input_gain) * output_gain;
+
