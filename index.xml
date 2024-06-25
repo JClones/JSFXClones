@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<index version="1" name="JSFXClones" commit="15f3f9d34194214a1bddce26feb7a0eee8c5bd5e">
+<index version="1" name="JSFXClones" commit="5cd21077fcfa1d1e666d7f0b1e94e32012e8bf62">
   <category name="jsfx">
     <reapack name="JClones_L2.jsfx" type="effect" desc="JClones_L2">
       <metadata>
@@ -57,7 +57,27 @@
 \widowctrl\hyphauto
 
 {\pard \ql \f0 \sa180 \li0 \fi0 \b \fs36 JClones_OInflator\par}
-{\pard \ql \f0 \sa180 \li0 \fi0 TODO\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 JClones_OInflator is a clone of a plugin renowned for its ability to enhance perceived loudness, warmth, and presence in audio without introducing distortion or reducing dynamic range. It operates by applying a unique process of harmonic enhancement that boosts the audio signal's energy, making it sound fuller and more impactful. Ideal for adding depth and richness to any audio source, it remains a go-to tool for professionals seeking to elevate their mixes with controlled and transparent processing.\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \b \fs32 Main Controls\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \b \fs28 Input:\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\b Function:} Adjusts the level of the signal entering the Inflator.\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\b Usage:} Use this control to ensure the input signal is at an optimal level before processing. This helps in achieving the desired loudness and character without clipping or unwanted distortion. Start with the input at a neutral level and adjust as needed to match the output and desired effect.\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \b \fs28 Effect:\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\b Function:} Determines the amount of the Inflator's effect applied to the audio signal.\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\b Range:} 0% to 100%.\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\b Usage:} Increasing the Effect level enhances the perceived loudness, warmth, and punch of the audio. At lower levels, the effect is subtle, while higher levels introduce a more pronounced, fuller sound. Start at a lower percentage and gradually increase until you achieve the desired enhancement.\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \b \fs28 Curve:\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\b Function:} Shapes the characteristic of the enhancement effect applied by the Inflator.\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\b Range:} -50% to +50%.\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\b Usage:}\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\b Negative Curve Values (-50% to 0%):} Provide a softer, more rounded enhancement, ideal for preserving the natural dynamics and warmth of the audio.\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\b Positive Curve Values (0% to +50%):} Offer a sharper, more aggressive enhancement, adding more punch and presence, which can be especially effective for drums or vocals.\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 Adjust this control to fine-tune the tonal character of the enhancement based on the specific needs of your audio material.\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \b \fs28 Output:\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\b Function:} Sets the level of the signal after processing by the Inflator.\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\b Usage:} Use this control to balance the processed signal\u8217's level with other elements in your mix. It ensures that the overall volume remains consistent and prevents clipping. Start with the output at a neutral level and adjust as needed to match your mix.\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \b \fs28 Band Split Mode:\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 Band Split Mode allows for independent processing of three frequency bands (Low, Mid, and High), providing a more detailed and nuanced approach to enhancing different parts of the audio spectrum.\par}
 }
 ]]></description>
         <link rel="website">https://github.com/JClones/JSFXClones</link>
