@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<index version="1" name="JSFXClones" commit="5cd21077fcfa1d1e666d7f0b1e94e32012e8bf62">
+<index version="1" name="JSFXClones" commit="6c2548aa315023d94f82b15bf9d545e7ec929d18">
   <category name="jsfx">
     <reapack name="JClones_L2.jsfx" type="effect" desc="JClones_L2">
       <metadata>
@@ -87,6 +87,53 @@
         <source>https://github.com/JClones/JSFXClones/raw/15f3f9d34194214a1bddce26feb7a0eee8c5bd5e/jsfx/JClones_OInflator.jsfx</source>
       </version>
     </reapack>
+    <reapack name="JClones_Phoenix.jsfx" type="effect" desc="JClones_Phoenix">
+      <metadata>
+        <description><![CDATA[{\rtf1\ansi\deff0{\fonttbl{\f0 \fswiss Helvetica;}{\f1 Courier;}}
+{\colortbl;\red255\green0\blue0;\red0\green0\blue255;}
+\widowctrl\hyphauto
+
+{\pard \ql \f0 \sa180 \li0 \fi0 \b \fs36 JClones_Phoenix\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 JClones_Phoenix is a clone of a renowned audio plugin designed to emulate the sound characteristics of analog tape recording. Created by a company known for its high-quality analog and digital audio equipment, the plugin is widely used by audio engineers and producers to add warmth, depth, and subtle harmonic distortion to digital recordings.\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \b \fs32 Main Parameters\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \b \fs28 Input Trim\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\b Function:} Adjusts the level of the input signal before it is processed by the tape emulation.\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\b Range:} Typically \u177?10 dB.\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\b Usage:} Increase the input trim to drive the signal harder into the tape effect, resulting in more pronounced saturation and harmonic distortion. Lower the trim for a cleaner, subtler effect. Use this control to set the initial level of processing intensity.\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \b \fs28 Process\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\b Function:} Controls the amount of tape saturation and harmonic distortion applied to the signal.\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\b Range:} Variable from light to heavy saturation.\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\b Usage:} Increase the drive to add more analog warmth, compression, and harmonic richness. Higher drive settings emulate the effect of pushing tape harder, which is useful for adding depth and character to instruments and vocals. Adjust to taste depending on the desired level of tape coloration.\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \b \fs28 Output Trim\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\b Function:} Sets the final output level after the tape emulation process.\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\b Range:} Typically \u177?6 dB.\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\b Usage:} Use the output trim to balance the level of the processed signal with the rest of your mix. This ensures that the enhanced audio fits seamlessly within the overall mix without causing level inconsistencies or clipping. Adjust to achieve the desired output volume.\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \b \fs28 Brightness\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\b Function:} Affects the way high frequencies are treated during the tape emulation process. It modifies the spectral balance by either enhancing or attenuating the upper frequencies, which can significantly influence the perceived clarity, presence, and airiness of the audio.\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\b Options:}\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\b Opal:} Designed to offer a neutral to slightly bright high-frequency response.\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\b Gold:} Provides a balanced enhancement that brings out a smooth and warm high-frequency presence.\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\b Sapphire:} Emphasizes high-frequency clarity and brightness, offering the most pronounced enhancement of the three modes.\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \b \fs28 Type (Tape Modes):\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\b Function:} Selects the specific tape emulation mode.\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\b Options:}\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\b Luminescent:} Adds brightness and clarity with subtle tape coloration.\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\b Iridescent:} Offers a balanced, all-purpose tape sound with moderate warmth.\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\b Radiant:} Enhances midrange presence, adding richness and body.\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\b Dark Essence:} Provides a darker, more saturated tone, emphasizing low-end warmth.\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\b Luster:} Combines tape saturation with compression, producing a smooth and cohesive sound.\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\b Usage:} Choose the mode that best suits the desired effect for the audio material. Experiment with different modes to find the perfect tonal character for your mix.\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \b \fs28 Auto Gain:\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 This function is added to JClones version to compensate gain boost in different tape modes.\par}
+}
+]]></description>
+        <link rel="website">https://github.com/JClones/JSFXClones</link>
+        <link rel="screenshot">https://github.com/JClones/JSFXClones/blob/master/assets/screenshots/JClones_Phoenix.png</link>
+      </metadata>
+      <version name="1.0.0" author="JClones" time="2024-06-25T23:02:09Z">
+        <source>https://github.com/JClones/JSFXClones/raw/6c2548aa315023d94f82b15bf9d545e7ec929d18/jsfx/JClones_Phoenix.jsfx</source>
+      </version>
+    </reapack>
   </category>
   <metadata>
     <description><![CDATA[{\rtf1\ansi\deff0{\fonttbl{\f0 \fswiss Helvetica;}{\f1 Courier;}}
@@ -123,6 +170,12 @@ Detailed Description
 {\pard \ql \f0 \sa180 \li0 \fi0 \b \fs36 \u8220"JClones_OInflator\u8221"\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 JClones_OInflator is a clone of a plugin renowned for its ability to enhance perceived loudness, warmth, and presence in audio without introducing distortion or reducing dynamic range. It operates by applying a unique process of harmonic enhancement that boosts the audio signal's energy, making it sound fuller and more impactful. Ideal for adding depth and richness to any audio source, it remains a go-to tool for professionals seeking to elevate their mixes with controlled and transparent processing.\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 {\field{\*\fldinst{HYPERLINK "https://github.com/JClones/JSFXClones/blob/master/JClones_OInflator.md"}}{\fldrslt{\ul
+Detailed Description
+}}}
+\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \b \fs36 JClones_Phoenix\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 JClones_Phoenix is a clone of a renowned audio plugin designed to emulate the sound characteristics of analog tape recording. Created by a company known for its high-quality analog and digital audio equipment, the plugin is widely used by audio engineers and producers to add warmth, depth, and subtle harmonic distortion to digital recordings.\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\field{\*\fldinst{HYPERLINK "https://github.com/JClones/JSFXClones/blob/master/JClones_Phoenix.md"}}{\fldrslt{\ul
 Detailed Description
 }}}
 \par}
