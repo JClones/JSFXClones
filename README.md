@@ -22,7 +22,7 @@ JClones_OInflator is a clone of a plugin renowned for its ability to enhance per
 
 [Detailed Description](https://github.com/JClones/JSFXClones/blob/master/JClones_OInflator.md)
 
-# JClones_Phoenix
+# “JClones_Phoenix”
 JClones_Phoenix is a clone of a renowned audio plugin designed to emulate the sound characteristics of analog tape recording. Created by a company known for its high-quality analog and digital audio equipment, the plugin is widely used by audio engineers and producers to add warmth, depth, and subtle harmonic distortion to digital recordings.
 
 [Detailed Description](https://github.com/JClones/JSFXClones/blob/master/JClones_Phoenix.md)
