@@ -1,0 +1,130 @@
+desc:       JClones_AC1
+version:    1.0.0
+author:     JClones
+tags:       analog channel
+link:       https://github.com/JClones/JSFXClones
+screenshot: https://github.com/JClones/JSFXClones/blob/master/assets/screenshots/JClones_AC1.png
+about:
+    # JClones_AC1
+    JClones_AC1 is a clone of a plugin, designed to emulate the characteristics and sonic qualities of analog mixing consoles. By simulating the behavior of analog circuits, the plugin brings the warmth, depth, and harmonic richness of analog gear to digital audio productions. The plugin is highly regarded for its ability to add subtle compression, harmonic distortion, and a sense of cohesion to mixes, making them sound more polished and professional.
+
+    ## Main Parameters
+
+    **Input Gain:** Adjusts the input signal level before processing.
+
+    **Output Gain:** Sets the final output level after processing.
+
+    **Auto Gain:** Engages primitive loudness compensation algorithm.
+
+    **Drive:** Controls the input signal level for saturation and harmonic distortion.
+
+    **Comp (Compression):** Adjusts the amount of soft-knee compression applied.
+
+    **Attack:** Controls the compressor's response to transients.
+
+    **Release:** Determines the compressor's recovery speed after compression.
+
+    Also the clone version adds extra parameters:
+
+    **Stereo Link:** allows to run the processing in linked stereo or dual-mono mode.
+
+    **Mode:** allows to switch the compression curve to more recent version of the cloned plugin (the newer curve offers more aggressive and less analog behaviour).
+
+slider1:0<-24,24,0.01>Input Gain, dB
+slider2:0<-24,24,0.01>Output Gain, dB
+slider3:0<0,1,1{Off,On}>Auto Gain
+slider4:0<-12,12,0.01>Drive, dB
+slider5:2<1,10,0.01>Comp
+slider6:0.50<0.10,10.0,0.10>Attack, ms
+slider7:500.0<10.0,1000.0,10.0>Release, ms
+slider8:1<0,1,1{Off,On}>Stereo Link
+slider9:0<0,1,1{AC1,AC101>Mode
+
+@init
+
+function DB_TO_K(x)
+(
+  10 ^ (x / 20)
+);
+
+/*
+ * AChannel
+ */
+
+function AChannel_reset()
+(
+  this.level_s = 0.0;
+);
+
+function AChannel_processSample(x, x_level) local(filter_k, gr)
+(
+  filter_k = (x_level > this.level_s) ? this.attack_k : this.release_k;
+
+  this.level_s = this.level_s + (x_level - this.level_s) * filter_k;
+  
+  x_level = this.level_s * this.input_gain * this.drive;
+  x *= this.input_gain;
+
+  gr = (x_level * x_level * 0.5 - 1.0) * (x_level * x_level * 0.5 - 1.0) + x_level * this.a;
+
+  (gr > 1.0) ? ( gr = 1.0; );
+  
+  (this.ac101_mode) ? (
+    (x_level > 1.0) ? ( gr = 1.0 / (x_level + 0.00001) * (this.a + 0.25); );
+  );
+
+  x * gr * this.output_gain;
+);
+
+function AChannel_setParameters(input_gain, output_gain, drive, curve, auto_gain, ac101_mode)
+(
+  this.input_gain = input_gain;
+  this.drive = drive;
+  this.a = 0.75 - (curve - 1.0) * 0.075;
+  this.output_gain = (!auto_gain) ? output_gain : min((1.0 / (1.0 - (curve - 1.0) * 0.075)) / input_gain, 16.0);
+  this.ac101_mode = ac101_mode;
+);
+
+function AChannel_setAttackRelease(attack_sec, release_sec)
+(
+    this.attack_k = 1.0 / (srate * attack_sec);
+    this.release_k = 1.0 / (srate * release_sec);
+
+);
+
+// continue @init:
+
+// reset filters
+left.AChannel_reset();
+right.AChannel_reset();
+
+@slider
+
+input_gain = DB_TO_K(slider1);
+output_gain = DB_TO_K(slider2);
+auto_gain = slider3;
+drive = DB_TO_K(slider4);
+curve = slider5;
+attack_ms = slider6;
+release_ms = slider7;
+stereo_link = slider8;
+ac101_mode = slider9;
+
+left.AChannel_setParameters(input_gain, output_gain, drive, curve, auto_gain, ac101_mode);
+right.AChannel_setParameters(input_gain, output_gain, drive, curve, auto_gain, ac101_mode);
+
+left.AChannel_setAttackRelease(attack_ms * 0.001, release_ms * 0.001);
+right.AChannel_setAttackRelease(attack_ms * 0.001, release_ms * 0.001);
+
+@block
+
+@sample
+
+level_1 = abs(spl0);
+level_2 = abs(spl1);
+
+(stereo_link) ? ( level_1 = max(level_1, level_2); level_2 = level_1 );
+
+spl0 = left.AChannel_processSample(spl0, level_1);
+spl1 = right.AChannel_processSample(spl1, level_2);
+
