@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<index version="1" name="JSFXClones" commit="eaed11c2c419950a62760395de17f30921f71f5d">
+<index version="1" name="JSFXClones" commit="ded12259a71ae75ed28a32e70e6acc893d98af25">
   <category name="jsfx">
     <reapack name="JClones_AC1.jsfx" type="effect" desc="JClones_AC1">
       <metadata>
@@ -207,7 +207,7 @@ Detailed Description
 Detailed Description
 }}}
 \par}
-{\pard \ql \f0 \sa180 \li0 \fi0 \b \fs36 JClones_AC1\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \b \fs36 \u8220"JClones_AC1\u8221"\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 JClones_AC1 is a clone of a plugin, designed to emulate the characteristics and sonic qualities of analog mixing consoles. By simulating the behavior of analog circuits, the plugin brings the warmth, depth, and harmonic richness of analog gear to digital audio productions. The plugin is highly regarded for its ability to add subtle compression, harmonic distortion, and a sense of cohesion to mixes, making them sound more polished and professional.\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 {\field{\*\fldinst{HYPERLINK "https://github.com/JClones/JSFXClones/blob/master/JClones_AC1.md"}}{\fldrslt{\ul
 Detailed Description
