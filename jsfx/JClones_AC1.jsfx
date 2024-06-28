@@ -3,7 +3,8 @@ version:    1.0.0
 author:     JClones
 tags:       analog channel
 link:       https://github.com/JClones/JSFXClones
-provides:   JClones_AC1.jsfx.rpl
+provides:
+            JClones_AC1.jsfx.rpl
 screenshot: https://github.com/JClones/JSFXClones/blob/master/assets/screenshots/JClones_AC1.png
 about:
     # JClones_AC1
