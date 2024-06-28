@@ -1,6 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
-<index version="1" name="JSFXClones" commit="6c2548aa315023d94f82b15bf9d545e7ec929d18">
+<index version="1" name="JSFXClones" commit="eaed11c2c419950a62760395de17f30921f71f5d">
   <category name="jsfx">
+    <reapack name="JClones_AC1.jsfx" type="effect" desc="JClones_AC1">
+      <metadata>
+        <description><![CDATA[{\rtf1\ansi\deff0{\fonttbl{\f0 \fswiss Helvetica;}{\f1 Courier;}}
+{\colortbl;\red255\green0\blue0;\red0\green0\blue255;}
+\widowctrl\hyphauto
+
+{\pard \ql \f0 \sa180 \li0 \fi0 \b \fs36 JClones_AC1\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 JClones_AC1 is a clone of a plugin, designed to emulate the characteristics and sonic qualities of analog mixing consoles. By simulating the behavior of analog circuits, the plugin brings the warmth, depth, and harmonic richness of analog gear to digital audio productions. The plugin is highly regarded for its ability to add subtle compression, harmonic distortion, and a sense of cohesion to mixes, making them sound more polished and professional.\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \b \fs32 Main Parameters\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\b Input Gain:} Adjusts the input signal level before processing.\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\b Output Gain:} Sets the final output level after processing.\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\b Auto Gain:} Engages primitive loudness compensation algorithm.\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\b Drive:} Controls the input signal level for saturation and harmonic distortion.\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\b Comp (Compression):} Adjusts the amount of soft-knee compression applied.\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\b Attack:} Controls the compressor's response to transients.\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\b Release:} Determines the compressor's recovery speed after compression.\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 Also the clone version adds extra parameters:\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\b Stereo Link:} allows to run the processing in linked stereo or dual-mono mode.\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\b Mode:} allows to switch the compression curve to more recent version of the cloned plugin (the newer curve offers more aggressive and less analog behaviour).\par}
+}
+]]></description>
+        <link rel="website">https://github.com/JClones/JSFXClones</link>
+        <link rel="screenshot">https://github.com/JClones/JSFXClones/blob/master/assets/screenshots/JClones_AC1.png</link>
+      </metadata>
+      <version name="1.0.0" author="JClones" time="2024-06-28T15:20:22Z">
+        <source>https://github.com/JClones/JSFXClones/raw/eaed11c2c419950a62760395de17f30921f71f5d/jsfx/JClones_AC1.jsfx</source>
+      </version>
+    </reapack>
     <reapack name="JClones_L2.jsfx" type="effect" desc="JClones_L2">
       <metadata>
         <description><![CDATA[{\rtf1\ansi\deff0{\fonttbl{\f0 \fswiss Helvetica;}{\f1 Courier;}}
@@ -176,6 +204,12 @@ Detailed Description
 {\pard \ql \f0 \sa180 \li0 \fi0 \b \fs36 \u8220"JClones_Phoenix\u8221"\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 JClones_Phoenix is a clone of a renowned audio plugin designed to emulate the sound characteristics of analog tape recording. Created by a company known for its high-quality analog and digital audio equipment, the plugin is widely used by audio engineers and producers to add warmth, depth, and subtle harmonic distortion to digital recordings.\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 {\field{\*\fldinst{HYPERLINK "https://github.com/JClones/JSFXClones/blob/master/JClones_Phoenix.md"}}{\fldrslt{\ul
+Detailed Description
+}}}
+\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \b \fs36 JClones_AC1\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 JClones_AC1 is a clone of a plugin, designed to emulate the characteristics and sonic qualities of analog mixing consoles. By simulating the behavior of analog circuits, the plugin brings the warmth, depth, and harmonic richness of analog gear to digital audio productions. The plugin is highly regarded for its ability to add subtle compression, harmonic distortion, and a sense of cohesion to mixes, making them sound more polished and professional.\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\field{\*\fldinst{HYPERLINK "https://github.com/JClones/JSFXClones/blob/master/JClones_AC1.md"}}{\fldrslt{\ul
 Detailed Description
 }}}
 \par}
