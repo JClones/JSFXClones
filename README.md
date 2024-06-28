@@ -27,7 +27,7 @@ JClones_Phoenix is a clone of a renowned audio plugin designed to emulate the so
 
 [Detailed Description](https://github.com/JClones/JSFXClones/blob/master/JClones_Phoenix.md)
 
-# JClones_AC1
+# “JClones_AC1”
 JClones_AC1 is a clone of a plugin, designed to emulate the characteristics and sonic qualities of analog mixing consoles. By simulating the behavior of analog circuits, the plugin brings the warmth, depth, and harmonic richness of analog gear to digital audio productions. The plugin is highly regarded for its ability to add subtle compression, harmonic distortion, and a sense of cohesion to mixes, making them sound more polished and professional.
 
 [Detailed Description](https://github.com/JClones/JSFXClones/blob/master/JClones_AC1.md)
