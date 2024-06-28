@@ -27,6 +27,7 @@
       </metadata>
       <version name="1.0.0" author="JClones" time="2024-06-28T15:20:22Z">
         <source>https://github.com/JClones/JSFXClones/raw/eaed11c2c419950a62760395de17f30921f71f5d/jsfx/JClones_AC1.jsfx</source>
+        <source file="JClones_AC1.jsfx.rpl">https://github.com/JClones/JSFXClones/raw/eaed11c2c419950a62760395de17f30921f71f5d/jsfx/JClones_AC1.jsfx.rpl</source>
       </version>
     </reapack>
     <reapack name="JClones_L2.jsfx" type="effect" desc="JClones_L2">
