@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<index version="1" name="JSFXClones" commit="ded12259a71ae75ed28a32e70e6acc893d98af25">
+<index version="1" name="JSFXClones" commit="bc59c96085401bc287aa36bed7d41765d225c5a1">
   <category name="jsfx">
     <reapack name="JClones_AC1.jsfx" type="effect" desc="JClones_AC1">
       <metadata>
@@ -28,6 +28,45 @@
       <version name="1.0.0" author="JClones" time="2024-06-28T15:20:22Z">
         <source>https://github.com/JClones/JSFXClones/raw/eaed11c2c419950a62760395de17f30921f71f5d/jsfx/JClones_AC1.jsfx</source>
         <source file="JClones_AC1.jsfx.rpl">https://github.com/JClones/JSFXClones/raw/eaed11c2c419950a62760395de17f30921f71f5d/jsfx/JClones_AC1.jsfx.rpl</source>
+      </version>
+    </reapack>
+    <reapack name="JClones_AC2.jsfx" type="effect" desc="JClones_AC2">
+      <metadata>
+        <description><![CDATA[{\rtf1\ansi\deff0{\fonttbl{\f0 \fswiss Helvetica;}{\f1 Courier;}}
+{\colortbl;\red255\green0\blue0;\red0\green0\blue255;}
+\widowctrl\hyphauto
+
+{\pard \ql \f0 \sa180 \li0 \fi0 \b \fs36 JClones_AC2\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 JClones_AC2 is a clone of a plugin designed to emulate the classic sound and behavior of analog tape machines that captures the essence of tape saturation, compression, and harmonic richness, making it an invaluable asset for adding depth, warmth, and character to digital recordings. The plugin provides a range of controls that allow users to fine-tune the tape emulation to suit various audio materials and production styles.\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \b \fs32 Main Parameters\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\b Input Gain:} Adjusts the input signal level before processing.\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\b Output Gain:} Sets the final output level after processing.\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\b Auto Gain:} Engages primitive loudness compensation algorithm.\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\b Rolloff:} Controls the attenuation of high frequencies, simulating the natural frequency response of analog tape, which tends to soften or "roll off" the high-end as part of its characteristic sound.\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\b Bump:} Adds a distinctive low-end enhancement or "bump," reminiscent of the subtle bass lift that can occur when audio is recorded to or played back from analog tape.\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\b Model:} Sets playback head type model:\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\b Swiss:} Modeled after Swiss-made tape machines known for their precision and high-fidelity sound (Studer A80 mkII).\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\b Japan-O:} Represents a tape machine from Japan, known for its balanced tonal qualities and slightly warm character (Otari MX-80).\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\b USA-M:} Modeled after a classic American tape machine, famous for its robust and punchy sound (MCI JH-24).\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\b USA-A:} Based on another renowned American tape machine, known for its aggressive saturation and strong coloration (Ampex MM-1200).\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\b Japan-S:} Represents a Japanese tape machine with a smooth, silky sound, often used in high-quality studio recordings (Sony APR-5000).\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\b Japan-T:} Modeled after a Japanese tape machine noted for its tight, punchy low end and clear, defined high frequencies (Tascam ATR-60).\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\b Bias:} controls the tape bias setting, which refers to a high-frequency signal added to the audio signal before recording onto tape. Adjusting the bias affects the tonal balance, saturation, and overall character of the tape emulation.\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\b Release:} Controls the time it takes for the dynamic processing to return to its normal state after the input signal level decreases. This is crucial in the context of tape emulation because it simulates the behavior of the tape as it responds to changes in the audio signal, affecting how the saturation and compression characteristics are applied over time.\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\b Speed:} Tape speed: 7.5, 15 or 30 inch per second (IPS).\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\b EQ Type:} Allows users to choose between different equalization curves that emulate the frequency response characteristics of classic tape machines. The IEC-1 and IEC-2 options represent different International Electrotechnical Commission (IEC) standards for tape equalization. These settings affect the overall tonal balance of the tape emulation by applying specific equalization curves commonly associated with different tape recording and playback standards.\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\b IEC-1:} Use this setting to add warmth and fullness to tracks, particularly those needing a boost in the low-end or a smooth high-end roll-off. It's perfect for creating a vintage tape sound with a rich bass response.\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\b IEC-2:} Opt for this setting when you want to maintain clarity and detail in the mid and high frequencies. It's ideal for modern productions where a crisp, bright tape effect is desired without too much low-end emphasis.\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\b Tape:} Sets tape formulation:\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\b Modern:} current manufacturing technologies create a tape with a much greater dynamic range than earlier formulations. These tapes have a large linear region, and hence have a smaller non-linear (saturation) 'character'. This makes for recordings as true as possible to the original material.\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\b Vintage:} older tape mediums tend to have less dynamic range, and suffer from greater distortion/saturation. These tapes, however, have 'character' that newer ones do not, and have been used with great success in recording audio.\par}
+}
+]]></description>
+        <link rel="website">https://github.com/JClones/JSFXClones</link>
+        <link rel="screenshot">https://github.com/JClones/JSFXClones/blob/master/assets/screenshots/JClones_AC2.png</link>
+      </metadata>
+      <version name="1.0.0" author="JClones" time="2024-06-30T13:16:04Z">
+        <source>https://github.com/JClones/JSFXClones/raw/8a1d5b307326ea0f15ea59b86dbcf3deb47daab7/jsfx/JClones_AC2.jsfx</source>
       </version>
     </reapack>
     <reapack name="JClones_L2.jsfx" type="effect" desc="JClones_L2">
@@ -211,6 +250,12 @@ Detailed Description
 {\pard \ql \f0 \sa180 \li0 \fi0 \b \fs36 \u8220"JClones_AC1\u8221"\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 JClones_AC1 is a clone of a plugin, designed to emulate the characteristics and sonic qualities of analog mixing consoles. By simulating the behavior of analog circuits, the plugin brings the warmth, depth, and harmonic richness of analog gear to digital audio productions. The plugin is highly regarded for its ability to add subtle compression, harmonic distortion, and a sense of cohesion to mixes, making them sound more polished and professional.\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 {\field{\*\fldinst{HYPERLINK "https://github.com/JClones/JSFXClones/blob/master/JClones_AC1.md"}}{\fldrslt{\ul
+Detailed Description
+}}}
+\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \b \fs36 \u8220"JClones_AC2\u8221"\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 JClones_AC2 is a clone of a plugin designed to emulate the classic sound and behavior of analog tape machines that captures the essence of tape saturation, compression, and harmonic richness, making it an invaluable asset for adding depth, warmth, and character to digital recordings. The plugin provides a range of controls that allow users to fine-tune the tape emulation to suit various audio materials and production styles.\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\field{\*\fldinst{HYPERLINK "https://github.com/JClones/JSFXClones/blob/master/JClones_AC2.md"}}{\fldrslt{\ul
 Detailed Description
 }}}
 \par}
