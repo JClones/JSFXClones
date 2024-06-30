@@ -1,0 +1,603 @@
+desc:       JClones_AC2
+version:    1.0.0
+author:     JClones
+tags:       analog channel
+link:       https://github.com/JClones/JSFXClones
+screenshot: https://github.com/JClones/JSFXClones/blob/master/assets/screenshots/JClones_AC2.png
+about:
+    # JClones_AC2
+    text
+
+slider1:0<-24,24,0.01>Input Gain, dB
+slider2:0<-24,24,0.01>Output Gain, dB
+slider3:0<0,1,1{Off,On}>Auto Gain
+slider4:35<20,100,0.01>Rolloff
+slider5:0:<0,100,0.01>Bump
+slider6:0<0,5,1{Swiss,Japan-O,USA-M,USA-A,Japan-S,Japan-T}>Model
+slider7:0<-12,12,0.01>Bias
+slider8:500.0<10.0,1000.0,10.0>Release, ms
+slider9:1<0,2,1{7.5,15,30}>Speed, ips
+slider10:0<0,1,1{IEC 1,IEC2}>EQ Type
+slider11:0<0,1,1{Vintage,Modern}>Tape
+
+@init
+
+function DB_TO_K(x)
+(
+  10 ^ (x / 20)
+);
+
+/*
+ * Filter2 - digital second order filter:
+ * X(z) = (a0 + a1*z^-1 + a2*z^-2) / (1 - b1*z^-1 - b2*z^-2)
+ */
+ 
+function Filter2_Init(a0, a1, a2, b1, b2)
+(
+  this.a0 = a0;
+  this.a1 = a1;
+  this.a2 = a2;
+  this.b1 = b1;
+  this.b2 = b2;
+);
+
+function Filter2_reset()
+(
+  this.x1 = 0;
+  this.x2 = 0;
+  this.y1 = 0;
+  this.y2 = 0;
+);
+
+function Filter2_processSample(x0) local(y0)
+(
+  y0 = x0 * this.a0 + this.x1 * this.a1 + this.x2 * this.a2 +
+    this.y1 * this.b1 + this.y2 * this.b2;
+    
+  // shift history
+  this.x2 = this.x1;
+  this.x1 = x0;
+  
+  this.y2 = this.y1;
+  this.y1 = y0;
+  
+  y0;
+);
+
+function Filter2_crossfadeFrom2Filters(A_a0, A_a1, A_a2, A_b1, A_b2, mix_A, B_a0, B_a1, B_a2, B_b1, B_b2, mix_B)
+(
+  this.a0 = A_a0 * mix_A + B_a0 * mix_B;
+  this.a1 = A_a1 * mix_A + B_a1 * mix_B;
+  this.a2 = A_a2 * mix_A + B_a2 * mix_B;
+  this.b1 = A_b1 * mix_A + B_b1 * mix_B;
+  this.b2 = A_b2 * mix_A + B_b2 * mix_B;
+);
+
+/*
+ * AChannel
+ */
+
+function AChannel_reset()
+(
+  this.level_s = 0.0;
+);
+
+function AChannel_getLevel(x) local(x_level, attack_k, filter_k)
+(
+  x_level = abs(x);
+  
+  attack_k = this.attack_k * x_level;
+  
+  (attack_k > 1.0) ? ( attack_k = 1.0; );
+  
+  filter_k = (x_level > this.level_s) ? attack_k : this.release_k;
+  
+  this.level_s += (x_level - this.level_s) * filter_k;
+  
+  this.level_s * this.drive;
+);
+
+function AChannel_processSample(x, x_level) local(x_level2, gr)
+(
+  x_level2 = this.is_modern ? x_level * x_level : x_level;
+  
+  gr = (x_level2 * 0.5 - 1.0) * (x_level2 * 0.5 - 1.0) + x_level * this.a;
+  
+  (gr > 1.0) ? ( gr = 1.0 );
+  
+  (x_level > 1.0) ? ( gr = 1.0 / (x_level + 0.00001) * (this.a + 0.25); );
+  
+  x * gr;
+);
+
+function AChannel_setParameters(bias, curve, is_modern)
+(
+  this.drive = bias;
+  this.a = curve;
+  this.is_modern = is_modern;
+);
+
+function AChannel_setAttackRelease(attack_sec, release_sec)
+(
+  this.attack_k = 1.0 / (srate * attack_sec);
+  this.release_k = 1.0 / (srate * release_sec);
+);
+
+/*
+ * Tape202
+ */
+
+function Tape202_Filter2_generateHighpass(freq_k, Q, is_second_order) local(tan_w0, tan_w0_pow2, a0, a1, a2, b0, b1, b2)
+(
+    tan_w0 = tan(freq_k * $pi);
+    tan_w0_pow2 = tan_w0 * tan_w0;
+
+    (is_second_order) ? (
+
+        a0 = 1.0;
+        a1 = -2.0;
+        a2 = 1.0;
+        b0 = Q * tan_w0 + 1.0 + tan_w0_pow2;
+        b1 = tan_w0_pow2 * 2.0 - 2.0;
+        b2 = 1.0 - Q * tan_w0 + tan_w0_pow2;
+
+    ) : (
+
+        a0 = 1.0;
+        a1 = -1.0;
+        a2 = 0.0;
+        b0 = tan_w0 + 1.0;
+        b1 = tan_w0 - 1.0;
+        b2 = 0.0;
+
+    );
+
+    this.Filter2_Init(a0 / b0, a1 / b0, a2 / b0, -b1 / b0, -b2 / b0);
+);
+
+function Tape202_Filter2_generateBump1(freq_k_A, gain_dB_A, freq_k_B, gain_dB_B) local(
+  tan_w0_A, gain_k_A, gain_boost_A, gain_cut_A,
+  first_a0, first_a1, first_b0, first_b1, tan_w0_B, gain_k_B, gain_boost_B, gain_cut_B,
+  second_a0, second_a1, second_b0, second_b1, a0, a1, a2, b1, b2)
+(
+    // shelf 1
+    tan_w0_A = tan(freq_k_A * $pi);
+    gain_k_A = DB_TO_K(gain_dB_A);
+
+    gain_boost_A = (gain_dB_A >= 0.0) ? gain_k_A : 1.0;
+    gain_cut_A = (gain_dB_A < 0.0) ? (1.0 / gain_k_A) : 1.0;
+
+    first_a0 = tan_w0_A * gain_boost_A + 1.0;
+    first_a1 = tan_w0_A * gain_boost_A - 1.0;
+    first_b0 = tan_w0_A * gain_cut_A + 1.0;
+    first_b1 = tan_w0_A * gain_cut_A - 1.0;
+
+    first_a0 /= first_b0;
+    first_a1 /= first_b0;
+    first_b1 /= first_b0;
+
+    // shelf 2
+    tan_w0_B = tan(freq_k_B * $pi);
+    gain_k_B = DB_TO_K(gain_dB_B);
+
+    gain_boost_B = (gain_dB_B >= 0.0) ? gain_k_B : 1.0;
+    gain_cut_B = (gain_dB_B < 0.0) ? (1.0 / gain_k_B) : 1.0;
+
+    second_a0 = tan_w0_B * gain_boost_B + 1.0;
+    second_a1 = tan_w0_B * gain_boost_B - 1.0;
+    second_b0 = tan_w0_B * gain_cut_B + 1.0;
+    second_b1 = tan_w0_B * gain_cut_B - 1.0;
+
+    second_a0 /= second_b0;
+    second_a1 /= second_b0;
+    second_b1 /= second_b0;
+
+    // combine both shelves
+
+    a0 = first_a0 * second_a0;
+    a1 = first_a0 * second_a1 + first_a1 * second_a0;
+    a2 = first_a1 * second_a1;
+
+    b1 = first_b1 + second_b1;
+    b2 = first_b1 * second_b1;
+
+    this.Filter2_Init(a0, a1, a2, -b1, -b2);
+);
+
+function Tape202_Filter2_generateBump2(freq_k, gain_dB, dry_mix) local(tan_w0, tan_w0_pow2, gain_k, scale, gain_boost, gain_cut, mix, half_mix,
+  A, B, dry_a0, dry_a1, dry_a2, dry_b0, dry_b1, dry_b2, wet_a0, wet_a1, wet_a2, wet_b0, wet_b1, wet_b2, a0, a1, a2, b0, b1, b2)
+(
+    tan_w0 = tan(freq_k * $pi);
+    tan_w0_pow2 = tan_w0 * tan_w0;
+
+    gain_k = DB_TO_K(gain_dB);
+
+    scale = sqrt(abs(gain_dB / 12.0));
+
+    gain_boost = (gain_dB >= 0.0) ? gain_k : 1.0;
+    gain_cut = (gain_dB < 0.0) ? (1.0 / gain_k) : 1.0;
+
+    mix = pow(dry_mix, freq_k * 10.0 + 0.1);
+    half_mix = 1.0 - mix * 0.5;
+
+    A = (gain_dB >= 0.0) ? (scale * half_mix * -6.0 + sqrt(2)) : (scale * half_mix * -6.4 + sqrt(2));
+    B = (gain_dB >= 0.0) ? (scale * half_mix * -6.4 + sqrt(2)) : (scale * half_mix * -6.0 + sqrt(2));
+
+    A *= sqrt(gain_boost) * tan_w0;
+    B *= sqrt(gain_cut) * tan_w0;
+
+    dry_a0 = 1.0 + A + tan_w0_pow2 * gain_boost;
+    dry_a1 = gain_boost * 2.0 * tan_w0_pow2 - 2.0;
+    dry_a2 = 1.0 - A + tan_w0_pow2 * gain_boost;
+    dry_b0 = 1.0 + B + tan_w0_pow2 * gain_cut;
+    dry_b1 = gain_cut * 2.0 * tan_w0_pow2 - 2.0;
+    dry_b2 = 1.0 - B + tan_w0_pow2 * gain_cut;
+
+    wet_a0 = gain_boost * tan_w0 + 1.0;
+    wet_a1 = gain_boost * tan_w0 - 1.0;
+    wet_a2 = 0.0;
+    wet_b0 = gain_cut * tan_w0 + 1.0;
+    wet_b1 = gain_cut * tan_w0 - 1.0;
+    wet_b2 = 0.0;
+
+    // combine both filters
+    a0 = dry_a0 * mix + wet_a0 * (1.0 - mix);
+    a1 = dry_a1 * mix + wet_a1 * (1.0 - mix);
+    a2 = dry_a2 * mix + wet_a2 * (1.0 - mix);
+    b0 = dry_b0 * mix + wet_b0 * (1.0 - mix);
+    b1 = dry_b1 * mix + wet_b1 * (1.0 - mix);
+    b2 = dry_b2 * mix + wet_b2 * (1.0 - mix);
+
+    this.Filter2_Init(a0 / b0, a1 / b0, a2 / b0, -b1 / b0, -b2 / b0);
+);
+
+function Tape202_Filter2_generateBump3(freq_k, gain_dB) local(tan_w0, tan_w0_pow2, scale, gain_k, k1, scale_1, scale_2, scale_A, scale_B,
+  a0, a1, a2, b0, b1, b2)
+(
+    tan_w0 = tan(freq_k * $pi);
+    tan_w0_pow2 = tan_w0 * tan_w0;
+
+    scale = abs(gain_dB / 12.0);
+
+    gain_k = DB_TO_K(gain_dB);
+
+    k1 = (tan_w0 + 1.0) * 0.5;
+
+    (gain_dB < 0.0) ? (
+
+        scale_1 = k1;
+        scale_2 = k1 / gain_k;
+
+        scale_A = (scale_2 * freq_k + 1.0 - freq_k) * scale + 1.0 - scale;
+        scale_B = 1.0;
+
+    ) : (
+
+        scale_1 = gain_k * k1;
+        scale_2 = k1;
+
+        scale_A = 1.0;
+        scale_B = (scale_1 * freq_k + 1.0 - freq_k) * scale + 1.0 - scale;
+
+    );
+
+    a0 = tan_w0 * scale_1 + scale_B + tan_w0 * tan_w0;
+    a1 = tan_w0_pow2 * 2.0 - scale_B * 2.0;
+    a2 = scale_B - scale_1 * tan_w0 + tan_w0_pow2;
+    b0 = scale_2 * tan_w0 + scale_A + tan_w0_pow2;
+    b1 = tan_w0_pow2 * 2.0 - scale_A * 2.0;
+    b2 = scale_A - scale_2 * tan_w0 + tan_w0_pow2;
+
+    this.Filter2_Init(a0 / b0, a1 / b0, a2 / b0, -b1 / b0, -b2 / b0);
+);
+
+function Tape202_Filter2_generateShelf_1(freq_k_A, gain_dB_A, freq_k_B, gain_dB_B) local(
+  tan_w0_A, gain_k_A, gain_boost_A, gain_cut_A,
+  first_a0, first_a1, first_b0, first_b1, first_a0, first_a1, first_b1, tan_w0_B, gain_k_B, gain_boost_B, gain_cut_B,
+  second_a0, second_a1, second_b0, second_b1, a0, a1, a2, b1, b2)
+(
+    // shelf 1
+    tan_w0_A = tan(freq_k_A * $pi);
+    gain_k_A = DB_TO_K(gain_dB_A);
+
+    gain_boost_A = (gain_dB_A >= 0.0) ? gain_k_A : 1.0;
+    gain_cut_A = (gain_dB_A < 0.0) ? (1.0 / gain_k_A) : 1.0;
+
+    first_a0 = tan_w0_A + gain_boost_A;
+    first_a1 = tan_w0_A - gain_boost_A;
+    first_b0 = tan_w0_A + gain_cut_A;
+    first_b1 = tan_w0_A - gain_cut_A;
+
+    first_a0 /= first_b0;
+    first_a1 /= first_b0;
+    first_b1 /= first_b0;
+
+    // shelf 2
+    tan_w0_B = tan(freq_k_B * $pi);
+    gain_k_B = DB_TO_K(gain_dB_B);
+
+    gain_boost_B = (gain_dB_B >= 0.0) ? gain_k_B : 1.0;
+    gain_cut_B = (gain_dB_B < 0.0) ? (1.0 / gain_k_B) : 1.0;
+
+    second_a0 = tan_w0_B + gain_boost_B;
+    second_a1 = tan_w0_B - gain_boost_B;
+    second_b0 = tan_w0_B + gain_cut_B;
+    second_b1 = tan_w0_B - gain_cut_B;
+
+    second_a0 /= second_b0;
+    second_a1 /= second_b0;
+    second_b1 /= second_b0;
+
+    // combine both shelves
+
+    a0 = first_a0 * second_a0;
+    a1 = first_a0 * second_a1 + first_a1 * second_a0;
+    a2 = first_a1 * second_a1;
+
+    b1 = first_b1 + second_b1;
+    b2 = first_b1 * second_b1;
+
+    this.Filter2_Init(a0, a1, a2, -b1, -b2);
+);
+
+function Tape202_Filter2_generateShelf_2(freq_k_A, gain_dB_A, freq_k_B, gain_dB_B) local(
+  tan_w0_A, gain_k_A, gain_boost_A, gain_cut_A,
+  first_a0, first_a1, first_b0, first_b1,
+  tan_w0_B, gain_k_B, gain_boost_B, gain_cut_B,
+  second_a0, second_a1, second_b0, second_b1,
+  a0, a1, a2, b1, b2)
+(
+    // shelf 1
+    tan_w0_A = tan(freq_k_A * $pi);
+    gain_k_A = DB_TO_K(gain_dB_A);
+
+    gain_boost_A = (gain_dB_A >= 0.0) ? gain_k_A : 1.0;
+    gain_cut_A = (gain_dB_A < 0.0) ? (1.0 / gain_k_A) : 1.0;
+
+    first_a0 = tan_w0_A + gain_boost_A;
+    first_a1 = tan_w0_A - gain_boost_A;
+    first_b0 = tan_w0_A + gain_cut_A;
+    first_b1 = tan_w0_A - gain_cut_A;
+
+    first_a0 /= first_b0;
+    first_a1 /= first_b0;
+    first_b1 /= first_b0;
+
+    // shelf 2
+    tan_w0_B = tan(freq_k_B * $pi);
+    gain_k_B = DB_TO_K(gain_dB_B);
+
+    gain_boost_B = (gain_dB_B >= 0.0) ? gain_k_B : 1.0;
+    gain_cut_B = (gain_dB_B < 0.0) ? (1.0 / gain_k_B) : 1.0;
+
+    second_a0 = tan_w0_B * gain_boost_B + 1.0;
+    second_a1 = tan_w0_B * gain_boost_B - 1.0;
+    second_b0 = tan_w0_B * gain_cut_B + 1.0;
+    second_b1 = tan_w0_B * gain_cut_B - 1.0;
+
+    second_a0 /= second_b0;
+    second_a1 /= second_b0;
+    second_b1 /= second_b0;
+
+    // combine both shelves
+
+    a0 = first_a0 * second_a0;
+    a1 = first_a0 * second_a1 + first_a1 * second_a0;
+    a2 = first_a1 * second_a1;
+
+    b1 = first_b1 + second_b1;
+    b2 = first_b1 * second_b1;
+
+    this.Filter2_Init(a0, a1, a2, -b1, -b2);
+);
+
+function Tape202_setFilter(rolloff, bump, model)
+(
+  (model == 0) ? (
+    this.flt1.Tape202_Filter2_generateHighpass(rolloff / srate, 1.614 - sqrt(bump) * 1.164, 1);
+    this.flt2.Tape202_Filter2_generateBump1(rolloff / srate, 0.0, rolloff / srate, 0.0);
+  );
+  (model == 1) ? (
+    this.flt1.Tape202_Filter2_generateHighpass(rolloff * 0.5 / srate, 2.0, 1);
+    this.flt2.Tape202_Filter2_generateBump2(rolloff / srate, 2.2 * sqrt(bump), 0.98);
+  );
+  (model == 2) ? (
+    this.flt1.Tape202_Filter2_generateHighpass(rolloff / srate, 1.414, 0);
+    this.flt2.Tape202_Filter2_generateBump1(rolloff * 1.5 / srate, 18.0 * sqrt(bump), rolloff * 8.0 / srate, -9.0 * sqrt(bump));
+  );
+  (model == 3) ? (
+    this.flt1.Tape202_Filter2_generateHighpass(rolloff / srate, 1.414 - sqrt(bump) * 1.014, 1);
+    this.flt2.Tape202_Filter2_generateBump3(rolloff * 2.0 / srate, sqrt(bump) * -6.0);
+  );
+  (model == 4) ? (
+    this.flt1.Tape202_Filter2_generateHighpass(rolloff / srate, 1.514 - sqrt(bump) * 1.064, 1);
+    this.flt2.Tape202_Filter2_generateBump1(rolloff / srate, -9.0 * sqrt(bump), rolloff * 4.0 / srate, 6.0 * sqrt(bump));
+  );
+  (model == 5) ? (
+    this.flt1.Tape202_Filter2_generateHighpass(rolloff / srate, 1.4 - sqrt(bump) * 1.05, 1);
+    this.flt2.Tape202_Filter2_generateBump2(rolloff * 2.0 / srate, -2.0 * sqrt(bump), 0.97);
+  );
+);
+
+function Tape202_setParams(bias, release_ms, tape_speed, eq_type, is_modern) local(curve, high_freq_hz, high_gain_dB, low_freq_hz, low_gain_dB, high_freq_hz_A, high_freq_hz_B)
+(
+  (!is_modern) ? (
+    // vintage
+    tape_speed == 0 ? ( curve = 0.05 );
+    tape_speed == 1 ? ( curve = 0.1 );
+    tape_speed == 2 ? ( curve = 0.15 );
+  ) : (
+    // modern
+    tape_speed == 0 ? ( curve = 0.3 );
+    tape_speed == 1 ? ( curve = 0.35 );
+    tape_speed == 2 ? ( curve = 0.4 );
+  );
+
+  this.ac.AChannel_setParameters(DB_TO_K(bias), curve, is_modern);
+  this.ac.AChannel_setAttackRelease(0.003, release_ms * 0.001);
+  
+  // dynamic EQ
+  (eq_type == 1) ? (
+    // IEC 2
+    
+    tape_speed == 0 ? ( high_freq_hz = 12000 );
+    tape_speed == 1 ? ( high_freq_hz = 16000 );
+    tape_speed == 2 ? ( high_freq_hz = 12000 );
+    
+    tape_speed == 0 ? ( high_gain_dB = -18 );
+    tape_speed == 1 ? ( high_gain_dB = -7 );
+    tape_speed == 2 ? ( high_gain_dB = 0 );
+
+    low_freq_hz = 30;
+    
+    tape_speed == 0 ? ( low_gain_dB = 7.5 );
+    tape_speed == 1 ? ( low_gain_dB = 7.5 );
+    tape_speed == 2 ? ( low_gain_dB = 0.0 );
+    
+    this.dynamic_a.Tape202_Filter2_generateShelf_2(high_freq_hz / srate, high_gain_dB * bias / 12.0, low_freq_hz / srate, low_gain_dB * bias / 12.0);
+    this.dynamic_b.Tape202_Filter2_generateShelf_2(high_freq_hz / srate, 0.0, low_freq_hz / srate, 0.0);
+  
+  ) : (
+    // IEC 1
+    
+    tape_speed == 0 ? ( high_freq_hz_A = 11000 );
+    tape_speed == 1 ? ( high_freq_hz_A = 12000 );
+    tape_speed == 2 ? ( high_freq_hz_A = 10000 );
+    
+    tape_speed == 0 ? ( high_gain_dB = -15 );
+    tape_speed == 1 ? ( high_gain_dB = -10 );
+    tape_speed == 2 ? ( high_gain_dB = 3 );
+
+    tape_speed == 0 ? ( high_freq_hz_B = 10000 );
+    tape_speed == 1 ? ( high_freq_hz_B = 10000 );
+    tape_speed == 2 ? ( high_freq_hz_B = 12000 );
+  
+    this.dynamic_a.Tape202_Filter2_generateShelf_1(high_freq_hz_A / srate, high_gain_dB * bias / 12.0, high_freq_hz_A / srate, 0.0);
+    this.dynamic_b.Tape202_Filter2_generateShelf_1(high_freq_hz_B / srate, 0.0, high_freq_hz_B / srate, 0.0);
+  
+  );
+  
+  this.level_k = 1.0 / (srate * 0.003);   // additional smoothing
+);
+
+function Tape202_setGain(input_gain, output_gain)
+(
+  this.input_gain = input_gain;
+  this.output_gain = output_gain;
+);
+
+function Tape202_reset()
+(
+  this.flt1.Filter2_reset();
+  this.flt2.Filter2_reset();
+  
+  this.ac.AChannel_reset();
+  
+  this.level_s = 0.0;
+  
+  this.dynamic.Filter2_reset();
+);
+
+function Tape202_processSample(x) local(x1, level, x2, x3)
+(
+  // input gain
+  x *= this.input_gain;
+
+  // 1. filter
+  x1 = this.flt2.Filter2_processSample(this.flt1.Filter2_processSample(x));
+
+  // 2. saturation
+  level = this.ac.AChannel_getLevel(x1);
+  x2 =this.ac.AChannel_processSample(x1, level);
+
+  // 3. dynamic EQ:
+
+  // limit level
+  (level > 1.0) ? ( level = 1.0; );
+
+  // smooth level
+  this.level_s += this.level_k * (level - this.level_s);
+
+  // generate dynamic filter
+  this.dynamic.Filter2_crossfadeFrom2Filters(
+    this.dynamic_a.a0, this.dynamic_a.a1, this.dynamic_a.a2, this.dynamic_a.b1, this.dynamic_a.b2,
+    this.level_s,
+    this.dynamic_b.a0, this.dynamic_b.a1, this.dynamic_b.a2, this.dynamic_b.b1, this.dynamic_b.b2,
+    1.0 - this.level_s);
+
+  // apply dynamic filter
+  x3 = this.dynamic.Filter2_processSample(x2);
+  
+  // output gain
+  x3 * this.output_gain;
+);
+
+// auto gain calculation
+function get_auto_gain(bias, tape_speed, is_modern, input_gain) local(bias_lin, x, curve, val, output_gain)
+(
+  bias_lin = bias < 0 ? DB_TO_K(bias) : 1;
+  
+  x = (bias_lin / 2 - 1) * (bias_lin / 2 - 1);
+
+  (!is_modern) ? (
+    // vintage
+    tape_speed == 0 ? ( curve = 0.05 );
+    tape_speed == 1 ? ( curve = 0.1 );
+    tape_speed == 2 ? ( curve = 0.15 );
+  ) : (
+    // modern
+    tape_speed == 0 ? ( curve = 0.3 );
+    tape_speed == 1 ? ( curve = 0.35 );
+    tape_speed == 2 ? ( curve = 0.4 );
+  );
+  
+  gain_factor = curve * bias_lin + x;
+  
+  (gain_factor > 1) ? ( gain_factor = 1; );
+  
+  output_gain = (1 / gain_factor) / input_gain;
+  
+  (output_gain > 16) ? ( output_gain = 16; );
+  
+  output_gain;
+);
+
+// continue @init:
+
+// reset filters
+left.Tape202_reset();
+right.Tape202_reset();
+
+@slider
+
+input_gain = DB_TO_K(slider1);
+output_gain = DB_TO_K(slider2);
+auto_gain = slider3;
+rolloff = slider4;
+bump = slider5 / 100.0;
+tape_model = slider6;
+bias = slider7;
+release_ms = slider8;
+tape_speed = slider9;
+eq_type = slider10;
+is_modern = slider11;
+
+// auto-gain
+(auto_gain) ? ( output_gain = get_auto_gain(bias, tape_speed, is_modern, input_gain); );
+
+left.Tape202_setGain(input_gain, output_gain);
+right.Tape202_setGain(input_gain, output_gain);
+
+left.Tape202_setParams(bias, release_ms, tape_speed, eq_type, is_modern);
+right.Tape202_setParams(bias, release_ms, tape_speed, eq_type, is_modern);
+
+left.Tape202_setFilter(rolloff, bump, tape_model);
+right.Tape202_setFilter(rolloff, bump, tape_model);
+
+@block
+
+@sample
+
+spl0 = left.Tape202_processSample(spl0);
+spl1 = right.Tape202_processSample(spl1);
+
