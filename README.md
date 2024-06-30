@@ -31,3 +31,8 @@ JClones_Phoenix is a clone of a renowned audio plugin designed to emulate the so
 JClones_AC1 is a clone of a plugin, designed to emulate the characteristics and sonic qualities of analog mixing consoles. By simulating the behavior of analog circuits, the plugin brings the warmth, depth, and harmonic richness of analog gear to digital audio productions. The plugin is highly regarded for its ability to add subtle compression, harmonic distortion, and a sense of cohesion to mixes, making them sound more polished and professional.
 
 [Detailed Description](https://github.com/JClones/JSFXClones/blob/master/JClones_AC1.md)
+
+# “JClones_AC2”
+JClones_AC2 is a clone of a plugin designed to emulate the classic sound and behavior of analog tape machines that captures the essence of tape saturation, compression, and harmonic richness, making it an invaluable asset for adding depth, warmth, and character to digital recordings. The plugin provides a range of controls that allow users to fine-tune the tape emulation to suit various audio materials and production styles.
+
+[Detailed Description](https://github.com/JClones/JSFXClones/blob/master/JClones_AC2.md)
