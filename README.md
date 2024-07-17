@@ -36,3 +36,8 @@ JClones_AC1 is a clone of a plugin, designed to emulate the characteristics and 
 JClones_AC2 is a clone of a plugin designed to emulate the classic sound and behavior of analog tape machines that captures the essence of tape saturation, compression, and harmonic richness, making it an invaluable asset for adding depth, warmth, and character to digital recordings. The plugin provides a range of controls that allow users to fine-tune the tape emulation to suit various audio materials and production styles.
 
 [Detailed Description](https://github.com/JClones/JSFXClones/blob/master/JClones_AC2.md)
+
+# “JClones_RS124”
+JClones_RS124 is a clone of the first emulation of classic vari-mu compressor, originally developed in the 1960s by technical engineers of famous recording studio. This plugin captures the unique sonic characteristics and behavior of the original hardware, which was famously used on numerous iconic recordings by The Beatles and other legendary artists.
+
+[Detailed Description](https://github.com/JClones/JSFXClones/blob/master/JClones_RS124.md)
