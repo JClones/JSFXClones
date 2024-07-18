@@ -1,0 +1,252 @@
+desc:       JClones_Classic_Master_Limiter
+version:    1.0.0
+author:     JClones
+tags:       compressor
+link:       https://github.com/JClones/JSFXClones
+screenshot: https://github.com/JClones/JSFXClones/blob/master/assets/screenshots/JClones_Classic_Master_Limiter.png
+about:
+    # JClones_Classic_Master_Limiter
+
+slider1:-5<-20,0,0.1>Threshold, dB
+
+@init
+
+// for allocator
+function allocate(size) local(result)
+(
+  result = __memory_Index__;
+  __memory_Index__ += size;
+  result;
+);
+
+function DB_TO_K(x)
+(
+  10 ^ (x / 20)
+);
+
+/*
+ * Filter1
+ */
+ 
+function Filter1_LPFilter_Init(freq_k) local(w0, KK, a0, a1, b0, b1)
+(
+  w0 = freq_k * 2.0 * $pi;
+
+  // prepare for BLT
+  KK = 1.0 / tan(w0 / 2.0);
+
+  // perform BLT
+  a0 = 1.0;
+  a1 = 1.0;
+  b0 = 1.0 + KK;
+  b1 = 1.0 - KK;
+
+  // make b0 == 1, also change the sign for b1 and b2 in our calculations
+  this.a0 = a0 / b0;
+  this.a1 = a1 / b0;
+  this.b1 = -b1 / b0;
+);
+
+function Filter1_reset()
+(
+  this.x1 = 0.0;
+  this.y1 = 0.0;
+);
+
+function Filter1_processSample(x) local(y)
+(
+  y = this.a0 * x + this.a1 * this.x1 + this.b1 * this.y1;
+  
+  this.x1 = x;
+  this.y1 = y;
+  
+  y;
+);
+
+/*
+ * DelayLine
+ */
+ 
+function DelayLine_init(delay_line_size)
+(
+  this.size = delay_line_size;
+  this.line = allocate(delay_line_size);
+  this.head = 0;
+); 
+
+function DelayLine_pushSample(x) local(y)
+(
+  y = this.line[this.head]; 
+  this.line[this.head] = x;
+  this.head = (this.head + 1) % this.size;
+  
+  y
+);
+
+function DelayLine_reset(val)
+(
+  this.head = 0;
+  
+  memset(this.line, val, this.size);
+);
+
+function DelayLine_getLatency(val)
+(
+  this.size;
+);
+
+/*
+ * ClassicLimiter
+ */
+ 
+function ClassicLimiter_Init()
+(
+  this.kA = pow(0.368, 1.0 / (srate * 0.0005));
+  this.kX = 1.0 - pow(0.368, 1.0 / (srate * 0.5));
+  this.kC = pow(0.368, 1.0 / (srate * 0.001));
+  this.kE = 1.0 - pow(0.368, 1.0 / (srate * 0.0005));
+
+  this.attack.Filter1_LPFilter_Init(100.0 / srate);
+
+  this.delay.DelayLine_init(floor(sample_rate * 0.003 + 0.5));
+);
+
+function ClassicLimiter_reset()
+(
+  this.iGR_A = 0.0;
+  this.iGR_B = 0.0;
+  this.iGR_X = 0.0;
+  this.iGR_C = 0.0;
+  this.iGR_D = 0.0;
+  this.iGR_E = 0.0;
+
+  this.attack.Filter1_reset();
+  this.delay.DelayLine_reset();
+
+  this.kB = this.kA;
+  this.kD = this.kC;
+);
+
+function ClassicLimiter_setThreshold(threshold_k)
+(
+  this.threshold_k = threshold_k;
+  this.master_gain = 0.977 / threshold_k;
+);
+
+function ClassicLimiter_getLatency()
+(
+  this.delay.DelayLine_getLatency();
+);
+
+ONE_E_20 = pow(10, -20);
+
+function ClassicLimiter_processSample(x) local(L, iGR_1, y1, y2, iGR_2, y3, iGR_3, y4, iGR_4)
+(
+  // pass#1
+  L = abs(x) + ONE_E_20;
+
+  iGR_1 = 1.0 - this.threshold_k / L;
+
+  iGR_1 = max(iGR_1, ONE_E_20);
+
+  this.iGR_A *= this.kA;     // release to 0
+  this.iGR_A = max(this.iGR_A, iGR_1);     // reference value
+
+  this.iGR_B *= this.kB;     // release to 0
+  this.iGR_B = max(this.iGR_B, iGR_1);     // dynamic value
+
+  (this.iGR_A >= this.iGR_B) ? (
+    this.kB = 1.0;      // hold
+  ) : (
+    this.kB += (this.kA - this.kB) * (this.iGR_B - this.iGR_A) / srate;   // dynamic release
+  );
+
+  this.iGR_X += (this.iGR_B - this.iGR_X) * this.kX;   // secondary release
+  this.iGR_X = min(this.iGR_X, this.iGR_B);
+
+  // apply attack to GR, apply GR
+  y1 = x * (1.0 - this.attack.Filter1_processSample(this.iGR_X));
+
+  // pass#2
+  L = abs(y1);
+
+  (L >= this.threshold_k) ? (
+    iGR_2 = (1.0 - this.threshold_k / L);
+
+    // apply GR^3 (T*3 with soft knee)
+    y2 = y1 * (1.0 - iGR_2 * iGR_2 * iGR_2);
+  ) : (
+    y2 = y1;
+  );
+
+  // pass#3
+  y3 = this.delay.DelayLine_pushSample(y2);     // delayed by lookahead
+
+  L = abs(y2) + ONE_E_20;     // not delayed (lookahead)
+
+  iGR_3 = 1.0 - this.threshold_k / L;
+
+  iGR_3 = max(iGR_3, ONE_E_20);
+
+  this.iGR_C *= this.kC;     // release to 0
+  this.iGR_C = max(this.iGR_C, iGR_3);     // reference value
+
+  this.iGR_D *= this.kD;     // release to 0
+  this.iGR_D = max(this.iGR_D, iGR_3);     // dynamic value
+
+  (this.iGR_C >= this.iGR_D) ? (
+    this.kD += (1.0 - this.kD) * 8000.0 / srate;        // go to hold value
+  ) : (
+    this.kD += (this.kC - this.kD) * (this.iGR_D - this.iGR_C) / srate;   // dynamic release
+  );
+
+  this.iGR_E += (this.iGR_D - this.iGR_E) * this.kE;   // secondary release
+  this.iGR_E = min(this.iGR_E, this.iGR_D);
+
+  y4 = y3 * (1.0 - this.iGR_E);
+
+  // pass#4
+  L = abs(y4) + ONE_E_20;
+
+  iGR_4 = 1.0 - this.threshold_k / L;
+
+  iGR_4 = max(iGR_4, ONE_E_20);
+
+  // apply gain reduction and master gain
+  y4 * (1.0 - iGR_4) * this.master_gain;
+);
+
+// continue @init:
+
+(sample_rate != srate) ? (
+
+  sample_rate = srate;
+  
+  __memory_Index__ = 0;
+
+  left.ClassicLimiter_Init();  
+  right.ClassicLimiter_Init();  
+);
+
+left.ClassicLimiter_reset();
+right.ClassicLimiter_reset();
+
+// report latency
+pdc_delay = left.ClassicLimiter_getLatency();
+pdc_bot_ch = 0;
+pdc_top_ch = 2; // delays the first two channels (spl0/spl1).
+
+@slider
+
+threshold_k = DB_TO_K(slider1);
+
+left.ClassicLimiter_setThreshold(threshold_k);
+right.ClassicLimiter_setThreshold(threshold_k);
+
+@block
+
+@sample
+
+spl0 = left.ClassicLimiter_processSample(spl0);
+spl1 = right.ClassicLimiter_processSample(spl1);
+

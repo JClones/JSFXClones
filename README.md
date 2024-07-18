@@ -41,3 +41,8 @@ JClones_AC2 is a clone of a plugin designed to emulate the classic sound and beh
 JClones_RS124 is a clone of the first emulation of classic vari-mu compressor, originally developed in the 1960s by technical engineers of famous recording studio. This plugin captures the unique sonic characteristics and behavior of the original hardware, which was famously used on numerous iconic recordings by The Beatles and other legendary artists.
 
 [Detailed Description](https://github.com/JClones/JSFXClones/blob/master/JClones_RS124.md)
+
+# “JClones_Classic_Master_Limiter”
+JClones_Classic_Master_Limiter is a clone of freeware limiter plugin designed to provide transparent limiting, allowing you to maximize the loudness of your audio tracks without introducing distortion or unwanted artifacts. Simple interface, low CPU usage, and essential controls make it an excellent choice for both beginners and experienced producers looking to increase the loudness of their tracks. However, the developer of the plugin disappeared from the market abruptly around 2007.
+
+[Detailed Description](https://github.com/JClones/JSFXClones/blob/master/JClones_Classic_Master_Limiter.md)
