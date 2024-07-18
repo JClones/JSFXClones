@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<index version="1" name="JSFXClones" commit="2943d11793da7f7a0a17eaf5bc19f9804aea7841">
+<index version="1" name="JSFXClones" commit="f2440722590127a7e69c8bce318c3c56d1e0ffa1">
   <category name="jsfx">
     <reapack name="JClones_AC1.jsfx" type="effect" desc="JClones_AC1">
       <metadata>
@@ -67,6 +67,25 @@
       </metadata>
       <version name="1.0.0" author="JClones" time="2024-06-30T13:16:04Z">
         <source>https://github.com/JClones/JSFXClones/raw/8a1d5b307326ea0f15ea59b86dbcf3deb47daab7/jsfx/JClones_AC2.jsfx</source>
+      </version>
+    </reapack>
+    <reapack name="JClones_Classic_Master_Limiter.jsfx" type="effect" desc="JClones_Classic_Master_Limiter">
+      <metadata>
+        <description><![CDATA[{\rtf1\ansi\deff0{\fonttbl{\f0 \fswiss Helvetica;}{\f1 Courier;}}
+{\colortbl;\red255\green0\blue0;\red0\green0\blue255;}
+\widowctrl\hyphauto
+
+{\pard \ql \f0 \sa180 \li0 \fi0 \b \fs36 JClones_Classic_Master_Limiter\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 JClones_Classic_Master_Limiter is a clone of freeware limiter plugin designed to provide transparent limiting, allowing you to maximize the loudness of your audio tracks without introducing distortion or unwanted artifacts. Simple interface, low CPU usage, and essential controls make it an excellent choice for both beginners and experienced producers looking to increase the loudness of their tracks. However, the developer of the plugin disappeared from the market abruptly around 2007.\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \b \fs32 Main Parameters\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\b Threshold:} Sets the level at which the limiting begins. Any signal that exceeds this threshold will be limited. Lower the threshold to apply more limiting and increase the perceived loudness of the audio.\par}
+}
+]]></description>
+        <link rel="website">https://github.com/JClones/JSFXClones</link>
+        <link rel="screenshot">https://github.com/JClones/JSFXClones/blob/master/assets/screenshots/JClones_Classic_Master_Limiter.png</link>
+      </metadata>
+      <version name="1.0.0" author="JClones" time="2024-07-18T18:15:30Z">
+        <source>https://github.com/JClones/JSFXClones/raw/bd6d27854c3f0f3d170d19283d8061f9244b247d/jsfx/JClones_Classic_Master_Limiter.jsfx</source>
       </version>
     </reapack>
     <reapack name="JClones_L2.jsfx" type="effect" desc="JClones_L2">
@@ -289,6 +308,12 @@ Detailed Description
 {\pard \ql \f0 \sa180 \li0 \fi0 \b \fs36 \u8220"JClones_RS124\u8221"\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 JClones_RS124 is a clone of the first emulation of classic vari-mu compressor, originally developed in the 1960s by technical engineers of famous recording studio. This plugin captures the unique sonic characteristics and behavior of the original hardware, which was famously used on numerous iconic recordings by The Beatles and other legendary artists.\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 {\field{\*\fldinst{HYPERLINK "https://github.com/JClones/JSFXClones/blob/master/JClones_RS124.md"}}{\fldrslt{\ul
+Detailed Description
+}}}
+\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \b \fs36 \u8220"JClones_Classic_Master_Limiter\u8221"\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 JClones_Classic_Master_Limiter is a clone of freeware limiter plugin designed to provide transparent limiting, allowing you to maximize the loudness of your audio tracks without introducing distortion or unwanted artifacts. Simple interface, low CPU usage, and essential controls make it an excellent choice for both beginners and experienced producers looking to increase the loudness of their tracks. However, the developer of the plugin disappeared from the market abruptly around 2007.\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\field{\*\fldinst{HYPERLINK "https://github.com/JClones/JSFXClones/blob/master/JClones_Classic_Master_Limiter.md"}}{\fldrslt{\ul
 Detailed Description
 }}}
 \par}
