@@ -1,0 +1,725 @@
+desc:       JClones_VBL
+version:    1.0.0
+author:     JClones
+tags:       tube compressor
+link:       https://github.com/JClones/JSFXClones
+screenshot: https://github.com/JClones/JSFXClones/blob/master/assets/screenshots/JClones_VBL.png
+about:
+    # JClones_VBL
+    JClones_VBL is a clone of earlier version of vintage broadcast limiter plugin, which emulates the characteristics of classic tube-based broadcast limiters, providing warm analog-style compression and saturation. The plugin is designed to add character and color to digital recordings by incorporating tube harmonics and subtle distortions. It features controls for threshold, release, drive, output, and mix, allowing users to adjust the level of compression and saturation to achieve the desired sound. With its ability to enhance the richness and warmth of audio signals, it is a popular choice for adding vintage character to mixes.
+
+    ## Main Parameters
+
+    **Input (Gain):** Adjusts the input level.
+
+    **Comp (Compression):** Controls the amount of compression applied to the input signal. It essentially determines how aggressively the plugin compresses the signal once it surpasses the threshold level.
+
+    **Emphasis:** Controls the frequency-dependent compression behavior by emphasizing certain frequency ranges before they hit the compression stage. This parameter essentially shapes how the compressor responds to different parts of the frequency spectrum, allowing users to accentuate or de-emphasize specific frequencies during the compression process.
+
+    **Bias:** Controls the biasing of the virtual tube circuitry, affecting the tonal character and harmonic distortion of the processed audio. This parameter allows users to fine-tune the behavior of the tube emulation, resulting in different saturation characteristics and overall tonal coloration.
+
+    **Amp (Amplifier):** Controls the amount of preamp gain applied to the signal before it reaches the limiter stage. This parameter influences how much of the signal is pushed into the tube emulation circuit, effectively increasing the level of saturation and harmonic distortion.
+
+    **Brilliance:** Controls the high-frequency enhancement applied to the audio signal, emphasizing the "air" and brightness of the sound. This parameter allows users to add a subtle boost to the high frequencies, enhancing the clarity and presence of the processed audio.
+
+    **Dry Mix:** Controls the amount of unprocessed signal mixed to the output.
+
+    **Output (Gain):** Adjusts the output level.
+
+    **Stereo-Link:** If activated, the amount of gain reduction on left and right channels is equal.
+
+    **Trafo:** Simulates the effect of a vintage output transformer on the audio signal. This parameter influences the tonal coloration and harmonic enhancement by emulating the subtle saturation and character introduced by analog transformers commonly found in classic hardware equipment.
+
+slider1:0<-24,24,0.1>Input, dB
+slider2:0<0,48,0.1>Comp, dB
+slider3:50<0,100,0.1>Emphasis, %
+slider4:50<0,100,0.1>Bias, %
+slider5:0<0,100,0.1>Amp, %
+slider6:0<0,100,0.1>Brilliance, %
+slider7:0<0,100,0.1>Dry Mix, %
+slider8:0<-24,24,0.1>Output, dB
+slider9:1<0,1,1{Off,On}>Stereo-Link
+slider10:1<0,1,1{Off,On}>Trafo
+
+@init
+
+function DB_TO_K(x)
+(
+  10 ^ (x / 20)
+);
+
+function K_TO_DB(x)
+(
+  20 * log10(x);
+);
+
+M_SQRT2 = sqrt(2.0);
+M_SQRT1_2 = M_SQRT2 / 2.0;
+
+// 1st order filter helpers
+
+function getFilter1LPF(freq_k) (
+  1.0 - exp(-(2.0 * $pi * freq_k));
+);
+
+function applyFilter1(s, x, k) (
+  s + (x - s) * k;
+);
+
+/*
+ * Filter2 - digital second order filter:
+ * X(z) = (a0 + a1*z^-1 + a2*z^-2) / (1 - b1*z^-1 - b2*z^-2)
+ */
+ 
+function Filter2_reset()
+(
+  this.x1 = 0;
+  this.x2 = 0;
+  this.y1 = 0;
+  this.y2 = 0;
+);
+
+function Filter2_reset_v(val)
+(
+  this.x1 = val;
+  this.x2 = val;
+  this.y1 = val;
+  this.y2 = val;
+);
+
+function Filter2_processSample(x0) local(y0)
+(
+  y0 = x0 * this.a0 + this.x1 * this.a1 + this.x2 * this.a2 +
+    this.y1 * this.b1 + this.y2 * this.b2;
+    
+  // shift history
+  this.x2 = this.x1;
+  this.x1 = x0;
+  
+  this.y2 = this.y1;
+  this.y1 = y0;
+  
+  y0;
+);
+
+function Filter2_LPFilter2(freq_k, Q) local(w0, KK, KK2, a0, a1, a2, b0, b1, b2)
+(
+  w0 = freq_k * 2.0 * $pi;
+  KK = 1.0 / tan(w0 / 2.0);
+  KK2 = KK * KK;
+
+  a0 = 1.0;
+  a1 = 2.0;
+  a2 = 1.0;
+  b0 = KK2 + KK / Q + 1.0;
+  b1 = 2.0 * (1.0 - KK2);
+  b2 = KK2 - KK / Q + 1.0;
+
+  this.a0 = a0 / b0;
+  this.a1 = a1 / b0;
+  this.a2 = a2 / b0;
+  this.b1 = -b1 / b0;
+  this.b2 = -b2 / b0;
+);
+
+function Filter2_HPFilter2(freq_k, Q) local(omega0, alpha)
+(
+  /*
+   * http://www.musicdsp.org/files/Audio-EQ-Cookbook.txt
+   */
+
+  omega0 = freq_k * 2.0 * $pi;
+  alpha = sin(omega0) / (2.0 * Q);
+
+  this.a0 = ((1.0 + cos(omega0)) / 2.0) / (1.0 + alpha);
+  this.a1 = -(1.0 + cos(omega0)) / (1.0 + alpha);
+  this.a2 = ((1.0 + cos(omega0)) / 2.0) / (1.0 + alpha);
+
+  this.b1 = -(-2.0 * cos(omega0)) / (1.0 + alpha);
+  this.b2 = -(1.0 - alpha) / (1.0 + alpha);
+);
+
+function Filter2_LSFilter2(freq_k, Q, A) local(alpha, w0, a0, a1, a2, b0, b1, b2)
+(
+  /*
+   * http://www.musicdsp.org/files/Audio-EQ-Cookbook.txt
+   */
+
+  A = sqrt(A);        // 10^(Adb / 40) e.g. Adb / 2.
+
+  w0 = freq_k * 2.0 * $pi;
+  alpha = sin(w0) / (2.0 * Q);
+
+  a0 = A * ((A + 1.0) - (A - 1.0) * cos(w0) + 2.0 * sqrt(A) * alpha);
+  a1 = 2.0 * A * ((A - 1.0) - (A + 1.0) * cos(w0));
+  a2 = A * ((A + 1.0) - (A - 1.0) * cos(w0) - 2.0 * sqrt(A) * alpha);
+
+  b0 = (A + 1.0) + (A - 1.0) * cos(w0) + 2.0 * sqrt(A) * alpha;
+  b1 = -2.0 * ((A - 1.0) + (A + 1.0) * cos(w0));
+  b2 = (A + 1.0) + (A - 1.0) * cos(w0) - 2.0 * sqrt(A) * alpha;
+
+  this.a0 = a0 / b0;
+  this.a1 = a1 / b0;
+  this.a2 = a2 / b0;
+  
+  this.b1 = -b1 / b0;
+  this.b2 = -b2 / b0;
+);
+
+function Filter2_HSFilter2(freq_k, Q, A) local(alpha, w0, a0, a1, a2, b0, b1, b2)
+(
+  /*
+   * http://www.musicdsp.org/files/Audio-EQ-Cookbook.txt
+   */
+
+  A = sqrt(A);        // 10^(Adb / 40) e.g. Adb / 2.
+
+  w0 = freq_k * 2.0 * $pi;
+  alpha = sin(w0) / (2.0 * Q);
+
+  a0 = A * ((A + 1.0) + (A - 1.0) * cos(w0) + 2.0 * sqrt(A) * alpha);
+  a1 = -2.0 * A * ((A - 1.0) + (A + 1.0) * cos(w0));
+  a2 = A * ((A + 1.0) + (A - 1.0) * cos(w0) - 2.0 * sqrt(A) * alpha);
+
+  b0 = (A + 1.0) - (A - 1.0) * cos(w0) + 2.0 * sqrt(A) * alpha;
+  b1 = 2.0 * ((A - 1.0) - (A + 1.0) * cos(w0));
+  b2 = (A + 1.0) - (A - 1.0) * cos(w0) - 2.0 * sqrt(A) * alpha;
+
+  this.a0 = a0 / b0;
+  this.a1 = a1 / b0;
+  this.a2 = a2 / b0;
+  
+  this.b1 = -b1 / b0;
+  this.b2 = -b2 / b0;
+);
+
+/*
+ * VblComp
+ */
+
+function VblComp_setSampleRate()
+(
+  this.emphasis1.Filter2_LSFilter2(415.0 / srate, 0.5, 0.25);
+  this.emphasis2.Filter2_HSFilter2(1500.0 / srate, 0.49, 3.802);   // +11.6 dB
+
+  this.crossover_k = getFilter1LPF(2611.0 / srate);
+  this.gr_filter1_k = getFilter1LPF(15.9 / srate);   // tau=10 ms
+
+  this.gr_filter2.Filter2_LPFilter2(500.0 / srate, 0.72);
+
+  this.attack_lo_k = 1.0 - 2.0 * $pi / (2.0 * $pi + srate * 21.55685 / 1000.0);
+  this.attack_hi_k = 1.0 - 2.0 * $pi / (2.0 * $pi + srate * 10.77843 / 1000.0);
+);
+
+function VblComp_reset()
+(
+  this.sc_hpf.Filter2_reset();
+
+  this.emphasis1.Filter2_reset();
+  this.emphasis2.Filter2_reset();
+
+  this.crossover1_s = 0.0;
+  this.crossover2_s = 0.0;
+
+  this.gr_filter1_lo_s = 1.0;
+  this.gr_filter1_hi_s = 1.0;
+
+  this.attack_release_lo_s = 0.0;
+  this.attack_release_hi_s = 0.0;
+
+  this.gr_filter2.Filter2_reset_v(1.0);
+
+  this.feedback_y = 0.0;
+  this.feedback_gr = 1.0;
+
+  this.feedback_gr_hi = 1.0;
+  this.feedback_gr_lo = 1.0;
+);
+
+function VblComp_setEmphasis(emphasis_k) local(hpf_freq_hz)
+(
+  hpf_freq_hz = 40.0 + emphasis_k * 120.0;
+
+  this.sc_hpf.Filter2_HPFilter2(hpf_freq_hz / srate, M_SQRT1_2);
+);
+
+function VblComp_setComp(comp_dB)
+(
+  this.comp_1 = DB_TO_K(-0.9 * comp_dB - 24.843803);
+  this.comp_2 = DB_TO_K(comp_dB * comp_dB * 0.00727 - 1.0138 * comp_dB + 0.602056);
+  this.comp_3 = this.comp_2 / (1.0 - this.comp_1) - DB_TO_K(-comp_dB);
+);
+
+function VblComp_setStereoLink(stereo_link)
+(
+  this.stereo_link = stereo_link;
+);
+
+function VblComp_preprocessFeedbackSample() local(sc, sc_sc, sc_sat)
+(
+  // sidechain filter
+  sc = this.sc_hpf.Filter2_processSample(this.feedback_y);
+
+  this.sc = sc;  // reused in VblSat
+
+  // saturation emphasis
+  sc_sc = this.emphasis1.Filter2_processSample(sc);
+  sc_sc = this.emphasis2.Filter2_processSample(sc_sc);
+
+  // saturation
+  sc_sat = 2.778890 - (1.667 - sc_sc * 0.313) * (1.667 - sc_sc * 0.313);
+
+  // dry mix saturation
+  (1.0 - this.feedback_gr) * sc_sat + this.feedback_gr * sc;
+);
+
+function VblComp_getDynamicRelease(gr, max_release_ms) local(x, x2, x4, y, release_ms)
+(
+  x = 7.0 * (gr - 1.0);
+
+  x2 = x * x;
+  x4 = x2 * x2;
+
+  y = (1680.0 + x * 840.0 + x2 * 180.0 + x2 * x * 20.0 + x4) / (1680.0 - x * 840.0 + x2 * 180.0 - x2 * x * 20.0 + x4);
+
+  release_ms = max(y * max_release_ms, 30.0);
+
+  1.0 - 2.0 * $pi / (2.0 * $pi + srate * release_ms / 1000.0);
+);
+
+function VblComp_getFeedbackGR(sc) local(sc_lo, sc_hi, gr_lo, gr_hi, release_k_lo, release_k_hi, level_lo, level_hi, ar_k_lo, ar_k_hi)
+(
+  // crossover
+  this.crossover1_s = applyFilter1(this.crossover1_s, sc, this.crossover_k);
+  this.crossover2_s = applyFilter1(this.crossover2_s, this.crossover1_s, this.crossover_k);
+
+  sc_lo = this.crossover2_s;
+  sc_hi = sc - sc_lo;
+
+  // smooth feedback GR (RMS smoothing)
+  this.gr_filter1_lo_s = applyFilter1(this.gr_filter1_lo_s, this.feedback_gr_lo * this.feedback_gr_lo, this.gr_filter1_k);
+  this.gr_filter1_hi_s = applyFilter1(this.gr_filter1_hi_s, this.feedback_gr_hi * this.feedback_gr_hi, this.gr_filter1_k);
+
+  gr_lo = sqrt(this.gr_filter1_lo_s);
+  gr_hi = sqrt(this.gr_filter1_hi_s);
+
+  // get dynamic release
+  release_k_lo = this.VblComp_getDynamicRelease(gr_lo, (2.0 - this.feedback_gr_hi) * 14750.0);
+  release_k_hi = this.VblComp_getDynamicRelease(gr_hi, 14750.0);
+
+  // apply attack/release to level
+  level_lo = abs(sc_lo);
+  level_hi = abs(sc_hi);
+
+  ar_k_lo = (level_lo > this.attack_release_lo_s) ? this.attack_lo_k : release_k_lo;
+  ar_k_hi = (level_hi > this.attack_release_hi_s) ? this.attack_hi_k : release_k_hi;
+
+  this.attack_release_lo_s = level_lo + ar_k_lo * (this.attack_release_lo_s - level_lo);
+  this.attack_release_hi_s = level_hi + ar_k_hi * (this.attack_release_hi_s - level_hi);
+
+  // get GR
+  this.feedback_gr_lo = min(this.comp_2 / (this.attack_release_lo_s + this.comp_3) + this.comp_1, 1.0);
+  this.feedback_gr_hi = min(this.comp_2 / (this.attack_release_hi_s + this.comp_3) + this.comp_1, 1.0);
+
+  // RMS of lo/hi
+  sqrt((this.feedback_gr_lo * this.feedback_gr_lo + this.feedback_gr_hi * this.feedback_gr_hi) * 0.5);
+);
+
+function VblComp_processSampleStereo(x, preproc_sc_this, preproc_sc_that)
+(
+  (this.stereo_link) ? (
+    // RMS link
+    preproc_sc_this = sqrt((preproc_sc_this * preproc_sc_this + preproc_sc_that * preproc_sc_that) * 0.5);
+  );
+
+  this.feedback_gr = this.VblComp_getFeedbackGR(preproc_sc_this);
+
+  this.feedback_y = this.gr_filter2.Filter2_processSample(this.feedback_gr) * x;
+
+  this.feedback_y;
+);
+
+/*
+ * Filter3dB_Oct
+ */
+
+function Filter3dB_Oct_processSample(x) local(y)
+(
+  this.b0 = x;
+  this.b1 = this.b1 * 0.99886 + this.b0 * 0.0555179;
+  this.b2 = this.b2 * 0.99332 + this.b0 * 0.0750759;
+  this.b3 = this.b3 * 0.969 + this.b0 * 0.153852;
+  this.b4 = this.b4 * 0.8665 + this.b0 * 0.310486;
+  this.b5 = this.b5 * 0.55 + this.b0 * 0.532952;
+  this.b6 = this.b6 * -0.7616 + this.b0 * 0.016898;
+
+  y = this.b1 + this.b2 + this.b3 + this.b4 + this.b5 + this.b6 + this.b7 + this.b0 * 0.5362;
+
+  this.b7 = this.b0 * 0.115926;
+
+  y;
+);
+
+function Filter3dB_Oct_reset()
+(
+  this.b0 = 0.0;
+  this.b1 = 0.0;
+  this.b2 = 0.0;
+  this.b3 = 0.0;
+  this.b4 = 0.0;
+  this.b5 = 0.0;
+  this.b6 = 0.0;
+  this.b7 = 0.0;
+);
+
+/*
+ * TrafoFilter
+ */
+
+function TrafoFilter_processSample(x)
+(
+  this.c1 = this.c2 - 0.9698154 * x;
+  this.c2 = x + 0.9698154 * this.c1;
+  this.c3 = this.c4 - 0.9698154 * this.c1;
+  this.c4 = this.c1 + 0.9698154 * this.c3;
+  this.c5 = this.c6 - 0.9698154 * this.c3;
+  this.c6 = this.c3 + 0.9698154 * this.c5;
+  this.c7 = this.c8 - 0.9698154 * this.c5;
+  this.c8 = this.c5 + 0.9698154 * this.c7;
+
+  this.c7;
+);
+
+function TrafoFilter_reset()
+(
+  this.c1 = 0.0;
+  this.c2 = 0.0;
+  this.c3 = 0.0;
+  this.c4 = 0.0;
+  this.c5 = 0.0;
+  this.c6 = 0.0;
+  this.c7 = 0.0;
+  this.c8 = 0.0;
+);
+
+/*
+ * VblSaturator
+ */
+
+function VblSaturator_setSampleRate()
+(
+  this.sc_mix_filter_k = getFilter1LPF(32.0 / srate);
+
+  this.crossover_k = getFilter1LPF(2175.0 / srate);
+
+  this.gr_filter.Filter2_LPFilter2(3000.0 / srate, 0.72);
+
+  this.crosstalk_filter.Filter2_HSFilter2(7000.0 / srate, 0.5, 10.0);
+);
+
+function VblSaturator_reset()
+(
+  this.emphasis.Filter3dB_Oct_reset();
+
+  this.rms_filter_lo_s = 0.0;
+  this.rms_filter_hi_s = 0.0;
+
+  this.sc_mix_filter_s = 0.0;
+
+  this.crossover1_s = 0.0;
+  this.crossover2_s = 0.0;
+
+  this.gr_filter.Filter2_reset();
+
+  this.feedback_gr = 1.0;
+
+  this.hf_s = 0.0;
+
+  this.hpf_x1 = 0.0;
+  this.hpf_y1 = 0.0;
+
+  this.brilliance1_s = 0.0;
+  this.brilliance2_s = 0.0;
+
+  this.trafo_flt.TrafoFilter_reset();
+  this.crosstalk_filter.Filter2_reset();
+
+  this.feedback_amp = 0.0;
+);
+
+function VblSaturator_preprocessSample(sc) local(sc_emphasis, sc_mix, sc_lo, sc_hi)
+(
+  (this.trafo_on) ? (
+
+    sc_emphasis = this.emphasis.Filter3dB_Oct_processSample(sc);
+
+    sc_emphasis = sc * 0.9 + sc_emphasis * 0.1;
+
+    // use feedback GR as dry mix
+    sc_mix = 1.0 - this.feedback_gr;
+
+    // RMS average
+    this.sc_mix_filter_s = applyFilter1(this.sc_mix_filter_s, sc_mix * sc_mix, this.sc_mix_filter_k);
+
+    sc_mix = sqrt(this.sc_mix_filter_s);
+
+    // dry mix by RMS GR
+    sc = sc * (1.0 - sc_mix) + sc_emphasis * sc_mix;
+
+  );
+
+  // crosssover
+  this.crossover1_s = applyFilter1(this.crossover1_s, sc, this.crossover_k);
+  this.crossover2_s = applyFilter1(this.crossover2_s, this.crossover1_s, this.crossover_k);
+
+  sc_lo = this.crossover2_s;
+  sc_hi = sc - sc_lo;
+
+  // RMS smoothing
+  this.rms_filter_lo_s = applyFilter1(this.rms_filter_lo_s, sc_lo * sc_lo, this.rms_filter_k);
+  this.rms_filter_hi_s = applyFilter1(this.rms_filter_hi_s, sc_hi * sc_hi, this.rms_filter_k);
+
+  this.rms_lo = sqrt(this.rms_filter_lo_s);
+  this.rms_hi = sqrt(this.rms_filter_hi_s);
+
+  // continue later...
+);
+
+function fast_tanh(x) local(x2)
+(
+  x2 = x * x;
+
+  ((((x2 + 378.0) * x2 + 17325.0) * x2 + 135135.0) * x) / (((x2 * 28.0 + 3150.0) * x2 + 62370.0) * x2 + 135135.0);
+);
+
+GR_EPSILON = pow(10.0, -18.0);
+
+function VblSaturator_postprocessSample(x) local(x_lo, x_hi, y_lo, y_hi, gr_lo, gr_hi, gr, y, delta, brilliance_lo, brilliance_hi, xx)
+(
+  // continue...
+
+  x_lo = this.rms_lo * 4.0;
+  x_hi = this.rms_hi * 4.0;
+
+  y_lo = fast_tanh(x_lo);
+  y_hi = fast_tanh(x_hi);
+
+  gr_lo = y_lo / (x_lo + GR_EPSILON);
+  gr_hi = y_hi / (x_hi + GR_EPSILON);
+
+  this.feedback_gr = (gr_lo + gr_hi) * 0.5;
+
+  gr = this.gr_filter.Filter2_processSample(this.feedback_gr);
+
+  y = x * gr;
+
+  (this.trafo_on) ? (
+    // HF clip
+    delta = y - this.hf_s;
+
+    delta = max(min(delta, 0.5), -0.5);
+
+    this.hf_s += delta;
+
+    y = this.hf_s;
+  );
+
+  // hardclip
+  xx = max(min(y * 2.0, 3.352580), -3.722950);
+
+  // waveshaper
+  y = (((xx * 9.0) + 5.0) * xx - 337) * xx * -0.00277778;
+  y *= 0.5;
+
+  this.feedback_amp = y;   // goes to the input
+
+  // HPF
+  this.hpf_y1 = (y - this.hpf_x1) + this.hpf_k * this.hpf_y1;
+  this.hpf_x1 = y;
+
+  y = this.hpf_y1;
+
+  // brilliance
+  this.brilliance1_s = applyFilter1(this.brilliance1_s, y, this.brilliance_k);
+  this.brilliance2_s = applyFilter1(this.brilliance2_s, this.brilliance1_s, this.brilliance_k);
+
+  brilliance_lo = this.brilliance2_s;
+  brilliance_hi = y - brilliance_lo;
+
+  y = brilliance_lo + brilliance_hi * this.param_brilliance;
+
+  y;
+);
+
+function VblSaturator_applyTrafo(x, that_x) local(y)
+(
+  (this.trafo_on) ? (
+
+    // crosstalk
+    y = x + this.crosstalk_filter.Filter2_processSample(that_x) * 0.001;
+
+    // phase rotator
+    y = this.trafo_flt.TrafoFilter_processSample(y);
+  
+  ) : (
+    y = x;
+  );
+
+  y;
+);
+
+function VblSaturator_setBias(bias_k) local(bias_tau_ms)
+(
+  bias_tau_ms = bias_k * (2.283 - 7.000) + 7.000;
+
+  this.rms_filter_k = getFilter1LPF((1000.0 / bias_tau_ms) / srate);
+);
+
+function VblSaturator_setAmpBrilliance(amp_k, brilliance_k) local(brilliance_freq_hz)
+(
+  // boost
+  this.param_brilliance = DB_TO_K(brilliance_k * 18.0);  // 0..+18 dB
+
+  // filter (depends on AMP)
+  brilliance_freq_hz = 34540.0 * amp_k * amp_k * amp_k - 57183.0 * amp_k * amp_k + 3594.0 * amp_k + 24504.0;
+
+  this.brilliance_k = getFilter1LPF(brilliance_freq_hz / srate);
+
+  this.amp_k = amp_k;
+);
+
+function VblSaturator_setTrafo(trafo) local(hpf_freq_k, cw)
+(
+  this.trafo_on = trafo;
+
+  hpf_freq_k = (trafo ? 19.0 : 6.4) / srate;
+
+  cw = cos(2.0 * $pi * hpf_freq_k);
+
+  this.hpf_k = cw - sqrt(cw * cw - 4.0 * cw + 3.0);
+);
+
+function VblSaturator_setStereoLink(stereo_link)
+(
+  this.stereo_link = stereo_link;
+);
+
+function VblSaturator_getAmpFeedback()
+(
+  this.feedback_amp * this.amp_k;
+);
+
+// continue @init:
+
+(sample_rate != srate) ? (
+
+  left.comp.VblComp_setSampleRate();
+  right.comp.VblComp_setSampleRate();
+
+  left.sat.VblSaturator_setSampleRate();
+  right.sat.VblSaturator_setSampleRate();
+
+  sample_rate = srate;
+);
+
+// reset filters
+left.comp.VblComp_reset();
+right.comp.VblComp_reset();
+
+left.sat.VblSaturator_reset();
+right.sat.VblSaturator_reset();
+
+@slider
+
+input_gain_dB = slider1;
+comp_dB = slider2;
+emphasis_perc = slider3;
+bias_perc = slider4;
+amp_perc = slider5;
+brilliance_perc = slider6;
+dry_mix_perc = slider7;
+output_gain_dB = slider8;
+stereo_link = slider9;
+trafo_on = slider10;
+
+input_gain_k = DB_TO_K(input_gain_dB);
+output_gain_k = DB_TO_K(output_gain_dB);
+dry_mix_k = dry_mix_perc / 100.0;
+
+// compressor parameters
+
+left.comp.VblComp_setComp(comp_dB);
+right.comp.VblComp_setComp(comp_dB);
+
+left.comp.VblComp_setEmphasis(emphasis_perc / 100.0);
+right.comp.VblComp_setEmphasis(emphasis_perc / 100.0);
+
+left.comp.VblComp_setStereoLink(stereo_link);
+right.comp.VblComp_setStereoLink(stereo_link);
+
+// saturator parameters
+
+left.sat.VblSaturator_setBias(bias_perc / 100.0);
+right.sat.VblSaturator_setBias(bias_perc / 100.0);
+
+left.sat.VblSaturator_setAmpBrilliance(amp_perc / 100.0, brilliance_perc / 100.0);
+right.sat.VblSaturator_setAmpBrilliance(amp_perc / 100.0, brilliance_perc / 100.0);
+
+left.sat.VblSaturator_setStereoLink(stereo_link);
+right.sat.VblSaturator_setStereoLink(stereo_link);
+
+left.sat.VblSaturator_setTrafo(trafo_on);
+right.sat.VblSaturator_setTrafo(trafo_on);
+
+@block
+
+@sample
+
+// for dry mix
+input0 = spl0;
+input1 = spl1;
+
+// input gain
+spl0 *= input_gain_k;
+spl1 *= input_gain_k;
+
+// AMP feedback
+spl0 += left.sat.VblSaturator_getAmpFeedback();
+spl1 += right.sat.VblSaturator_getAmpFeedback();
+
+// Compressor: feedback
+preproc_sc_left = left.comp.VblComp_preprocessFeedbackSample();
+preproc_sc_right = right.comp.VblComp_preprocessFeedbackSample();
+
+// Compressor:
+spl0 = left.comp.VblComp_processSampleStereo(spl0, preproc_sc_left, preproc_sc_right);
+spl1 = right.comp.VblComp_processSampleStereo(spl1, preproc_sc_right, preproc_sc_left);
+
+// Saturator: preprocess sidechain (reuse from compressor)
+left.sat.VblSaturator_preprocessSample(left.comp.sc);
+right.sat.VblSaturator_preprocessSample(right.comp.sc);
+
+(stereo_link) ? (
+
+  // Saturator: RMS link
+  rms_lo_linked = sqrt((left.sat.rms_lo * left.sat.rms_lo + right.sat.rms_lo * right.sat.rms_lo) * 0.5);
+  rms_hi_linked = sqrt((left.sat.rms_hi * left.sat.rms_hi + right.sat.rms_hi * right.sat.rms_hi) * 0.5);
+
+  left.sat.rms_lo = rms_lo_linked;
+  left.sat.rms_hi = rms_hi_linked;
+
+  right.sat.rms_lo = rms_lo_linked;
+  right.sat.rms_hi = rms_hi_linked;
+);
+
+spl0 = left.sat.VblSaturator_postprocessSample(spl0);
+spl1 = right.sat.VblSaturator_postprocessSample(spl1);
+
+// dry mix/output gain
+spl0 = input0 * dry_mix_k + (1.0 - dry_mix_k) * spl0 * output_gain_k;
+spl1 = input1 * dry_mix_k + (1.0 - dry_mix_k) * spl1 * output_gain_k;
+
+// "trafo" (post dry mix because of phase rotation)
+spl0 = left.sat.VblSaturator_applyTrafo(spl0, spl1);
+spl1 = right.sat.VblSaturator_applyTrafo(spl1, spl0);
+

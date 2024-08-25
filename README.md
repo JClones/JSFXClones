@@ -46,3 +46,8 @@ JClones_RS124 is a clone of the first emulation of classic vari-mu compressor, o
 JClones_Classic_Master_Limiter is a clone of freeware limiter plugin designed to provide transparent limiting, allowing you to maximize the loudness of your audio tracks without introducing distortion or unwanted artifacts. Simple interface, low CPU usage, and essential controls make it an excellent choice for both beginners and experienced producers looking to increase the loudness of their tracks. However, the developer of the plugin disappeared from the market abruptly around 2007.
 
 [Detailed Description](https://github.com/JClones/JSFXClones/blob/master/JClones_Classic_Master_Limiter.md)
+
+# “JClones_VBL”
+JClones_VBL is a clone of earlier version of vintage broadcast limiter plugin, which emulates the characteristics of classic tube-based broadcast limiters, providing warm analog-style compression and saturation. The plugin is designed to add character and color to digital recordings by incorporating tube harmonics and subtle distortions. It features controls for threshold, release, drive, output, and mix, allowing users to adjust the level of compression and saturation to achieve the desired sound. With its ability to enhance the richness and warmth of audio signals, it is a popular choice for adding vintage character to mixes.
+
+[Detailed Description](https://github.com/JClones/JSFXClones/blob/master/JClones_VBL.md)
