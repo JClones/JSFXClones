@@ -51,3 +51,8 @@ JClones_Classic_Master_Limiter is a clone of freeware limiter plugin designed to
 JClones_VBL is a clone of earlier version of vintage broadcast limiter plugin, which emulates the characteristics of classic tube-based broadcast limiters, providing warm analog-style compression and saturation. The plugin is designed to add character and color to digital recordings by incorporating tube harmonics and subtle distortions. It features controls for threshold, release, drive, output, and mix, allowing users to adjust the level of compression and saturation to achieve the desired sound. With its ability to enhance the richness and warmth of audio signals, it is a popular choice for adding vintage character to mixes.
 
 [Detailed Description](https://github.com/JClones/JSFXClones/blob/master/JClones_VBL.md)
+
+# “JClones_CL1B“
+JClones_CL1B plugin is a clone of older version of digital emulation of the renowned optical compressor, which is widely used in professional audio production. The modelled hardware compressor is highly regarded for its smooth, warm, and musical compression characteristics, making it a popular choice for vocals, bass, drums, and other instruments.
+
+[Detailed Description](https://github.com/JClones/JSFXClones/blob/master/JClones_CL1B.md)
