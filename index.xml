@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<index version="1" name="JSFXClones" commit="1a6860dd9a2f0810163f4d445b155bd5f6f8020d">
+<index version="1" name="JSFXClones" commit="f4eddabdd5fd43931417468ac7ed3fc79e3bb569">
   <category name="jsfx">
     <reapack name="JClones_AC1.jsfx" type="effect" desc="JClones_AC1">
       <metadata>
@@ -67,6 +67,33 @@
       </metadata>
       <version name="1.0.0" author="JClones" time="2024-06-30T13:16:04Z">
         <source>https://github.com/JClones/JSFXClones/raw/8a1d5b307326ea0f15ea59b86dbcf3deb47daab7/jsfx/JClones_AC2.jsfx</source>
+      </version>
+    </reapack>
+    <reapack name="JClones_CL1B.jsfx" type="effect" desc="JClones_CL1B">
+      <metadata>
+        <description><![CDATA[{\rtf1\ansi\deff0{\fonttbl{\f0 \fswiss Helvetica;}{\f1 Courier;}}
+{\colortbl;\red255\green0\blue0;\red0\green0\blue255;}
+\widowctrl\hyphauto
+
+{\pard \ql \f0 \sa180 \li0 \fi0 \b \fs36 JClones_CL1B\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 JClones_CL1B plugin is a clone of older version of digital emulation of the renowned optical compressor, which is widely used in professional audio production. The modelled hardware compressor is highly regarded for its smooth, warm, and musical compression characteristics, making it a popular choice for vocals, bass, drums, and other instruments.\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \b \fs32 Main Parameters\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\b Ratio:} The ratio control determines the amount of gain reduction applied once the signal exceeds the threshold.\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\b Threshold:} This control sets the level at which compression begins. When the input signal exceeds the threshold level, compression is applied. JClones specific: the parameter sets exact dB value unlike the cloned plugin, which models the hardware knob behavior.\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\b Attack:} The attack parameter controls how quickly the compressor responds to signals that exceed the threshold. Note: the parameter is ignored in "Fixed" mode.\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\b Release:} The release control determines how quickly the compressor stops compressing after the signal falls below the threshold. Note: the parameter is ignored in "Fixed" mode.\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\b A/R Select:} The parameter has three settings:\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\b Fixed:} In Fixed mode, both the attack and release times are set to predefined values that are not adjustable. This mode is designed to provide a classic, vintage-style compression behavior that is consistent and easy to use.\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\b Manual:} In Manual mode, users have full control over the attack and release times, allowing for precise adjustments to tailor the compressor's response to the specific audio material.\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\b Fixed/Manual:} The Fixed/Manual mode combines elements of both Fixed and Manual modes. In this setting, the attack time is fixed at a predefined value, while the release time can be adjusted manually.\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\b Output Gain:} This parameter allows you to increase or decrease the output level of the signal after compression has been applied. JClones specific: the parameter sets exact dB value unlike the cloned plugin, which models the hardware knob behavior.\par}
+}
+]]></description>
+        <link rel="website">https://github.com/JClones/JSFXClones</link>
+        <link rel="screenshot">https://github.com/JClones/JSFXClones/blob/master/assets/screenshots/JClones_CL1B.png</link>
+      </metadata>
+      <version name="1.0.0" author="JClones" time="2024-08-27T20:45:47Z">
+        <source>https://github.com/JClones/JSFXClones/raw/f4eddabdd5fd43931417468ac7ed3fc79e3bb569/jsfx/JClones_CL1B.jsfx</source>
       </version>
     </reapack>
     <reapack name="JClones_Classic_Master_Limiter.jsfx" type="effect" desc="JClones_Classic_Master_Limiter">
@@ -348,6 +375,12 @@ Detailed Description
 {\pard \ql \f0 \sa180 \li0 \fi0 \b \fs36 \u8220"JClones_VBL\u8221"\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 JClones_VBL is a clone of earlier version of vintage broadcast limiter plugin, which emulates the characteristics of classic tube-based broadcast limiters, providing warm analog-style compression and saturation. The plugin is designed to add character and color to digital recordings by incorporating tube harmonics and subtle distortions. It features controls for threshold, release, drive, output, and mix, allowing users to adjust the level of compression and saturation to achieve the desired sound. With its ability to enhance the richness and warmth of audio signals, it is a popular choice for adding vintage character to mixes.\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 {\field{\*\fldinst{HYPERLINK "https://github.com/JClones/JSFXClones/blob/master/JClones_VBL.md"}}{\fldrslt{\ul
+Detailed Description
+}}}
+\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \b \fs36 \u8220"JClones_CL1B\u8220"\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 JClones_CL1B plugin is a clone of older version of digital emulation of the renowned optical compressor, which is widely used in professional audio production. The modelled hardware compressor is highly regarded for its smooth, warm, and musical compression characteristics, making it a popular choice for vocals, bass, drums, and other instruments.\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\field{\*\fldinst{HYPERLINK "https://github.com/JClones/JSFXClones/blob/master/JClones_CL1B.md"}}{\fldrslt{\ul
 Detailed Description
 }}}
 \par}
