@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<index version="1" name="JSFXClones" commit="f4eddabdd5fd43931417468ac7ed3fc79e3bb569">
+<index version="1" name="JSFXClones" commit="c0b04bd022d4bc0dd766043862b25ffaf9b8d177">
   <category name="jsfx">
     <reapack name="JClones_AC1.jsfx" type="effect" desc="JClones_AC1">
       <metadata>
@@ -67,6 +67,33 @@
       </metadata>
       <version name="1.0.0" author="JClones" time="2024-06-30T13:16:04Z">
         <source>https://github.com/JClones/JSFXClones/raw/8a1d5b307326ea0f15ea59b86dbcf3deb47daab7/jsfx/JClones_AC2.jsfx</source>
+      </version>
+    </reapack>
+    <reapack name="JClones_CA2A.jsfx" type="effect" desc="JClones_CA2A">
+      <metadata>
+        <description><![CDATA[{\rtf1\ansi\deff0{\fonttbl{\f0 \fswiss Helvetica;}{\f1 Courier;}}
+{\colortbl;\red255\green0\blue0;\red0\green0\blue255;}
+\widowctrl\hyphauto
+
+{\pard \ql \f0 \sa180 \li0 \fi0 \b \fs36 JClones_CA2A\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 JClones_CA2A plugin is a clone of digital emulation of the legendary LA-2A optical compressor, which is highly regarded in the audio industry for its smooth and musical compression characteristics. The cloned plugin was developed by a company, known for their popular digital audio workstation (DAW) software. The plugin was designed to replicate the unique sound and behavior of the original hardware LA-2A, a tube-based optical compressor that became famous for its warm, natural-sounding compression. The cloned plugin was discontinued due to the acquisition of the development company in 2013.\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \b \fs32 Main Parameters\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\b Peak Reduction:} This control sets the amount of compression applied to the input signal. It determines how much gain reduction occurs when the signal exceeds the threshold.\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\b Gain:} The Gain control adjusts the output level of the signal after compression has been applied. This is often referred to as "makeup gain," as it compensates for the gain reduction caused by compression.\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\b Mode:} This switch toggles between two different compression modes \u8212- Compress and Limit.\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\b Compress Mode:} This mode provides a gentler, more gradual compression, suitable for smoothing out dynamic fluctuations without being overly aggressive. It is ideal for vocals, bass, and other instruments where natural-sounding compression is desired.\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\b Limit Mode:} This mode applies a more aggressive form of compression with a higher ratio, acting more like a limiter. It is useful for more extreme dynamic control or for ensuring that peaks do not exceed a certain level, making it great for drums or transient-heavy material.\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\b R37:} The R37 parameter is a high-frequency sidechain emphasis control. It allows the user to adjust the sensitivity of the compressor to high-frequency content in the input signal. This control effectively alters the internal sidechain circuitry, emphasizing or de-emphasizing high frequencies, which in turn affects how the compressor responds to those frequencies.\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\b Opto Cell:} This parameter allows users to choose between two different optical compression response modes, labeled Classic and Fast. These modes determine how quickly the plugin's compressor responds to changes in the input signal, affecting the overall character and behavior of the compression.\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\b Classic:} The Classic mode emulates the original response characteristics of the hardware LA-2A optical compressor. This mode features a slower attack and release time, resulting in a smoother and more gradual compression effect.\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\b Fast:} The Fast mode provides a quicker attack and release time compared to the Classic mode. This mode allows the compressor to react more swiftly to transients and dynamic changes in the input signal.\par}
+}
+]]></description>
+        <link rel="website">https://github.com/JClones/JSFXClones</link>
+        <link rel="screenshot">https://github.com/JClones/JSFXClones/blob/master/assets/screenshots/JClones_CA2A.png</link>
+      </metadata>
+      <version name="1.0.0" author="JClones" time="2024-08-31T19:26:13Z">
+        <source>https://github.com/JClones/JSFXClones/raw/c0b04bd022d4bc0dd766043862b25ffaf9b8d177/jsfx/JClones_CA2A.jsfx</source>
       </version>
     </reapack>
     <reapack name="JClones_CL1B.jsfx" type="effect" desc="JClones_CL1B">
@@ -378,9 +405,15 @@ Detailed Description
 Detailed Description
 }}}
 \par}
-{\pard \ql \f0 \sa180 \li0 \fi0 \b \fs36 \u8220"JClones_CL1B\u8220"\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \b \fs36 \u8220"JClones_CL1B\u8221"\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 JClones_CL1B plugin is a clone of older version of digital emulation of the renowned optical compressor, which is widely used in professional audio production. The modelled hardware compressor is highly regarded for its smooth, warm, and musical compression characteristics, making it a popular choice for vocals, bass, drums, and other instruments.\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 {\field{\*\fldinst{HYPERLINK "https://github.com/JClones/JSFXClones/blob/master/JClones_CL1B.md"}}{\fldrslt{\ul
+Detailed Description
+}}}
+\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \b \fs36 \u8220"JClones_CA2A\u8221"\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 JClones_CA2A plugin is a clone of digital emulation of the legendary LA-2A optical compressor, which is highly regarded in the audio industry for its smooth and musical compression characteristics. The cloned plugin was developed by a company, known for their popular digital audio workstation (DAW) software. The plugin was designed to replicate the unique sound and behavior of the original hardware LA-2A, a tube-based optical compressor that became famous for its warm, natural-sounding compression. The cloned plugin was discontinued due to the acquisition of the development company in 2013.\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\field{\*\fldinst{HYPERLINK "https://github.com/JClones/JSFXClones/blob/master/JClones_CA2A.md"}}{\fldrslt{\ul
 Detailed Description
 }}}
 \par}
