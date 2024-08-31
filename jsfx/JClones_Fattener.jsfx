@@ -1,0 +1,256 @@
+desc:       JClones_Fattener
+version:    1.0.0
+author:     JClones
+tags:       soft clipper, loudness
+link:       https://github.com/JClones/JSFXClones
+screenshot: https://github.com/JClones/JSFXClones/blob/master/assets/screenshots/JClones_Fattener.png
+about:
+    # JClones_Fattener
+    JClones_Fattener is a clone of popular audio plugin developed by a duo known for their electronic dance music. The plugin is designed to add warmth, distortion, and overall fatness to audio signals, making it a favorite among producers for enhancing the character of their tracks.
+
+    ## Main Parameters
+
+    **Fattness:** Controls the amount of distortion and saturation applied to the audio signal. Increasing this parameter adds more warmth and thickness to the sound.
+
+    **Color:** Modifies the frequency response of the distortion effect, adjusting how the harmonic content and saturation interact with the signal. It affects the tonal balance of the processed audio, adding or removing certain frequency characteristics.
+
+    **Gain:** Controls the overall output level of the processed signal. This parameter is crucial for adjusting the volume of the effect to match the desired level in the mix.
+
+slider1:0:<0,100,0.1>fattness, %
+slider2:0:<0,100,0.1>color, %
+slider3:0<-24,24,0.01>gain, dB
+
+@init
+
+function DB_TO_K(x)
+(
+  10 ^ (x / 20)
+);
+
+function tanh(x) local(e2x)
+(
+  e2x = exp(2.0 * x);
+  (e2x - 1.0) / (e2x + 1.0);
+);
+
+/*
+ * Filter2 - digital second order filter:
+ * X(z) = (a0 + a1*z^-1 + a2*z^-2) / (1 - b1*z^-1 - b2*z^-2)
+ */
+ 
+function Filter2_Init(a0, a1, a2, b1, b2)
+(
+  this.a0 = a0;
+  this.a1 = a1;
+  this.a2 = a2;
+  this.b1 = b1;
+  this.b2 = b2;
+);
+
+function Filter2_reset()
+(
+  this.x1 = 0;
+  this.x2 = 0;
+  this.y1 = 0;
+  this.y2 = 0;
+);
+
+function Filter2_processSample(x0) local(y0)
+(
+  y0 = x0 * this.a0 + this.x1 * this.a1 + this.x2 * this.a2 +
+    this.y1 * this.b1 + this.y2 * this.b2;
+    
+  // shift history
+  this.x2 = this.x1;
+  this.x1 = x0;
+  
+  this.y2 = this.y1;
+  this.y1 = y0;
+  
+  y0;
+);
+
+function Filter2_HPFilter2(freq_k, Q) local(omega0, alpha)
+(
+  /*
+   * http://www.musicdsp.org/files/Audio-EQ-Cookbook.txt
+   */
+
+  omega0 = freq_k * 2.0 * $pi;
+  alpha = sin(omega0) / (2.0 * Q);
+
+  this.a0 = ((1.0 + cos(omega0)) / 2.0) / (1.0 + alpha);
+  this.a1 = -(1.0 + cos(omega0)) / (1.0 + alpha);
+  this.a2 = ((1.0 + cos(omega0)) / 2.0) / (1.0 + alpha);
+
+  this.b1 = -(-2.0 * cos(omega0)) / (1.0 + alpha);
+  this.b2 = -(1.0 - alpha) / (1.0 + alpha);
+);
+
+function Filter2_PeakFilter2(freq_k, Q, A) local(alpha, w0)
+(
+  /*
+   * Cookbook formulae for audio EQ biquad filter coefficients
+   * http://www.musicdsp.org/files/Audio-EQ-Cookbook.txt
+   */
+
+  A = sqrt(A);        // 10^(Adb / 40) e.g. Adb / 2.
+
+  w0 = freq_k * 2.0 * $pi;
+
+  alpha = sin(w0) / (2.0 * Q);
+
+  this.a0 = (1.0 + alpha * A) / (1.0 + alpha / A);
+  this.a1 = -2.0 * cos(w0) / (1.0 + alpha / A);
+  this.a2 = (1.0 - alpha * A) / (1.0 + alpha / A);
+
+  this.b1 = -(-2.0 * cos(w0)) / (1.0 + alpha / A);
+  this.b2 = -(1.0 - alpha / A) / (1.0 + alpha / A);
+);
+
+function getDigitalQ_peak(Q, freq_k) local(w0, C)
+(
+  // w0/2 matching of BLT vs. analog prototype
+  w0 = freq_k * 2.0 * $pi;
+  C = cos(w0 / 2.0);
+  3.0 / 2.0 * (C + 1.0) * C / (2.0 * C + 1.0) * Q;
+);
+
+M_SQRT2 = sqrt(2.0);
+M_SQRT1_2 = M_SQRT2 / 2.0;
+
+/*
+ * Fattener
+ */
+
+function Fattener_setSampleRate() local(attack_time_sec, release_time_sec)
+(
+  this.biquad1.Filter2_HPFilter2(20.0 / srate, M_SQRT1_2);
+  this.biquad2.Filter2_HPFilter2(30.0 / srate, M_SQRT1_2);
+
+  attack_time_sec = 2.69 * 0.001;
+  release_time_sec = 32.9 * 0.001;
+
+  this.attack_k = exp(-1.0 / (srate * attack_time_sec));
+  this.release_k = exp(-1.0 / (srate * release_time_sec));
+);
+
+function Fattener_reset()
+(
+  this.biquad1.Filter2_reset();
+  this.biquad2.Filter2_reset();
+  this.biquad3.Filter2_reset();
+
+  this.level_s = 0.0;
+);
+
+function Fattener_preprocessSample(x)
+(
+  this.biquad3.Filter2_processSample(this.biquad2.Filter2_processSample(this.biquad1.Filter2_processSample(x * this.input_gain)));
+);
+
+function Fattener_postprocessSample(x_pp, level_pp) local(k, gr, y)
+(
+  // apply compressor
+
+  k = level_pp > this.level_s ? this.attack_k : this.release_k;
+
+  this.level_s = (1.0 - k) * level_pp + k * this.level_s;
+
+  gr = (this.level_s > this.threshold) ?
+    pow(this.level_s / this.threshold, this.inv_ratio - 1.0) :
+    1.0;
+
+  y = x_pp * gr * this.output_gain;
+
+  // apply soft-clipping
+
+  (abs(y) > this.sat_threshold) ? (
+
+    (this.sat_threshold < 1.0) ? (
+      // soft clip
+      (y > 0.0) ? (
+        y = tanh((y - this.sat_threshold) / (1.0 - this.sat_threshold)) * (1.0 - this.sat_threshold) + this.sat_threshold;
+      ) : (
+        y = -(tanh((-y - this.sat_threshold) / (1.0 - this.sat_threshold)) * (1.0 - this.sat_threshold) + this.sat_threshold);
+      );
+    ) : (
+      // hard clip
+      y = (y > 0.0) ? this.sat_threshold : -this.sat_threshold;
+    );
+  );
+  
+  y * this.final_gain;
+);
+
+function Fattener_setFattness(fattness)
+(
+  this.threshold = DB_TO_K(-(fattness * 34.0 + 1.0));
+  this.output_gain = DB_TO_K(fattness * 39.0 + 1.0);
+  
+  // 10:1
+  this.inv_ratio = 0.1;
+  
+  // -0.1 dB
+  this.final_gain = DB_TO_K(-0.1);
+);
+
+function Fattener_setColour(colour) local(gain_dB, freq_hz)
+(
+  gain_dB = colour * 8.0;
+  freq_hz = pow(colour, 3.219) * 6680.0 + 40.0;
+
+  freq_hz = min(freq_hz, srate * 0.5 - 100.0);
+
+  this.biquad3.Filter2_PeakFilter2(
+    freq_hz / srate,
+    getDigitalQ_peak(0.71, freq_hz / srate),
+    DB_TO_K(gain_dB));
+
+  this.sat_threshold = 0.1 * colour + 0.9;
+);
+
+function Fattener_setInputGain(input_gain)
+(
+  this.input_gain = input_gain;
+);
+
+// continue @init:
+
+(srate != sample_rate) ? (
+  left.Fattener_setSampleRate();
+  right.Fattener_setSampleRate();
+
+  sample_rate = srate;
+);
+
+// reset filters
+left.Fattener_reset();
+right.Fattener_reset();
+
+@slider
+
+fattness = slider1 / 100.0;
+colour = slider2 / 100.0;
+input_gain = DB_TO_K(slider3);
+
+left.Fattener_setFattness(fattness);
+right.Fattener_setFattness(fattness);
+
+left.Fattener_setColour(colour);
+right.Fattener_setColour(colour);
+
+left.Fattener_setInputGain(input_gain);
+right.Fattener_setInputGain(input_gain);
+
+@block
+
+@sample
+
+pp0 = left.Fattener_preprocessSample(spl0);
+pp1 = right.Fattener_preprocessSample(spl1);
+
+level = max(abs(pp0), abs(pp1));
+
+spl0 = left.Fattener_postprocessSample(pp0, level);
+spl1 = right.Fattener_postprocessSample(pp1, level);

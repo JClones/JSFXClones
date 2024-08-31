@@ -62,13 +62,18 @@ JClones_CA2A plugin is a clone of digital emulation of the legendary LA-2A optic
 
 [Detailed Description](https://github.com/JClones/JSFXClones/blob/master/JClones_CA2A.md)
 
-# “JClones_SatChannel” / “JClones_SatBuss“
+# “JClones_SatChannel” / “JClones_SatBuss”
 These plugins are clones of popular audio plugin that emulates the sound and characteristics of an analog mixing console. It is designed to add warmth, character, and subtle harmonic distortion to digital audio, mimicking the nonlinearities and saturation that occur in analog gear. The plugin is often used in digital audio production to give mixes a more "analog" feel, adding depth and presence to individual tracks and overall mixes.
 
 The original plugin has two versions: Channel and Buss. Channel version is typically used on individual tracks within a mix. It emulates the behavior of a single channel on an analog console, adding mild saturation and coloration to the audio signal.
 
-[Channel version](https://github.com/JClones/JSFXClones/blob/master/JClones_SatChannel.md)
+[Channel Description](https://github.com/JClones/JSFXClones/blob/master/JClones_SatChannel.md)
 
 Buss version is used on subgroups or the master bus. It emulates the sound of a console's summing bus, providing a slightly different character and allowing for more pronounced saturation when driven hard. 
 
-[Buss version](https://github.com/JClones/JSFXClones/blob/master/JClones_SatBuss.md)
+[Buss Description](https://github.com/JClones/JSFXClones/blob/master/JClones_SatBuss.md)
+
+# “JClones_Fattener”
+JClones_Fattener is a clone of popular audio plugin developed by a duo known for their electronic dance music. The plugin is designed to add warmth, distortion, and overall fatness to audio signals, making it a favorite among producers for enhancing the character of their tracks.
+
+[Detailed Description](https://github.com/JClones/JSFXClones/blob/master/JClones_Fattener.md)
