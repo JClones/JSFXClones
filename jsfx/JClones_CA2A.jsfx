@@ -1,0 +1,505 @@
+desc:       JClones_CA2A
+version:    1.0.0
+author:     JClones
+tags:       tube compressor
+link:       https://github.com/JClones/JSFXClones
+screenshot: https://github.com/JClones/JSFXClones/blob/master/assets/screenshots/JClones_CA2A.png
+about:
+    # JClones_CA2A
+    JClones_CA2A plugin is a clone of digital emulation of the legendary LA-2A optical compressor, which is highly regarded in the audio industry for its smooth and musical compression characteristics. The cloned plugin was developed by a company, known for their popular digital audio workstation (DAW) software. The plugin was designed to replicate the unique sound and behavior of the original hardware LA-2A, a tube-based optical compressor that became famous for its warm, natural-sounding compression. The cloned plugin was discontinued due to the acquisition of the development company in 2013.
+
+    ## Main Parameters
+
+    **Peak Reduction:** This control sets the amount of compression applied to the input signal. It determines how much gain reduction occurs when the signal exceeds the threshold.
+
+    **Gain:** The Gain control adjusts the output level of the signal after compression has been applied. This is often referred to as "makeup gain," as it compensates for the gain reduction caused by compression.
+
+    **Mode:**  This switch toggles between two different compression modes — Compress and Limit.
+
+    **Compress Mode:** This mode provides a gentler, more gradual compression, suitable for smoothing out dynamic fluctuations without being overly aggressive. It is ideal for vocals, bass, and other instruments where natural-sounding compression is desired.
+
+    **Limit Mode:** This mode applies a more aggressive form of compression with a higher ratio, acting more like a limiter. It is useful for more extreme dynamic control or for ensuring that peaks do not exceed a certain level, making it great for drums or transient-heavy material.
+
+    **R37:** The R37 parameter is a high-frequency sidechain emphasis control. It allows the user to adjust the sensitivity of the compressor to high-frequency content in the input signal. This control effectively alters the internal sidechain circuitry, emphasizing or de-emphasizing high frequencies, which in turn affects how the compressor responds to those frequencies.
+
+    **Opto Cell:** This parameter allows users to choose between two different optical compression response modes, labeled Classic and Fast. These modes determine how quickly the plugin's compressor responds to changes in the input signal, affecting the overall character and behavior of the compression.
+
+    **Classic:** The Classic mode emulates the original response characteristics of the hardware LA-2A optical compressor. This mode features a slower attack and release time, resulting in a smoother and more gradual compression effect.
+
+    **Fast:** The Fast mode provides a quicker attack and release time compared to the Classic mode. This mode allows the compressor to react more swiftly to transients and dynamic changes in the input signal.
+
+slider1:50<0,100,0.1>Peak Reduction
+slider2:40<0,100,0.1>Gain
+slider3:0<0,1,1{Compress,Limit}>Mode
+slider4:50<0,100,0.1>R37
+slider5:1<0,1,1{Classic,Fast}>Opto Cell
+
+@init
+
+function DB_TO_K(x)
+(
+  10 ^ (x / 20)
+);
+
+function K_TO_DB(x)
+(
+  20 * log10(x)
+);
+
+function getFilter1K(time_msec)
+(
+  1.0 - pow(0.05, 1.0 / (srate * (time_msec / 1000.0)));
+);
+
+const_1Em10 = 10.0 ^ -10.0;
+
+/*
+ * Filter2 - digital second order filter:
+ * X(z) = (a0 + a1*z^-1 + a2*z^-2) / (1 - b1*z^-1 - b2*z^-2)
+ */
+ 
+function Filter2_Init(a0, a1, a2, b1, b2)
+(
+  this.a0 = a0;
+  this.a1 = a1;
+  this.a2 = a2;
+  this.b1 = b1;
+  this.b2 = b2;
+);
+
+function Filter2_reset()
+(
+  this.x1 = 0;
+  this.x2 = 0;
+  this.y1 = 0;
+  this.y2 = 0;
+);
+
+function Filter2_processSample(x0) local(y0)
+(
+  y0 = x0 * this.a0 + this.x1 * this.a1 + this.x2 * this.a2 +
+    this.y1 * this.b1 + this.y2 * this.b2;
+    
+  // shift history
+  this.x2 = this.x1;
+  this.x1 = x0;
+  
+  this.y2 = this.y1;
+  this.y1 = y0;
+  
+  y0;
+);
+
+function Filter2_generateLS(freq_k, gain_dB, Q) local(w0, sin_w0, cos_w0, gain_1, gain_0, gain_2, s_sin, x1, x2, x3, b1, b2, a0, a1, a2)
+(
+  w0 = freq_k * 2.0 * $pi;
+
+  sin_w0 = sin(w0);
+  cos_w0 = cos(w0);
+
+  gain_1 = DB_TO_K(gain_dB);
+
+  gain_0 = gain_1 - 1.0;
+  gain_2 = (gain_1 * gain_1 + 1.0) / Q - (gain_1 - 1.0) * (gain_1 - 1.0);
+
+  s_sin = sqrt(max(gain_2, 0.0)) * sin_w0;
+
+  x1 = gain_1 + 1.0 + gain_0 * cos_w0;
+  x2 = gain_1 + 1.0 - gain_0 * cos_w0;
+  x3 = gain_0 - (gain_1 + 1.0) * cos_w0;
+
+  b1 = ((gain_1 + 1.0) * cos_w0 + gain_0) * -2.0 / (s_sin + x1);
+  b2 = (x1 - s_sin) / (s_sin + x1);
+  a0 = (x2 + s_sin) * gain_1 / (s_sin + x1);
+  a1 = x3 * (gain_1 * 2.0) / (s_sin + x1);
+  a2 = (x2 - s_sin) * gain_1 / (s_sin + x1);
+
+  this.Filter2_Init(a0, a1, a2, -b1, -b2);
+);
+
+function Filter2_generateHS(freq_k, gain_dB, Q) local(w0, sin_w0, cos_w0, gain_1, gain_0, gain_2, s_sin, x1, x2, x3, b1, b2, a0, a1, a2)
+(
+  w0 = freq_k * 2.0 * $pi;
+
+  sin_w0 = sin(w0);
+  cos_w0 = cos(w0);
+
+  gain_1 = DB_TO_K(gain_dB);
+
+  gain_0 = gain_1 - 1.0;
+  gain_2 = (gain_1 * gain_1 + 1.0) / Q - (gain_1 - 1.0) * (gain_1 - 1.0);
+
+  s_sin = sqrt(max(gain_2, 0.0)) * sin_w0;
+
+  x1 = gain_1 + 1.0 - gain_0 * cos_w0;
+  x2 = gain_1 + 1.0 + gain_0 * cos_w0;
+  x3 = gain_0 + (gain_1 + 1.0) * cos_w0;
+  
+  b1 = (gain_0 - (gain_1 + 1.0) * cos_w0) * 2.0 / (s_sin + x1);
+  b2 = (x1 - s_sin) / (s_sin + x1);
+  a0 = (x2 + s_sin) * gain_1 / (s_sin + x1);
+  a1 = x3 * (gain_1 * -2.0) / (s_sin + x1);
+  a2 = (x2 - s_sin) * gain_1 / (s_sin + x1);
+
+  this.Filter2_Init(a0, a1, a2, -b1, -b2);
+);
+
+function Filter2_generatePK(freq_k, gain_dB) local(w0, sin_w0, cos_w0, gain_1, x1, x2, x3, b1, b2, a0, a1, a2)
+(
+  w0 = freq_k * 2.0 * $pi;
+
+  sin_w0 = sin(w0);
+  cos_w0 = cos(w0);
+
+  gain_1 = DB_TO_K(gain_dB);
+
+  x1 = ((freq_k * 2.0 + 1.0) * 0.187 / (1.0 - freq_k * 2.0) + 0.81) * sin_w0 / 0.42;
+  x2 = x1 / gain_1;
+  x3 = x1 * gain_1;
+
+  b1 = cos_w0 * -2.0 / (x2 + 1.0);
+  b2 = (1.0 - x2) / (x2 + 1.0);
+  a0 = (x3 + 1.0) / (x2 + 1.0);
+  a1 = cos_w0 * -2.0 / (x2 + 1.0);
+  a2 = (1.0 - x3) / (x2 + 1.0);
+
+  this.Filter2_Init(a0, a1, a2, -b1, -b2);
+);
+
+/*
+ * LACompressor
+ */
+
+function LACompressor_setGain(gain_k)
+(
+  this.output_gain_k = pow((pow(24.0, gain_k) - 1.0) / 23.0, 1.35) * 24.0;
+);
+
+function LACompressor_refreshFilters()
+(
+  this.biquad1.Filter2_generateLS(10.0 / srate, -9.0, 0.5);
+  this.biquad3.Filter2_generateHS(17000.0 / srate, -6.0, 0.3);
+  this.biquad5.Filter2_generatePK(220.0 / srate, this.R47_param * -13.0 * 0.5);
+  this.biquad7.Filter2_generateLS(43.0 / srate, 30.0, 0.6);
+
+  this.biquad2.Filter2_Init(this.biquad1.a0, this.biquad1.a1, this.biquad1.a2, this.biquad1.b1, this.biquad1.b2);
+  this.biquad4.Filter2_Init(this.biquad3.a0, this.biquad3.a1, this.biquad3.a2, this.biquad3.b1, this.biquad3.b2);
+  this.biquad6.Filter2_Init(this.biquad5.a0, this.biquad5.a1, this.biquad5.a2, this.biquad5.b1, this.biquad5.b2);
+  this.biquad8.Filter2_Init(this.biquad7.a0, this.biquad7.a1, this.biquad7.a2, this.biquad7.b1, this.biquad7.b2);
+);
+
+function LACompressor_setPeakReduction(peak_reduction_k) local(a)
+(
+  this.gr_const_A = (peak_reduction_k * 1.03 - 0.03) * -49.0;
+
+  this.threshold_dB = this.gr_const_A + 47.0;
+
+  this.threshold_lin = DB_TO_K(this.threshold_dB);
+
+  a = pow(2.0, 1.0 - peak_reduction_k);
+
+  this.gr_const_B = a + 1.2;
+  this.gr_const_C = log10(this.gr_const_B);
+
+  this.gr_const_D = DB_TO_K(this.gr_const_A);
+
+  this.peak_reduction_k = peak_reduction_k;
+
+  this.LACompressor_refreshFilters();
+);
+
+function LACompressor_setLimitMode(is_limit)
+(
+  this.is_limit = is_limit;
+
+  this.12_or_13 = !is_limit ? 1.2 : 1.3;
+  this.log_12_or_13 = log10(this.12_or_13);
+);
+
+function LACompressor_setR37(r37_k)
+(
+  this.R47_param = r37_k;
+
+  this.LACompressor_refreshFilters();
+);
+
+function LACompressor_setOptoCell(is_classic)
+(
+  this.photocell_memory_classic = is_classic;
+);
+
+function LACompressor_getGainReduction(input) local(s, max_gr_lpf4, attack_msec, dynamic_gr_lpf4_attack)
+(
+  // gr_lpf1
+  (input < this.gr_lpf1_s) ? (
+    this.gr_lpf1_s += (input - this.gr_lpf1_s) * this.gr_lpf1_attack;
+  ) : (
+    this.gr_lpf1_s += (input - this.gr_lpf1_s) * this.gr_lpf1_release;
+  );
+
+  this.gr_lpf1_s = max(this.gr_lpf1_s, 0.7);   // limit the envelope
+
+  // gr_lpf2
+  (input < this.gr_lpf2_s) ? (
+    this.gr_lpf2_s += (input - this.gr_lpf2_s) * this.gr_lpf2_attack;
+  ) : (
+    this.gr_lpf2_s += (min(input, this.gr_lpf1_s) - this.gr_lpf2_s) * this.gr_lpf2_release;  // refer to gr_lpf1 here
+  );
+
+  this.gr_lpf2_s = max(this.gr_lpf2_s, 0.4);   // limit the envelope
+
+  // gr_lpf3
+  (input < this.gr_lpf4_s) ? (  // input < prev_output
+    this.gr_lpf3_s += (input - this.gr_lpf3_s) * this.gr_lpf3_attack;
+  ) : (
+    this.gr_lpf3_s += (input - this.gr_lpf3_s) * this.gr_lpf3_release;
+  );
+
+  s = (this.gr_lpf3_s - 0.5) * 2.0;
+
+  (this.photocell_memory_classic) ? (
+    max_gr_lpf4 = input * 12.0;
+  ) : (
+    s /= 5.5;
+    max_gr_lpf4 = input * 6.0;
+    this.dynamic_attack_s = 0.9;
+  );
+
+  // dynamic attack for gr_lpf4
+  attack_msec = 70.0 * max(0.3, s);
+    
+  dynamic_gr_lpf4_attack = getFilter1K(attack_msec);
+
+  // gr_lpf4
+  (input < this.gr_lpf4_s) ? (
+    // attack
+
+    (input + 0.0001 < this.gr_lpf4_s) ? (
+      this.dynamic_attack_s += (1.0 - this.dynamic_attack_s) * this.dynamic_attack_attack;
+    );
+
+    this.gr_lpf4_s += (input - this.gr_lpf4_s) * dynamic_gr_lpf4_attack * this.dynamic_attack_s;
+
+    (this.gr_lpf4_s >= max_gr_lpf4) ? (
+      this.gr_lpf4_s = max_gr_lpf4;
+    );
+
+  ) : (
+    // release
+
+    this.dynamic_attack_s += (0.0 - this.dynamic_attack_s) * this.dynamic_attack_release;
+
+    this.gr_lpf4_s += (min(input, this.gr_lpf2_s) - this.gr_lpf4_s) * this.gr_lpf4_release;
+  );
+
+  this.gr_lpf4_s;
+);
+
+function LACompressor_processSampleStereo(x1, x2) local(sc_left, sc_right, 
+  level_left, level_right, level_max, level_max_dB, value_dB, value, 
+  gr_level, k, b_left, b_right, level_sc, level_b, v1, v2, v3, v4, v5, 
+  gain_reduction, sat_x1, delta_x1, sat_x2, delta_x2, gain_scale, y1, y2, 
+  y1_sat, delta_y1, y2_sat, delta_y2, delta_gr)
+(
+  // internal sidechain
+  sc_left = x1;
+  sc_right = x2;
+
+  sc_left = this.biquad5.Filter2_processSample(this.biquad3.Filter2_processSample(this.biquad1.Filter2_processSample(sc_left)));
+  sc_right = this.biquad6.Filter2_processSample(this.biquad4.Filter2_processSample(this.biquad2.Filter2_processSample(sc_right)));
+
+  // get level
+  this.rms_s_left += (sc_left * sc_left - this.rms_s_left) * this.rms_lpf_k;
+  this.rms_s_right += (sc_right * sc_right - this.rms_s_right) * this.rms_lpf_k;
+
+  level_left = sqrt(this.rms_s_left) * 0.25 + abs(sc_left) * 0.75;
+  level_right = sqrt(this.rms_s_right) * 0.25 + abs(sc_right) * 0.75;
+
+  // stereo-link
+  level_max = max(level_left, level_right);
+
+  level_max = max(level_max, const_1Em10);
+
+  // get gain reduction (threshold soft-clip)
+  level_max_dB = K_TO_DB(level_max);
+
+  level_max_dB -= this.gr_const_A;
+
+  value_dB = log10(pow(this.gr_const_B, level_max_dB) + 1) / this.gr_const_C + this.gr_const_A;
+
+  value = DB_TO_K(value_dB);
+
+  gr_level = (value - this.gr_const_D) / level_max;
+
+  // apply attack/release to GR
+
+  k = (gr_level > this.gr_filter_s) ? this.attack_filter_k : this.release_filter_k;
+
+  this.gr_filter_s += (gr_level - this.gr_filter_s) * k;
+
+  sc_left *= this.gr_filter_s;
+  sc_right *= this.gr_filter_s;
+
+  //-----------------------------------------------------------
+
+  // apply integration to compressed sc
+
+  b_left = this.biquad7.Filter2_processSample(sc_left);
+  b_right = this.biquad8.Filter2_processSample(sc_right);
+
+  // get max level from compressed sc and integrated compressed sc
+
+  level_sc = max(abs(sc_left), abs(sc_right));
+  level_b = max(abs(b_left), abs(b_right));
+
+  level_sc = max(level_sc, const_1Em10);
+  level_b = max(level_b, const_1Em10);
+
+  // apply attack/release to both signals
+
+  k = (level_sc > this.sc_level_s) ? this.level_attack : this.level_release;
+
+  this.sc_level_s += (level_sc - this.sc_level_s) * k;
+
+  k = (level_b > this.b_level_s) ? this.level_attack : this.level_release;
+
+  this.b_level_s += (level_b - this.b_level_s) * k;
+
+  // calculate compression signal
+
+  v1 = K_TO_DB(this.b_level_s);
+  v2 = log10(pow(this.12_or_13, v1 - this.threshold_dB) + 1.0);
+  v3 = DB_TO_K(v2 / this.log_12_or_13 + this.threshold_dB);
+  v4 = this.threshold_lin / v3 * this.sc_level_s;
+  v5 = pow(this.gr_const_D / (this.gr_const_D + v4), !this.is_limit ? 0.79 : 0.94);
+
+  gain_reduction = this.LACompressor_getGainReduction(v5);
+
+  // input saturation
+
+  sat_x1 = (x1 >= 0.0) ?
+    x1 / (pow(x1 * 0.05, 1.3) + 1.0) :
+    x1 / (1.0 - x1 * 0.005);
+
+  delta_x1 = sat_x1 - x1;
+
+  sat_x2 = (x2 >= 0.0) ?
+    x2 / (pow(x2 * 0.05, 1.3) + 1.0) :
+    x2 / (1.0 - x2 * 0.005);
+
+  delta_x2 = sat_x2 - x2;
+
+  // apply gain reduction (to clean x)
+
+  gain_scale = this.peak_reduction_k * this.peak_reduction_k * 14.0 + 1.0;
+
+  y1 = x1 * gain_reduction * gain_scale;
+  y2 = x2 * gain_reduction * gain_scale;
+
+  // output saturation
+
+  y1_sat = (y1 >= 0.0) ?
+    y1 / (pow(y1 * 0.05, 1.3) + 1.0) :
+    y1 / (1.0 - y1 * 0.005);
+
+  delta_y1 = y1_sat - y1;
+
+  y2_sat = (y2 >= 0.0) ?
+    y2 / (pow(y2 * 0.05, 1.3) + 1.0) :
+    y2 / (1.0 - y2 * 0.005);
+
+  delta_y2 = y2_sat - y2;
+
+  // get saturation amount
+  delta_gr = max((1.0 - pow(gain_reduction * 0.98, 0.1)) * 18.0, 0.0);
+
+  // mix delta saturation back
+  this.y1 = ((delta_y1 * 0.5 + delta_x1 * 0.5) * delta_gr + x1) * gain_reduction * this.output_gain_k;
+  this.y2 = ((delta_y2 * 0.5 + delta_x2 * 0.5) * delta_gr + x2) * gain_reduction * this.output_gain_k;
+);
+
+function LACompressor_reset()
+(
+  this.biquad1.Filter2_reset();
+  this.biquad2.Filter2_reset();
+  this.biquad3.Filter2_reset();
+  this.biquad4.Filter2_reset();
+  this.biquad5.Filter2_reset();
+  this.biquad6.Filter2_reset();
+  this.biquad7.Filter2_reset();
+  this.biquad8.Filter2_reset();
+
+  this.rms_s_left = 0.0;
+  this.rms_s_right = 0.0;
+
+  this.gr_filter_s = 0.0;
+
+  this.sc_level_s = 0.0;
+  this.b_level_s = 0.0;
+
+  this.gr_lpf1_s = 1.0;
+  this.gr_lpf2_s = 1.0;
+  this.gr_lpf3_s = 1.0;
+  this.gr_lpf4_s = 1.0;
+  this.dynamic_attack_s = 0.0;
+);
+
+function LACompressor_setSampleRate()
+(
+  this.rms_lpf_k = getFilter1K(36.0);
+
+  this.attack_filter_k = getFilter1K(0.0);
+  this.release_filter_k = getFilter1K(20.0);
+
+  this.level_attack = getFilter1K(0.0);
+  this.level_release = getFilter1K(20.0);
+
+  this.gr_lpf1_attack = getFilter1K(35000.0);
+  this.gr_lpf1_release = getFilter1K(9000.0);
+
+  this.gr_lpf2_attack = getFilter1K(1400.0);
+  this.gr_lpf2_release = getFilter1K(900.0);
+
+  this.gr_lpf3_attack = getFilter1K(1100.0);
+  this.gr_lpf3_release = getFilter1K(12000.0);
+
+  this.gr_lpf4_release = getFilter1K(70.0);
+
+  this.dynamic_attack_attack = getFilter1K(15.0);
+  this.dynamic_attack_release = getFilter1K(2.0);
+);
+
+
+// continue @init:
+
+(srate != sample_rate) ? (
+  comp.LACompressor_setSampleRate();
+  sample_rate = srate;
+);
+
+// reset filters
+comp.LACompressor_reset();
+
+@slider
+
+peak_reduction = slider1 / 100.0;
+gain = slider2 / 100.0;
+limit_mode = slider3;
+r37 = 1.0 - slider4 / 100.0;
+opto_cell = slider5;
+
+comp.LACompressor_setGain(gain);
+comp.LACompressor_setPeakReduction(peak_reduction);
+comp.LACompressor_setLimitMode(limit_mode);
+comp.LACompressor_setR37(r37);
+comp.LACompressor_setOptoCell(!opto_cell);
+
+@block
+
+@sample
+
+comp.LACompressor_processSampleStereo(spl0, spl1);
+
+spl0 = comp.y1;
+spl1 = comp.y2;
+

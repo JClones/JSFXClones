@@ -52,7 +52,12 @@ JClones_VBL is a clone of earlier version of vintage broadcast limiter plugin, w
 
 [Detailed Description](https://github.com/JClones/JSFXClones/blob/master/JClones_VBL.md)
 
-# “JClones_CL1B“
+# “JClones_CL1B”
 JClones_CL1B plugin is a clone of older version of digital emulation of the renowned optical compressor, which is widely used in professional audio production. The modelled hardware compressor is highly regarded for its smooth, warm, and musical compression characteristics, making it a popular choice for vocals, bass, drums, and other instruments.
 
 [Detailed Description](https://github.com/JClones/JSFXClones/blob/master/JClones_CL1B.md)
+
+# “JClones_CA2A”
+JClones_CA2A plugin is a clone of digital emulation of the legendary LA-2A optical compressor, which is highly regarded in the audio industry for its smooth and musical compression characteristics. The cloned plugin was developed by a company, known for their popular digital audio workstation (DAW) software. The plugin was designed to replicate the unique sound and behavior of the original hardware LA-2A, a tube-based optical compressor that became famous for its warm, natural-sounding compression. The cloned plugin was discontinued due to the acquisition of the development company in 2013.
+
+[Detailed Description](https://github.com/JClones/JSFXClones/blob/master/JClones_CA2A.md)

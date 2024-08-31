@@ -33,7 +33,7 @@ slider2:0<-40,10,0.1>Threshold, dB
 slider3:5.0<0,10.0,0.1>Attack
 slider4:5.0<0,10.0,0.1>Release
 slider5:2<0,2,1{Fixed,Fixed/Manual,Manual}>A/R Select
-slider6:0<-12,12,0.1>Output Gain, dB
+slider6:0<-24,24,0.1>Output Gain, dB
 
 @init
 
