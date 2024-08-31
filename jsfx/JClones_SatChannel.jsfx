@@ -1,0 +1,239 @@
+desc:       JClones_SatChannel
+version:    1.0.0
+author:     JClones
+tags:       console saturation, gain staging
+link:       https://github.com/JClones/JSFXClones
+screenshot: https://github.com/JClones/JSFXClones/blob/master/assets/screenshots/JClones_SatChannel.png
+about:
+    # JClones_SatChannel
+    JClones_SatChannel plugin is a clone of popular audio plugin that emulates the sound and characteristics of an analog mixing console. It is designed to add warmth, character, and subtle harmonic distortion to digital audio, mimicking the nonlinearities and saturation that occur in analog gear. The plugin is often used in digital audio production to give mixes a more "analog" feel, adding depth and presence to individual tracks and overall mixes.
+
+    The plugin has two versions: Channel and Buss. Channel version is typically used on individual tracks within a mix. It emulates the behavior of a single channel on an analog console, adding mild saturation and coloration to the audio signal.
+
+    ## Main Parameters
+
+    **Gain:** Adjusts the input level of the signal entering the plugin. This allows users to set the proper gain staging, which is crucial for achieving the desired amount of saturation and analog warmth.
+
+    **High-Pass:** Cuts low frequencies from the signal. This is useful for removing unwanted low-end rumble or clearing up muddiness in the mix.
+
+    **High-Pass Slope:** Controls the steepness of the high-pass filter's cutoff slope. This filter is used to remove low-frequency content from the signal, which can help clean up unwanted rumble or sub-bass frequencies and improve the clarity of the mix.
+
+    **Low-Pass Filter:** Removes high frequencies from the signal, which can help tame harshness or reduce hiss and other high-frequency noise.
+
+    **Sat:** When activated, the saturation effect is applied to the signal; when turned off, the signal remains clean without added saturation.
+
+    **Fat:** Enhances the low-frequency response of the audio signal, giving it a thicker and more pronounced low end. This feature aims to emulate the effect of certain analog hardware, which often imparts a fuller, more robust bass presence.
+
+    **Compensation:** Manages the level changes introduced by processing within the plugin. Specifically, it compensates for any gain changes that occur as a result of applying the plugin’s various processing stages, ensuring that the output level remains consistent.
+
+slider1:0<-18,18,0.1>Gain
+slider2:10<10,1800,10>High Pass, Hz
+slider3:0<0,1,1{6 dB/Oct,12 dB/Oct}>High Pass Slope
+slider4:20<1,20,1>Low Pass, kHz
+slider5:1<0,1,1{Off,On}>Sat
+slider6:0<0,1,1{Off,On}>Fat
+slider7:0<0,1,1{Off,On}>Compensation
+
+@init
+
+function DB_TO_K(x)
+(
+ 10 ^ (x / 20)
+);
+
+function getFilter1K(freq_k)
+(
+  1.0 - exp(-2.0 * $pi * freq_k);
+);
+
+function satFn(x) local(y)
+(
+  (x < -3.0) ? y = -1.0 :
+  (x > 3.0) ? y = 1.0 :
+  y = (x * x + 27.0) * x / (x * x * 9.0 + 27.0);
+
+  y;
+);
+
+/*
+ * SatChannel
+ */
+
+function SatChannel_setMode(sat_on, fat_mode, input_gain_dB, gain_compensation) local(gain_scale)
+(
+  this.sat_on = sat_on;
+
+  gain_scale = 0.0;
+
+  (sat_on) ? (
+
+    (!fat_mode) ? (
+      // normal mode
+      this.G_fb3 = 0.6;
+      this.G_hi3_b = 0.6;
+      this.G_lo3 = 0.410706;
+      this.lpf5_k = 0.512;
+      this.G4 = 1.3;
+      this.lpf1_k = getFilter1K(120.0 / srate);
+      this.lpf4_k = getFilter1K(80.0 / srate);
+      this.G3 = 0.735;
+      this.G_fb1 = 0.4;
+      this.G_hi3 = 0.15;
+      this.G1 = 0.4;
+
+      (gain_compensation) ? (
+        (input_gain_dB <= 0.0) ?
+          gain_scale = input_gain_dB * -1.0
+        :
+          gain_scale = input_gain_dB * -0.92;
+      );
+
+      this.output_gain = DB_TO_K(gain_scale + 11.654);
+      this.input_gain = DB_TO_K(-8.0);
+    ) : (
+      // fat mode
+      this.G_fb3 = 0.1;
+      this.G_hi3 = 0.1;
+      this.G_hi3_b = 0.4;
+      this.G_lo3 = 0.408245;
+      this.lpf5_k = 0.745;
+      this.lpf1_k = getFilter1K(400.0 / srate);
+      this.G_fb1 = 0.302;
+      this.G1 = 0.22;
+      this.G4 = 0.975;
+      this.G3 = 0.725;
+      this.lpf4_k = getFilter1K(28.0 / srate);
+
+      (gain_compensation) ? (
+        (input_gain_dB <= 0.0) ?
+          gain_scale = input_gain_dB * -1.0
+        :
+          gain_scale = input_gain_dB * -0.79;
+      );
+
+      this.output_gain = DB_TO_K(gain_scale + 1.15);
+      this.input_gain = 1.0;
+    );
+
+    // both modes:
+    this.lpf6_k = getFilter1K(320.0 / srate);
+    this.lpf7_k = getFilter1K(20000.0 / srate);
+    this.lpf3_k = getFilter1K(5.0 / srate);
+    this.lpf2_k = getFilter1K(1.0);  // srate / srate
+
+    this.input_gain *= DB_TO_K(input_gain_dB);
+  ) : (
+    // no saturation
+    this.input_gain = DB_TO_K(input_gain_dB);
+    this.output_gain = gain_compensation ? 1.0 / this.input_gain : 1.0;
+  );
+);
+
+function SatChannel_reset()
+(
+  this.hpf_s = 0.0;
+  this.hpf2_s = 0.0;
+
+  this.lpf_s = 0.0;
+
+  this.lpf1_s = 0.0;
+  this.lpf2_s = 0.0;
+  this.lpf3_s = 0.0;
+  this.lpf4_s = 0.0;
+  this.lpf5_s = 0.0;
+  this.lpf6_s = 0.0;
+  this.lpf7_s = 0.0;
+
+  this.fb1 = 0.0;
+  this.fb2 = 0.0;
+  this.fb3 = 0.0;
+);
+
+function SatChannel_setFilters(hpf_freq_hz, hpf_12dB, lpf_freq_hz)
+(
+  this.hpf_k = getFilter1K(hpf_freq_hz / srate);
+  this.hpf_12dB = hpf_12dB;
+
+  (lpf_freq_hz < 20000.0) ?
+    this.lpf_k = getFilter1K(lpf_freq_hz / srate)
+  :
+    this.lpf_k = 1.0;
+);
+
+function SatChannel_saturate(x1) local(x2, x3, x4, lo3, hi3, x5, x6, x6_sat)
+(
+  x2 = (this.lpf1_s += (x1 * this.G1 - this.lpf1_s) * this.lpf1_k) +
+    1.4142135622 -
+    (this.lpf2_s += (0.0002135622 - this.lpf2_s) * this.lpf2_k);
+
+  x3 = x2 * x2 * 0.5 - 1.0;
+
+  x4 = (this.G3 * x3 - this.lpf1_s) * 5.8 + x1;
+
+  lo3 = (this.lpf3_s += ((this.fb2 - this.fb3) - this.lpf3_s) * this.lpf3_k);
+  hi3 = (this.fb2 - this.fb3) - lo3;
+
+  x5 = x4 - 0.01 - hi3 * this.G_hi3 - lo3 * this.G_lo3;
+
+  x6 = x5 - this.fb1 * this.G_fb1 - this.fb3 * this.G_fb3 + this.G4 * (this.lpf4_s += (hi3 - this.lpf4_s) * this.lpf4_k);
+
+  this.fb2 = x6;
+
+  x6_sat = satFn(x6);
+
+  this.fb3 = (this.lpf5_s += ((hi3 * this.G_hi3 * this.G_hi3_b + x6_sat + 0.008) - this.lpf5_s) * this.lpf5_k);
+
+  this.lpf6_s += (this.fb3 - this.lpf6_s) * this.lpf6_k;
+  
+  this.fb1 = (this.lpf7_s += ((this.fb3 - this.lpf6_s) - this.lpf7_s) * this.lpf7_k);
+
+  (this.G_fb1 * this.fb1 * 0.85 + this.fb3);
+);
+
+function SatChannel_processSample(x) local(y)
+(
+  x *= this.input_gain;
+
+  y = (this.sat_on) ? this.SatChannel_saturate(x) : x;
+
+  y *= this.output_gain;
+  
+  y = y - (this.hpf_s += (y - this.hpf_s) * this.hpf_k);
+
+  (this.hpf_12dB) ?
+    y = y - (this.hpf2_s += (y - this.hpf2_s) * this.hpf_k);
+
+  y = (this.lpf_s += (y - this.lpf_s) * this.lpf_k);
+
+  y;
+);
+
+// continue @init:
+
+// reset filters
+left.SatChannel_reset();
+right.SatChannel_reset();
+
+@slider
+
+input_gain_dB = slider1;
+high_pass_Hz = slider2;
+high_pass_slope = slider3;
+low_pass_kHz = slider4;
+sat_mode = slider5;
+fat_mode = slider6;
+compensation_mode = slider7;
+
+left.SatChannel_setMode(sat_mode, fat_mode, input_gain_dB, compensation_mode);
+right.SatChannel_setMode(sat_mode, fat_mode, input_gain_dB, compensation_mode);
+
+left.SatChannel_setFilters(high_pass_Hz, high_pass_slope, low_pass_kHz * 1000.0);
+right.SatChannel_setFilters(high_pass_Hz, high_pass_slope, low_pass_kHz * 1000.0);
+
+@block
+
+@sample
+
+spl0 = left.SatChannel_processSample(spl0);
+spl1 = right.SatChannel_processSample(spl1);
+

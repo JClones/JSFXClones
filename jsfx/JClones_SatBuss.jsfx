@@ -1,0 +1,280 @@
+desc:       JClones_SatBuss
+version:    1.0.0
+author:     JClones
+tags:       console saturation, gain staging
+link:       https://github.com/JClones/JSFXClones
+screenshot: https://github.com/JClones/JSFXClones/blob/master/assets/screenshots/JClones_SatBuss.png
+about:
+    # JClones_SatBuss
+    JClones_SatBuss plugin is a clone of popular audio plugin that emulates the sound and characteristics of an analog mixing console. It is designed to add warmth, character, and subtle harmonic distortion to digital audio, mimicking the nonlinearities and saturation that occur in analog gear. The plugin is often used in digital audio production to give mixes a more "analog" feel, adding depth and presence to individual tracks and overall mixes.
+
+    The original plugin has two versions: Channel and Buss. Buss version is used on subgroups or the master bus. It emulates the sound of a console's summing bus, providing a slightly different character and allowing for more pronounced saturation when driven hard.
+
+    ## Main Parameters
+
+    **Crosstalk:** Simulates the effect of crosstalk between busses in an analog mixing console. Crosstalk refers to the unintended transfer of signal between channels or busses, which can add a sense of warmth, depth, and cohesion to the mix. The Crosstalk parameter offers three settings: Off, Modern, and Vintage.
+
+    **Off:** No crosstalk effect, maintaining a clean and isolated mix.
+
+    **Modern:** Subtle and controlled crosstalk for a contemporary blend and warmth.
+
+    **Vintage:** Pronounced crosstalk for a rich, analog-style character and depth.
+
+    **Loud:** Adds an analog-style boost to the mix bus, enhancing the perceived loudness and presence of the mix. It emulates the effect of pushing the mix bus harder, which can add warmth and increase the overall impact of the mix.
+
+    **Fat:** Enhances the low-end response of the mix bus, giving it a fuller and more pronounced bass presence. This feature emulates the way analog consoles can add a bit of weight and warmth to the low frequencies.
+
+slider1:1<0,2,1{Off,Modern,Vintage}>Crosstalk
+slider2:0<0,1,1{Off,On}>Loud
+slider3:0<0,1,1{Off,On}>Fat
+
+@init
+
+function DB_TO_K(x)
+(
+ 10 ^ (x / 20)
+);
+
+function getFilter1K(freq_k)
+(
+  1.0 - exp(-2.0 * $pi * freq_k);
+);
+
+function satFn(x) local(y)
+(
+  (x < -3.0) ? y = -1.0 :
+  (x > 3.0) ? y = 1.0 :
+  y = (x * x + 27.0) * x / (x * x * 9.0 + 27.0);
+
+  y;
+);
+
+/*
+ * SatBuss
+ */
+
+
+function SatBuss_setMode(fat_on, loud_on, crosstalk_type)
+(
+  this.lpf11_k = getFilter1K(320.0 / srate);
+  this.lpf12_k = getFilter1K(20000.0 / srate);
+  this.lpf8_k = getFilter1K(5.0 / srate);
+  this.lpf7_k = getFilter1K(1.0);  // srate / srate
+  this.lpf2_k = getFilter1K(70.0 / srate);
+
+  (crosstalk_type != 0) ? (
+
+    // some crosstalk
+    (srate > 44100.0) ? (
+      (srate > 48000.0) ? (
+        (srate > 88200.0) ? (
+          (srate > 96000.0) ? (
+            (srate > 176400.0) ? (
+              this.G_x2 = DB_TO_K(7.48);
+            ) : (
+              this.G_x2 = DB_TO_K(6.61);
+            );
+          ) : (
+            this.G_x2 = DB_TO_K(1.45);
+          );
+        ) : (
+          this.G_x2 = DB_TO_K(0.7);
+        );
+
+        this.G2 = 1.0;
+      ) : (
+        this.G_x2 = DB_TO_K(-4.7);
+
+        this.G2 = 0.418;
+      );
+    ) : (
+      this.G_x2 = DB_TO_K(-5.81);
+
+      this.G2 = 0.5;
+    );
+
+    this.G_lpf3 = DB_TO_K(-13.8);
+    this.G_that = 0.009;
+
+    this.lpf3_k = getFilter1K(11.0 / srate);
+    this.lpf4_k = getFilter1K(20000.0 / srate);
+
+    (crosstalk_type == 2) ?  // vintage
+      this.G3_1 = 0.16
+    :
+      this.G3_1 = 3.4;
+
+  ) : (
+    // no crosstalk
+    this.G_x2 = 0.0;
+    this.G2 = 0.0;
+    this.G3_1 = 0.0;
+
+    this.G_lpf3 = 0.0;
+    this.G_that = 0.0;
+
+    this.lpf3_k = 0.0;
+    this.lpf4_k = getFilter1K(10000.0 / srate);
+  );
+
+  this.G_ct = 0.27583;
+
+  this.loud_processing = loud_on;
+
+  (fat_on) ? (
+    this.G_fb2 = 0.1;
+    this.G_hpf8 = 0.1;
+    this.G_hpf8_alt = 0.4;
+    this.G6 = 0.408247;
+    this.lpf10_k = 0.73;
+    this.lpf5_k = getFilter1K(3500.0 / srate);
+    this.G_lpf5 = 0.23;
+    this.lpf6_k = getFilter1K(4000.0 / srate);
+    this.G_fb3 = 0.302;
+    this.G3 = 0.2;
+    this.G_lpf9 = 0.975;
+    this.G_5 = 0.725;
+    this.lpf9_k = getFilter1K(28.0 / srate);
+
+    (crosstalk_type != 1) ?  // vintage or off
+      this.lpf13_k = getFilter1K(12.0 / srate)
+    :            // modern
+      this.lpf13_k = getFilter1K(20.0 / srate);
+
+    this.lpf1_k = getFilter1K(1000.0 / srate);
+    this.G1 = 0.025;
+    this.G8 = DB_TO_K(1.2 + 0.0);
+    this.G3_2 = DB_TO_K(0.0);
+  ) : (
+    this.G_fb2 = 0.6;
+    this.G_fb3 = 0.4;
+    this.G_lpf9 = 0.26;
+    this.G_hpf8_alt = 0.9;
+    this.lpf9_k = getFilter1K(100.0 / srate);
+    this.G6 = 0.411795;
+    this.G_hpf8 = 0.2;
+    this.lpf10_k = 0.513;
+    this.G3 = 0.2;
+    this.lpf5_k = getFilter1K(220.0 / srate);
+    this.G_5 = 0.74;
+    this.lpf6_k = getFilter1K(2800.0 / srate);
+    this.G_lpf5 = 0.45;
+    this.lpf1_k = getFilter1K(1000.0 / srate);
+    this.G1 = 0.0;
+
+    (crosstalk_type != 1) ?  // vintage or off
+      this.lpf13_k = getFilter1K(8.0 / srate)
+    :            // modern
+      this.lpf13_k = getFilter1K(15.0 / srate);
+
+    this.G8 = DB_TO_K(11.8 + 0.0);
+    this.G3_2 = DB_TO_K(-8.0);
+  )
+);
+
+function SatBuss_reset()
+(
+  this.lpf1_s = 0.0;
+  this.lpf2_s = 0.0;
+  this.lpf3_s = 0.0;
+  this.lpf4_s = 0.0;
+  this.lpf5_s = 0.0;
+  this.lpf6_s = 0.0;
+  this.lpf7_s = 0.0;
+  this.lpf8_s = 0.0;
+  this.lpf9_s = 0.0;
+  this.lpf10_s = 0.0;
+  this.lpf11_s = 0.0;
+  this.lpf12_s = 0.0;
+  this.lpf13_s = 0.0;
+
+  this.ct_fb = 0.0;
+  this.fb1 = 0.0;
+  this.fb2 = 0.0;
+  this.fb3 = 0.0;
+);
+
+function SatBuss_processSample(x, that_x) local(x1, ct, lpf4_input, x2, x3, x4, x5, x6, hpf8_input, x7, x7_sat, x8)
+(
+  x1 = this.G1 * (this.lpf1_s += (x - this.lpf1_s) * this.lpf1_k) + x;
+  
+  (this.loud_processing) ?
+    x1 = (this.lpf2_s += (x1 - this.lpf2_s) * this.lpf2_k) * 0.05 + x;
+
+  // all-pass stuff
+  ct = that_x * this.G_ct + this.ct_fb;
+  this.ct_fb = that_x - ct * this.G_ct;
+
+  lpf4_input = (ct - that_x) * -0.12;
+
+  this.lpf4_s += (lpf4_input - this.lpf4_s) * this.lpf4_k;
+
+  x2 = lpf4_input - (lpf4_input - this.lpf4_s) * this.G2;
+
+  this.lpf3_s += (that_x - this.lpf3_s) * this.lpf3_k;
+
+  x3 = ((this.lpf3_s * this.G_lpf3 + x2 * this.G_x2 - that_x * this.G_that) * this.G3_1 + x1) * this.G3_2;
+
+  lpf5_output = (this.lpf5_s += (x3 * this.G_lpf5 - this.lpf5_s) * this.lpf5_k);
+
+  (this.loud_processing) ?
+    lpf5_output += x3 * this.G3 - (this.lpf6_s += (x3 * this.G3 - this.lpf6_s) * this.lpf6_k);
+
+  x4 = lpf5_output + 1.4142135622 - (this.lpf7_s += (0.0002135622 - this.lpf7_s) * this.lpf7_k);
+
+  x5 = x4 * x4 * 0.5 - 1.0;
+
+  x6 = (this.G_5 * x5 - lpf5_output) * 5.8 + x3;
+
+  hpf8_output = (this.fb1 - this.fb2) - (this.lpf8_s += ((this.fb1 - this.fb2) - this.lpf8_s) * this.lpf8_k);
+
+  x7 = x6
+    - 0.01
+    - this.G_hpf8 * hpf8_output
+    - this.G6 * this.lpf8_s
+    - this.G_fb3 * this.fb3
+    - this.G_fb2 * this.fb2
+    + this.G_lpf9 * (this.lpf9_s += (hpf8_output - this.lpf9_s) * this.lpf9_k);
+
+  this.fb1 = x7;
+
+  x7_sat = satFn(x7);
+
+  this.lpf10_s += ((this.G_hpf8_alt * this.G_hpf8 * hpf8_output + x7_sat + 0.008) - this.lpf10_s) * this.lpf10_k;
+  this.lpf11_s += (this.lpf10_s - this.lpf11_s) * this.lpf11_k;
+
+  this.fb2 = this.lpf10_s;
+  this.fb3 = (this.lpf12_s += ((this.lpf10_s - this.lpf11_s) - this.lpf12_s) * this.lpf12_k);
+
+  x8 = (this.G_fb3 * this.fb3 * 0.85 + this.fb2) * this.G8;
+
+  this.lpf13_s += (x8 - this.lpf13_s) * this.lpf13_k;
+
+  (x8 - this.lpf13_s);
+);
+
+// continue @init:
+
+// reset filters
+left.SatBuss_reset();
+right.SatBuss_reset();
+
+@slider
+
+crosstalk_mode = slider1;
+loud_mode = slider2;
+fat_mode = slider3;
+
+left.SatBuss_setMode(fat_mode, loud_mode, crosstalk_mode);
+right.SatBuss_setMode(fat_mode, loud_mode, crosstalk_mode);
+
+@block
+
+@sample
+
+left_in = spl0;
+right_in = spl1;
+
+spl0 = left.SatBuss_processSample(left_in, right_in);
+spl1 = right.SatBuss_processSample(right_in, left_in);
+

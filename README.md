@@ -58,6 +58,17 @@ JClones_CL1B plugin is a clone of older version of digital emulation of the reno
 [Detailed Description](https://github.com/JClones/JSFXClones/blob/master/JClones_CL1B.md)
 
 # “JClones_CA2A”
-JClones_CA2A plugin is a clone of digital emulation of the legendary LA-2A optical compressor, which is highly regarded in the audio industry for its smooth and musical compression characteristics. The cloned plugin was developed by a company, known for their popular digital audio workstation (DAW) software. The plugin was designed to replicate the unique sound and behavior of the original hardware LA-2A, a tube-based optical compressor that became famous for its warm, natural-sounding compression. The cloned plugin was discontinued due to the acquisition of the development company in 2013.
+JClones_CA2A plugin is a clone of digital emulation of the legendary LA-2A optical compressor, which is highly regarded in the audio industry for its smooth and musical compression characteristics. The original plugin was developed by a company, known for their popular digital audio workstation (DAW) software. The plugin was designed to replicate the unique sound and behavior of the original hardware LA-2A, a tube-based optical compressor that became famous for its warm, natural-sounding compression. The original plugin was discontinued due to the acquisition of the development company in 2013.
 
 [Detailed Description](https://github.com/JClones/JSFXClones/blob/master/JClones_CA2A.md)
+
+# “JClones_SatChannel” / “JClones_SatBuss“
+These plugins are clones of popular audio plugin that emulates the sound and characteristics of an analog mixing console. It is designed to add warmth, character, and subtle harmonic distortion to digital audio, mimicking the nonlinearities and saturation that occur in analog gear. The plugin is often used in digital audio production to give mixes a more "analog" feel, adding depth and presence to individual tracks and overall mixes.
+
+The original plugin has two versions: Channel and Buss. Channel version is typically used on individual tracks within a mix. It emulates the behavior of a single channel on an analog console, adding mild saturation and coloration to the audio signal.
+
+[Channel version](https://github.com/JClones/JSFXClones/blob/master/JClones_SatChannel.md)
+
+Buss version is used on subgroups or the master bus. It emulates the sound of a console's summing bus, providing a slightly different character and allowing for more pronounced saturation when driven hard. 
+
+[Buss version](https://github.com/JClones/JSFXClones/blob/master/JClones_SatBuss.md)

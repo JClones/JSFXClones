@@ -1,5 +1,5 @@
 # JClones_CA2A
-JClones_CA2A plugin is a clone of digital emulation of the legendary LA-2A optical compressor, which is highly regarded in the audio industry for its smooth and musical compression characteristics. The cloned plugin was developed by a company, known for their popular digital audio workstation (DAW) software. The plugin was designed to replicate the unique sound and behavior of the original hardware LA-2A, a tube-based optical compressor that became famous for its warm, natural-sounding compression. The cloned plugin was discontinued due to the acquisition of the development company in 2013.
+JClones_CA2A plugin is a clone of digital emulation of the legendary LA-2A optical compressor, which is highly regarded in the audio industry for its smooth and musical compression characteristics. The original plugin was developed by a company, known for their popular digital audio workstation (DAW) software. The plugin was designed to replicate the unique sound and behavior of the original hardware LA-2A, a tube-based optical compressor that became famous for its warm, natural-sounding compression. The original plugin was discontinued due to the acquisition of the development company in 2013.
 
 ## Main Parameters
 
