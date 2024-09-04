@@ -422,7 +422,11 @@ ReaPack Extension
 }}}
  installed, you can add the repository to Reaper with this URL:\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 \f1 https://github.com/JClones/JSFXClones/raw/master/index.xml\par}
-{\pard \ql \f0 \sa180 \li0 \fi0 If you {\b don't} have ReaPack installed, you can also add these plugins on a per-file basis. Also you may use {\field{\*\fldinst{HYPERLINK "https://github.com/jpcima/ysfx"}}{\fldrslt{\ul
+{\pard \ql \f0 \sa180 \li0 \fi0 If you {\b don't} have ReaPack installed, you may download plugins on per-file basis or use this {\field{\*\fldinst{HYPERLINK "https://github.com/JClones/JSFXClones/releases/tag/v1.0.0"}}{\fldrslt{\ul
+v1.0.0 release
+}}}
+.\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 Also you may use {\field{\*\fldinst{HYPERLINK "https://github.com/jpcima/ysfx"}}{\fldrslt{\ul
 ysfx
 }}}
  or {\field{\*\fldinst{HYPERLINK "https://www.reaper.fm/reaplugs/"}}{\fldrslt{\ul
