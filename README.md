@@ -8,7 +8,9 @@ If you have the [ReaPack Extension](https://reapack.com/) installed, you can add
 https://github.com/JClones/JSFXClones/raw/master/index.xml
 ```
 
-If you **don't** have ReaPack installed, you can also add these plugins on a per-file basis. Also you may use [ysfx](https://github.com/jpcima/ysfx) or [ReaJS](https://www.reaper.fm/reaplugs/) to run JSFX plugin in another DAW. 
+If you **don't** have ReaPack installed, you may download plugins on per-file basis or use this [v1.0.0 release](https://github.com/JClones/JSFXClones/releases/tag/v1.0.0).
+
+Also you may use [ysfx](https://github.com/jpcima/ysfx) or [ReaJS](https://www.reaper.fm/reaplugs/) to run JSFX plugin in another DAW. 
 
 # “JClones_L2”
 
