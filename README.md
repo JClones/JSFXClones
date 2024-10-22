@@ -79,3 +79,8 @@ Buss version is used on subgroups or the master bus. It emulates the sound of a 
 JClones_Fattener is a clone of popular audio plugin developed by a duo known for their electronic dance music. The plugin is designed to add warmth, distortion, and overall fatness to audio signals, making it a favorite among producers for enhancing the character of their tracks.
 
 [Detailed Description](https://github.com/JClones/JSFXClones/blob/master/JClones_Fattener.md)
+
+# “JClones_LMC1”
+JClones_LMC1 is a clone of a compressor plugin modeled after the compressor found in the legendary consoles. The original hardware compressor was designed to manage signals from talkback or listen microphones in recording studios. However, engineers quickly discovered its aggressive compression characteristics were fantastic for creative use, especially on drums.
+
+[Detailed Description](https://github.com/JClones/JSFXClones/blob/master/JClones_LMC1.md)

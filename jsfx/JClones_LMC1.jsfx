@@ -1,0 +1,155 @@
+desc:       JClones_LMC1
+version:    1.0.0
+author:     JClones
+tags:       compressor
+link:       https://github.com/JClones/JSFXClones
+screenshot: https://github.com/JClones/JSFXClones/blob/master/assets/screenshots/JClones_LMC1.png
+about:
+    # JClones_LMC1
+    JClones_LMC1 is a clone of a compressor plugin modeled after the compressor found in the legendary consoles. The original hardware compressor was designed to manage signals from talkback or listen microphones in recording studios. However, engineers quickly discovered its aggressive compression characteristics were fantastic for creative use, especially on drums.
+
+    ## Main Parameters
+
+    **Input (Gain):** Adjusts the input signal level before processing.
+
+    **Threshold:** Determines when the compression kicks in, controlling how much of the signal gets affected.
+
+    **Output (Gain):** Sets the final output level after processing.
+
+    **Box Tone:** JClones version specific. Removes bandpass filter from audio chain (but leaves it in the sidechain).
+
+slider1:0<-20,20,0.1>Input, dB
+slider2:0<-48,0,0.1>Threshold, dB
+slider3:0<-20,20,0.1>Output, dB
+slider4:1<0,1,1{Off,On}>Box Tone
+
+@init
+
+function DB_TO_K(x)
+(
+  10 ^ (x / 20)
+);
+
+function K_TO_DB(x)
+(
+  20 * log10(x);
+);
+
+MIN_LOG = -160.0;
+MIN_LIN = DB_TO_K(MIN_LOG);
+
+/*
+ * LMC
+ */
+
+function LMC_setThreshold(threshold_dB, use_box_tone)
+(
+  this.threshold_dB = threshold_dB;
+  this.use_box_tone = use_box_tone;
+);
+
+function LMC_setSampleRate() local(exp_w0)
+(
+  exp_w0 = exp(340.0 / srate * -2.0 * $pi);
+
+  this.filter1_k1 = exp_w0;
+  this.filter1_k2 = (exp_w0 + 1.0) * 0.5;
+
+  exp_w0 = exp(4000.0 / srate * -2.0 * $pi);
+
+  this.filter2_k1 = exp_w0;
+  this.filter2_k2 = 1.0 - exp_w0;
+
+  this.attack_k = 1.0 / (0.0025 * srate);
+  this.release_k = 1.0 / (0.025 * srate);
+);
+
+function LMC_reset()
+(
+  this.filter1_s = 0.0;
+  this.filter2_s = 0.0;
+
+  this.ar_state = 0.0;
+);
+
+function LMC_processSample(x) local(next_s, y, output, y2, ar_k, level_lin, level_dB, gr_dB)
+(
+
+  // filter1
+  next_s = this.filter1_k1 * this.filter1_s + x;
+  y = (next_s - this.filter1_s) * this.filter1_k2;
+  this.filter1_s = next_s;
+
+  // filter2
+  next_s = this.filter2_k1 * this.filter2_s + y;
+  y = next_s * this.filter2_k2;
+  this.filter2_s = next_s;
+  
+  // feedback_gr
+  y *= this.feedback_gr;
+
+  output = (this.use_box_tone) ? y : x * this.feedback_gr;
+
+  // attack/release (works with y^2)
+  y2 = y * y;
+
+  ar_k = (y2 > this.ar_state) ? this.attack_k : this.release_k;
+
+  this.ar_state += (y2 - this.ar_state) * ar_k;
+
+  // RMS to dB
+  level_lin = sqrt(this.ar_state);
+
+  (level_lin < MIN_LIN) ? (
+    level_lin = MIN_LIN;
+  );
+
+  level_dB = K_TO_DB(level_lin);
+
+  gr_dB = 0.0;
+
+  (level_dB < this.threshold_dB + 13.0) ? (
+
+    (level_dB >= this.threshold_dB) ? (
+      gr_dB = (level_dB - this.threshold_dB) * -3.0769231;   // -40/13
+    );
+
+  ) : (
+    gr_dB = -40.0;
+  );
+
+  this.feedback_gr = DB_TO_K(gr_dB);
+
+  output;
+);
+
+// continue @init:
+
+(srate != sample_rate) ? (
+  left.LMC_setSampleRate();
+  right.LMC_setSampleRate();
+
+  sample_rate = srate;
+);
+
+// reset filters
+left.LMC_reset();
+right.LMC_reset();
+
+@slider
+
+input_gain_k = DB_TO_K(slider1);
+threshold_dB = slider2;
+output_gain_k = DB_TO_K(slider3);
+use_box_tone = slider4;
+
+left.LMC_setThreshold(threshold_dB, use_box_tone);
+right.LMC_setThreshold(threshold_dB, use_box_tone);
+
+@block
+
+@sample
+
+spl0 = left.LMC_processSample(spl0 * input_gain_k) * output_gain_k;
+spl1 = right.LMC_processSample(spl1 * input_gain_k) * output_gain_k;
+
