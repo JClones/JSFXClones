@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<index version="1" name="JSFXClones" commit="8140718b238a57d6655e996e3439f0a4561e7f33">
+<index version="1" name="JSFXClones" commit="6ce8888e97dce615472daa6c36efba484a56e6fd">
   <category name="jsfx">
     <reapack name="JClones_AC1.jsfx" type="effect" desc="JClones_AC1">
       <metadata>
@@ -210,6 +210,28 @@
       </metadata>
       <version name="1.0.0" author="JClones" time="2024-06-22T17:26:21Z">
         <source>https://github.com/JClones/JSFXClones/raw/7560c0a8b6831662cbab27c34b1436eca1d8529e/jsfx/JClones_L2.jsfx</source>
+      </version>
+    </reapack>
+    <reapack name="JClones_LMC1.jsfx" type="effect" desc="JClones_LMC1">
+      <metadata>
+        <description><![CDATA[{\rtf1\ansi\deff0{\fonttbl{\f0 \fswiss Helvetica;}{\f1 Courier;}}
+{\colortbl;\red255\green0\blue0;\red0\green0\blue255;}
+\widowctrl\hyphauto
+
+{\pard \ql \f0 \sa180 \li0 \fi0 \b \fs36 JClones_LMC1\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 JClones_LMC1 is a clone of a compressor plugin modeled after the compressor found in the legendary consoles. The original hardware compressor was designed to manage signals from talkback or listen microphones in recording studios. However, engineers quickly discovered its aggressive compression characteristics were fantastic for creative use, especially on drums.\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \b \fs32 Main Parameters\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\b Input (Gain):} Adjusts the input signal level before processing.\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\b Threshold:} Determines when the compression kicks in, controlling how much of the signal gets affected.\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\b Output (Gain):} Sets the final output level after processing.\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\b Box Tone:} JClones version specific. Removes bandpass filter from audio chain (but leaves it in the sidechain).\par}
+}
+]]></description>
+        <link rel="website">https://github.com/JClones/JSFXClones</link>
+        <link rel="screenshot">https://github.com/JClones/JSFXClones/blob/master/assets/screenshots/JClones_LMC1.png</link>
+      </metadata>
+      <version name="1.0.0" author="JClones" time="2024-10-22T13:57:25Z">
+        <source>https://github.com/JClones/JSFXClones/raw/6ce8888e97dce615472daa6c36efba484a56e6fd/jsfx/JClones_LMC1.jsfx</source>
       </version>
     </reapack>
     <reapack name="JClones_OInflator.jsfx" type="effect" desc="JClones_OInflator">
@@ -508,6 +530,12 @@ Buss Description
 {\pard \ql \f0 \sa180 \li0 \fi0 \b \fs36 \u8220"JClones_Fattener\u8221"\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 JClones_Fattener is a clone of popular audio plugin developed by a duo known for their electronic dance music. The plugin is designed to add warmth, distortion, and overall fatness to audio signals, making it a favorite among producers for enhancing the character of their tracks.\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 {\field{\*\fldinst{HYPERLINK "https://github.com/JClones/JSFXClones/blob/master/JClones_Fattener.md"}}{\fldrslt{\ul
+Detailed Description
+}}}
+\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \b \fs36 \u8220"JClones_LMC1\u8221"\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 JClones_LMC1 is a clone of a compressor plugin modeled after the compressor found in the legendary consoles. The original hardware compressor was designed to manage signals from talkback or listen microphones in recording studios. However, engineers quickly discovered its aggressive compression characteristics were fantastic for creative use, especially on drums.\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\field{\*\fldinst{HYPERLINK "https://github.com/JClones/JSFXClones/blob/master/JClones_LMC1.md"}}{\fldrslt{\ul
 Detailed Description
 }}}
 \par}
