@@ -84,3 +84,8 @@ JClones_Fattener is a clone of popular audio plugin developed by a duo known for
 JClones_LMC1 is a clone of a compressor plugin modeled after the compressor found in the legendary consoles. The original hardware compressor was designed to manage signals from talkback or listen microphones in recording studios. However, engineers quickly discovered its aggressive compression characteristics were fantastic for creative use, especially on drums.
 
 [Detailed Description](https://github.com/JClones/JSFXClones/blob/master/JClones_LMC1.md)
+
+# “JClones_Hyrax“
+JClones_Hyrax is a clone of a brickwall limiter module included in an open-source automatic mastering system that uses machine learning to match the characteristics of a reference track to the track you want to master. While the original limiter does offline processing of a track the algorithm was modified to work in realtime.
+
+[Detailed Description](https://github.com/JClones/JSFXClones/blob/master/JClones_Hyrax.md)

@@ -1,0 +1,520 @@
+desc:       JClones_Hyrax
+version:    1.0.0
+author:     JClones
+tags:       limiter
+link:       https://github.com/JClones/JSFXClones
+screenshot: https://github.com/JClones/JSFXClones/blob/main/assets/screenshots/JClones_Hyrax.png
+about:
+    # JClones_Hyrax
+    JClones_Hyrax is a clone of a brickwall limiter module included in an open-source automatic mastering system that uses machine learning to match the characteristics of a reference track to the track you want to master. While the original limiter does offline processing of a track the algorithm was modified to work in realtime.
+
+    ## Main Parameters
+
+    **Input Gain:** Adjusts the input signal level before processing.
+
+    **Threshold:** Sets the level at which the limiting begins. Any signal that exceeds this threshold will be limited. Lower the threshold to apply more limiting and increase the perceived loudness of the audio.
+
+slider1:0<-18,18,0.1>Input Gain, dB
+slider2:-1<-18,0,0.1>Threshold, dB
+
+@init
+
+// for allocator
+function allocate(size) local(result)
+(
+  result = __memory_Index__;
+  __memory_Index__ += size;
+  result;
+);
+
+function DB_TO_K(x)
+(
+  10 ^ (x / 20)
+);
+
+/*
+ * Filter1
+ */
+
+function Filter1_init(a0, a1, b1)
+(
+  this.a0 = a0;
+  this.a1 = a1;
+  this.b1 = b1;
+);
+ 
+function Filter1_ButLPFilter1(freq_k) local(w0, KK, a0, a1, b0, b1)
+(
+  w0 = freq_k * 2.0 * $pi;
+
+  // prepare for BLT
+  KK = 1.0 / tan(w0 / 2.0);
+
+  // perform BLT
+  a0 = 1.0;
+  a1 = 1.0;
+  b0 = 1.0 + KK;
+  b1 = 1.0 - KK;
+
+  // make b0 == 1, also change the sign for b1 and b2 in our calculations
+  this.a0 = a0 / b0;
+  this.a1 = a1 / b0;
+  this.b1 = -b1 / b0;
+);
+
+function Filter1_reset()
+(
+  this.x1 = 0.0;
+  this.y1 = 0.0;
+);
+
+function Filter1_processSample(x) local(y)
+(
+  y = this.a0 * x + this.a1 * this.x1 + this.b1 * this.y1;
+  
+  this.x1 = x;
+  this.y1 = y;
+  
+  y;
+);
+
+/*
+ * DelayLineMax
+ */
+ 
+DelayLineMax_PAD_SIZE = 8;
+ 
+function DelayLineMax_PAD_FLOOR(x)
+(
+  floor(x / DelayLineMax_PAD_SIZE) * DelayLineMax_PAD_SIZE;
+);
+
+function DelayLineMax_PAD_CEIL(x)
+(
+  ceil(x / DelayLineMax_PAD_SIZE) * DelayLineMax_PAD_SIZE;
+);
+ 
+function DelayLineMax_PAD_DIV(x)
+(
+  x / DelayLineMax_PAD_SIZE;
+);
+
+function DelayLineMax_init(delay_line_size) local(len, total_len, len_pad, second_len)
+(
+  len = delay_line_size;
+  total_len = 0;
+  
+  while (len > 1) (
+  
+    len_pad = DelayLineMax_PAD_CEIL(len);
+    second_len = DelayLineMax_PAD_DIV(len_pad);
+    
+    total_len += len_pad;
+    
+    len = second_len;
+  );
+  
+  this.max_position = total_len;
+  total_len += 1;
+  
+  // allocate the line
+  this.delay_line = allocate(total_len);
+  this.delay_line_size = delay_line_size;
+);
+
+function DelayLineMax_reset(default_value) local(len, total_offset, len_pad, second_len, i, default_value)
+(  
+  // now fill the line (and fill PADs with specific values)
+
+  len = this.delay_line_size;
+  
+  total_offset = 0;
+  
+  while (len > 1) (
+  
+    len_pad = DelayLineMax_PAD_CEIL(len);
+    second_len = DelayLineMax_PAD_DIV(len_pad);
+
+    // fill main values by defaults
+    i = 0;
+    
+    loop(len,
+      this.delay_line[total_offset + i] = default_value;
+      i += 1;
+    );
+
+    // fill padding
+    loop(len_pad - len,
+      this.delay_line[total_offset + i] = -1000000.0;   // the lowest minimum value here
+      i += 1;
+    );
+  
+    total_offset += len_pad;
+
+    len = second_len;
+  );
+  
+  this.delay_line[total_offset] = default_value;
+  
+  this.head = 0;
+);
+
+function DelayLineMax_getMaxPad(source, destination) local(y, i)
+(
+  // max of 8 values
+  y = source[0];
+  
+  i = 1;
+
+  loop(7,
+    y = max(y, source[i]);
+    i += 1;
+  );
+  
+  destination[0] = y;
+);
+
+function DelayLineMax_pushSample(x) local(position, y, len, total_offset, len_pad, second_len, second_position, position_aligned, source, destination)
+(
+  position = this.head;
+  
+  y = this.delay_line[this.head];
+  
+  this.delay_line[this.head] = x;
+  
+  this.head += 1;
+  
+  (this.head >= this.delay_line_size) ? ( this.head = 0 );
+  
+  // refresh max tree
+  
+  len = this.delay_line_size;
+  
+  total_offset = 0;
+  
+  while (len > 1) (
+  
+    len_pad = DelayLineMax_PAD_CEIL(len);
+    second_len = DelayLineMax_PAD_DIV(len_pad);
+
+    second_position = DelayLineMax_PAD_DIV(position);
+    
+    // get source and destination values
+    
+    position_aligned = DelayLineMax_PAD_FLOOR(position);
+    
+    source = this.delay_line + total_offset + position_aligned;
+    destination = this.delay_line + total_offset + len_pad + second_position;
+    
+    this.DelayLineMax_getMaxPad(source, destination);
+    
+    total_offset += len_pad;
+    
+    len = second_len;
+    position = second_position;
+  
+  );
+  
+  y;
+);
+
+// for debugging:
+function DelayLineMax_getMaxSlow() local(y, i)
+(
+  y = this.delay_line[0];
+
+  i = 1;
+  
+  loop(this.delay_line_size - 1,
+    y = max(y, this.delay_line[i]);
+    i += 1;
+  );
+  
+  y;
+);
+
+function DelayLineMax_getMax()
+(
+  this.delay_line[this.max_position];
+);
+
+/*
+ * DelayLine
+ */
+ 
+function DelayLine_init(delay_line_size)
+(
+  this.size = delay_line_size;
+  this.line = allocate(delay_line_size);
+  this.head = 0;
+); 
+
+function DelayLine_pushSample(x) local(y)
+(
+  y = this.line[this.head]; 
+  this.line[this.head] = x;
+  this.head = (this.head + 1) % this.size;
+  
+  y
+);
+
+function DelayLine_reset()
+(
+  this.head = 0;
+  
+  memset(this.line, 0.0, this.size);
+);
+
+function DelayLine_getLatency()
+(
+  this.size;
+);
+
+/*
+ * LinearPhaseIIR1
+ */
+
+function LinearPhaseIIR1_reset()
+(
+  this.filter.Filter1_reset();
+
+  this.offset = 0;
+  this.output_index = 0;
+
+  memset(this.output_0, 0.0, this.block_size + this.half_block_size);
+  memset(this.output_1, 0.0, this.block_size + this.half_block_size);
+);
+
+function LinearPhaseIIR1_init(block_size)
+(
+  (block_size != this.block_size) ? (
+    this.block_size = block_size;
+    this.half_block_size = block_size / 2;
+
+    this.input = allocate(this.block_size);
+
+    this.output_0 = allocate(this.block_size + this.half_block_size);
+    this.output_1 = allocate(this.block_size + this.half_block_size);
+
+    this.LinearPhaseIIR1_reset();
+  );
+);
+
+function LinearPhaseIIR1_setHalfIIR(a0, a1, b1)
+(
+  this.filter.Filter1_init(a0, a1, b1);
+);
+
+function LinearPhaseIIR1_getLatency()
+(
+  this.block_size + this.half_block_size;
+);
+
+function LinearPhaseIIR1_processSample(x) local(y, output, p)
+(
+  // backward IIR filter part:
+
+  y = ((this.output_index == 0) ? this.output_0 : this.output_1)[this.offset];
+
+  (this.offset < this.half_block_size) ? (
+    y += ((this.output_index == 1) ? this.output_0 : this.output_1)[this.offset + this.block_size];  // half overlap/add
+  );
+
+  this.input[this.offset] = x;
+  this.offset += 1;
+
+  (this.offset >= this.block_size) ? (
+
+    // switch buffers
+    this.output_index = 1 - this.output_index;
+
+    output = (this.output_index == 0) ? this.output_0 : this.output_1;
+
+    // copy input data
+    memset(output, 0.0, this.half_block_size);
+    memcpy(output + this.half_block_size, this.input, this.block_size);
+
+    // process in reverse direction
+    p = output + this.block_size + this.half_block_size - 1;
+
+    this.backward.Filter1_init(this.filter.a0, this.filter.a1, this.filter.b1);
+    this.backward.Filter1_reset();
+
+    // data portion
+    loop(this.block_size,
+      p[0] = this.backward.Filter1_processSample(p[0]);
+      p -= 1;
+    );
+
+    // zero portion
+    loop(this.half_block_size,
+      p[0] = this.backward.Filter1_processSample(0.0);
+      p -= 1;
+    );
+
+    this.offset = 0;
+  );
+
+  // forward IIR filter part
+  this.filter.Filter1_processSample(y);
+);
+
+/*
+ * Limiter
+ */
+
+// default parameters
+default_attack_ms = 1.0;
+default_attack_filter_coefficient = -2.0;
+default_hold_ms = 1.0;
+default_hold_filter_coefficient = 7.0;
+default_release_filter_coefficient = 800.0;
+default_release_ms = 3000.0;
+
+function Limiter_init() local(attack_samples, attack_samples_odd, window_size, coeff, block_len_float, latency)
+(
+  // attack/lookahead
+
+  attack_samples = floor(srate * default_attack_ms * 0.001);
+
+  attack_samples_odd = attack_samples;   // make_odd
+
+  ((attack_samples_odd % 2) == 0) ? (
+    attack_samples_odd += 1;
+  );
+
+  window_size = 2 * attack_samples_odd - 1;
+
+  this.attack_hold.DelayLineMax_init(window_size);
+
+  // forward/backward filter
+  coeff = exp(default_attack_filter_coefficient / attack_samples);
+
+  // calculate response fall to -120 dB
+  block_len_float = log(0.000001) / log(coeff);
+
+  this.attack_filter.LinearPhaseIIR1_init(floor(block_len_float + 0.5));
+
+  this.attack_filter.LinearPhaseIIR1_setHalfIIR(1.0 - coeff, 0.0, coeff);
+
+  this.slided_attack_delay.DelayLine_init(this.attack_filter.LinearPhaseIIR1_getLatency());
+
+  // hold/release
+  window_size = floor(srate * default_hold_ms * 0.001);
+
+  this.hold_hold.DelayLineMax_init(window_size);
+
+  this.hold_filter.Filter1_ButLPFilter1(default_hold_filter_coefficient / srate);
+
+  this.release_filter.Filter1_ButLPFilter1((default_release_filter_coefficient / default_release_ms) / srate);
+
+  // latency compensation
+  latency = window_size + this.attack_filter.LinearPhaseIIR1_getLatency();
+
+  this.gr_compensation.DelayLine_init(latency);
+  this.x_left_compensation.DelayLine_init(latency);
+  this.x_right_compensation.DelayLine_init(latency);
+);
+
+function Limiter_reset()
+(
+  this.attack_hold.DelayLineMax_reset();
+  this.attack_filter.LinearPhaseIIR1_reset();
+  this.slided_attack_delay.DelayLine_reset();
+
+  this.hold_hold.DelayLineMax_reset();
+  this.hold_filter.Filter1_reset();
+  this.release_filter.Filter1_reset();
+
+  this.gr_compensation.DelayLine_reset();
+  this.x_left_compensation.DelayLine_reset();
+  this.x_right_compensation.DelayLine_reset();
+);
+
+function Limiter_getLatency()
+(
+  this.gr_compensation.DelayLine_getLatency();
+);
+
+function Limiter_setThreshold(threshold)
+(
+  this.threshold = threshold
+);
+
+function Limiter_processSampleStereo(x_left, x_right) local(level_x, flip_gr, slided_attack, attack, slided_release, hold_output, release_output, release, total_flip_gr)
+(
+  level_x = max(abs(x_left), abs(x_right));
+
+  flip_gr = 1.0 - this.threshold / max(level_x, this.threshold);
+
+  // attack
+
+  this.attack_hold.DelayLineMax_pushSample(flip_gr);
+
+  slided_attack = this.attack_hold.DelayLineMax_getMax();
+
+  attack = this.attack_filter.LinearPhaseIIR1_processSample(slided_attack);     // linear phase filter
+
+  slided_attack = this.slided_attack_delay.DelayLine_pushSample(slided_attack);  // compensate attack_filter latency
+
+  flip_gr = this.gr_compensation.DelayLine_pushSample(flip_gr);          // compensate attack_hold + attack_filter latency
+
+  // hold/release
+
+  this.hold_hold.DelayLineMax_pushSample(slided_attack);
+
+  slided_release = this.hold_hold.DelayLineMax_getMax();
+
+  hold_output = this.hold_filter.Filter1_processSample(slided_release);
+
+  release_output = this.release_filter.Filter1_processSample(max(slided_release, hold_output));
+
+  release = max(hold_output, release_output);
+
+  // compensate attack_hold + attack_filter latency
+  this.y_left = this.x_left_compensation.DelayLine_pushSample(x_left);
+  this.y_right = this.x_right_compensation.DelayLine_pushSample(x_right);
+
+  total_flip_gr = max(max(attack, release), flip_gr);
+
+  this.y_left *= (1.0 - total_flip_gr);
+  this.y_right *= (1.0 - total_flip_gr);
+);
+
+// continue @init:
+
+(sample_rate != srate) ? (
+
+  sample_rate = srate;
+  
+  // init memory buffers:
+
+  __memory_Index__ = 0;
+ 
+  limiter.Limiter_init();
+);
+
+limiter.Limiter_reset();
+
+// report latency
+pdc_delay = limiter.Limiter_getLatency();
+pdc_bot_ch = 0;
+pdc_top_ch = 2; // delays the first two channels (spl0/spl1).
+
+@slider
+
+input_gain_dB = slider1;
+threshold_dB = slider2;
+
+input_gain_k = DB_TO_K(input_gain_dB);
+
+limiter.Limiter_setThreshold(DB_TO_K(threshold_dB));
+
+@block
+
+@sample
+
+limiter.Limiter_processSampleStereo(spl0 * input_gain_k, spl1 * input_gain_k);
+
+spl0 = limiter.y_left;
+spl1 = limiter.y_right;
