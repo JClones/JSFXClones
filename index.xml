@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<index version="1" name="JSFXClones" commit="6ce8888e97dce615472daa6c36efba484a56e6fd">
+<index version="1" name="JSFXClones" commit="b33797f83999dd297d43fa90e560bc9e62a668eb">
   <category name="jsfx">
     <reapack name="JClones_AC1.jsfx" type="effect" desc="JClones_AC1">
       <metadata>
@@ -161,6 +161,26 @@
       </metadata>
       <version name="1.0.0" author="JClones" time="2024-08-31T20:36:06Z">
         <source>https://github.com/JClones/JSFXClones/raw/8140718b238a57d6655e996e3439f0a4561e7f33/jsfx/JClones_Fattener.jsfx</source>
+      </version>
+    </reapack>
+    <reapack name="JClones_Hyrax.jsfx" type="effect" desc="JClones_Hyrax">
+      <metadata>
+        <description><![CDATA[{\rtf1\ansi\deff0{\fonttbl{\f0 \fswiss Helvetica;}{\f1 Courier;}}
+{\colortbl;\red255\green0\blue0;\red0\green0\blue255;}
+\widowctrl\hyphauto
+
+{\pard \ql \f0 \sa180 \li0 \fi0 \b \fs36 JClones_Hyrax\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 JClones_Hyrax is a clone of a brickwall limiter module included in an open-source automatic mastering system that uses machine learning to match the characteristics of a reference track to the track you want to master. While the original limiter does offline processing of a track the algorithm was modified to work in realtime.\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \b \fs32 Main Parameters\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\b Input Gain:} Adjusts the input signal level before processing.\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\b Threshold:} Sets the level at which the limiting begins. Any signal that exceeds this threshold will be limited. Lower the threshold to apply more limiting and increase the perceived loudness of the audio.\par}
+}
+]]></description>
+        <link rel="website">https://github.com/JClones/JSFXClones</link>
+        <link rel="screenshot">https://github.com/JClones/JSFXClones/blob/main/assets/screenshots/JClones_Hyrax.png</link>
+      </metadata>
+      <version name="1.0.0" author="JClones" time="2024-10-24T21:51:16Z">
+        <source>https://github.com/JClones/JSFXClones/raw/b33797f83999dd297d43fa90e560bc9e62a668eb/jsfx/JClones_Hyrax.jsfx</source>
       </version>
     </reapack>
     <reapack name="JClones_L2.jsfx" type="effect" desc="JClones_L2">
@@ -536,6 +556,12 @@ Detailed Description
 {\pard \ql \f0 \sa180 \li0 \fi0 \b \fs36 \u8220"JClones_LMC1\u8221"\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 JClones_LMC1 is a clone of a compressor plugin modeled after the compressor found in the legendary consoles. The original hardware compressor was designed to manage signals from talkback or listen microphones in recording studios. However, engineers quickly discovered its aggressive compression characteristics were fantastic for creative use, especially on drums.\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 {\field{\*\fldinst{HYPERLINK "https://github.com/JClones/JSFXClones/blob/master/JClones_LMC1.md"}}{\fldrslt{\ul
+Detailed Description
+}}}
+\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \b \fs36 \u8220"JClones_Hyrax\u8220"\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 JClones_Hyrax is a clone of a brickwall limiter module included in an open-source automatic mastering system that uses machine learning to match the characteristics of a reference track to the track you want to master. While the original limiter does offline processing of a track the algorithm was modified to work in realtime.\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\field{\*\fldinst{HYPERLINK "https://github.com/JClones/JSFXClones/blob/master/JClones_Hyrax.md"}}{\fldrslt{\ul
 Detailed Description
 }}}
 \par}
