@@ -16,6 +16,7 @@ Also you may use [ysfx](https://github.com/jpcima/ysfx) or [ReaJS](https://www.r
 - Limiters
   - [L2](#jclones_l2)
   - [Classic Master Limiter](#jclones_classic_master_limiter)
+  - [Hyrax](#jclones_hyrax)
 - Compressors
   - [RS124](#jclones_rs124)
   - [VBL](#jclones_vbl)
