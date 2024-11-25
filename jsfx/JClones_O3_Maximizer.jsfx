@@ -1,0 +1,571 @@
+desc:       JClones_O3_Maximizer
+version:    1.0.0
+author:     JClones
+tags:       limiter
+link:       https://github.com/JClones/JSFXClones
+screenshot: https://github.com/JClones/JSFXClones/blob/main/assets/screenshots/JClones_O3_Maximizer.png
+about:
+    # JClones_O3_Maximizer
+    JClones_O3_Maximizer is a clone of maximizer module included in a comprehensive mastering plugin released in the mid-2000s. It was widely regarded for its all-in-one approach to mastering, offering a range of tools in a single interface that could handle EQ, dynamics, limiting, and more. It became a favorite for producers and engineers looking for a versatile, cost-effective solution for in-the-box mastering.
+
+    ## Main Parameters
+
+    **Threshold:** Determines the level at which the Maximizer begins reducing peaks.Lowering the threshold increases the amount of limiting applied, resulting in a louder output.
+
+    **Margin:** Sets the maximum output level of the signal. Typically set to -0.1 dB or -0.3 dB to prevent inter-sample peaks that can occur in digital systems. Ensures the output does not exceed this level.
+
+    **Character:** Controls the behavior of the Maximizer in balancing loudness and transparency. This parameter adjusts between more transparent limiting and a more aggressive approach, depending on the desired effect.
+
+    **Prevent ISP:** When the option is enabled, the Maximizer actively detects and limits potential inter-sample peaks during the limiting process. It ensures that the audio remains clean and undistorted, even after digital-to-analog conversion or compression to lossy formats.
+
+slider1:0<-20,0,0.1>Threshold, dB
+slider2:0<-6,0,0.1>Margin, dB
+slider3:4<0,10,0.1>Character
+slider4:0<0,1,1{Off,On}>Prevent ISP
+
+@init
+
+// for allocator
+function allocate(size) local(result)
+(
+  result = __memory_Index__;
+  __memory_Index__ += size;
+  result;
+);
+
+function DB_TO_K(x)
+(
+  10 ^ (x / 20)
+);
+
+function K_TO_DB(x)
+(
+  20 * log10(x)
+);
+
+/*
+ * DelayLine
+ */
+ 
+function DelayLine_init(delay_line_size)
+(
+  this.size = delay_line_size;
+  this.line = allocate(delay_line_size);
+  this.head = 0;
+); 
+
+function DelayLine_pushSample(x) local(y)
+(
+  (this.size > 0) ? (
+    y = this.line[this.head]; 
+    this.line[this.head] = x;
+    this.head = (this.head + 1) % this.size;
+  ) : 
+  (
+    y = x;
+  );
+  
+  y
+);
+
+function DelayLine_reset()
+(
+  this.head = 0;
+  
+  memset(this.line, 0, this.size);
+);
+
+function DelayLine_getLatency(val)
+(
+  this.size;
+);
+
+/*
+ * Ozone3Limiter
+ */
+
+function Ozone3Limiter_initUpsampling() local(n_taps)
+(
+  n_taps = 70;   // 63 samples + pad for 5x oversampling
+
+  this.upsampling_ir = allocate(n_taps);
+
+  this.upsampling_ir[0] = 0.000000000;   this.upsampling_ir[1] = 0.000000000;   this.upsampling_ir[2] = 0.000000000;   this.upsampling_ir[3] = 0.000000000;   this.upsampling_ir[4] = 0.001108887;
+  this.upsampling_ir[5] = 0.000000000;   this.upsampling_ir[6] = -0.002307397;  this.upsampling_ir[7] = -0.005021744;  this.upsampling_ir[8] = -0.006557025;  this.upsampling_ir[9] = -0.005171423;
+  this.upsampling_ir[10] = 0.000000000;  this.upsampling_ir[11] = 0.007996489;  this.upsampling_ir[12] = 0.015768220;  this.upsampling_ir[13] = 0.019012450;  this.upsampling_ir[14] = 0.014039180;
+  this.upsampling_ir[15] = 0.000000000;  this.upsampling_ir[16] = -0.019598060; this.upsampling_ir[17] = -0.037128130; this.upsampling_ir[18] = -0.043264330; this.upsampling_ir[19] = -0.031036880;
+  this.upsampling_ir[20] = 0.000000000;  this.upsampling_ir[21] = 0.041477940;  this.upsampling_ir[22] = 0.077415300;  this.upsampling_ir[23] = 0.089296040;  this.upsampling_ir[24] = 0.063735860;
+  this.upsampling_ir[25] = 0.000000000;  this.upsampling_ir[26] = -0.085880880; this.upsampling_ir[27] = -0.162850400; this.upsampling_ir[28] = -0.192896500; this.upsampling_ir[29] = -0.143438300;
+  this.upsampling_ir[30] = 0.000000000;  this.upsampling_ir[31] = 0.225520200;  this.upsampling_ir[32] = 0.494558500;  this.upsampling_ir[33] = 0.750534300;  this.upsampling_ir[34] = 0.934209700;
+  this.upsampling_ir[35] = 1.000956000;  this.upsampling_ir[36] = 0.934209700;  this.upsampling_ir[37] = 0.750534300;  this.upsampling_ir[38] = 0.494558500;  this.upsampling_ir[39] = 0.225520200;
+  this.upsampling_ir[40] = 0.000000000;  this.upsampling_ir[41] = -0.143438300; this.upsampling_ir[42] = -0.192896500; this.upsampling_ir[43] = -0.162850400; this.upsampling_ir[44] = -0.085880880;
+  this.upsampling_ir[45] = 0.000000000;  this.upsampling_ir[46] = 0.063735860;  this.upsampling_ir[47] = 0.089296040;  this.upsampling_ir[48] = 0.077415300;  this.upsampling_ir[49] = 0.041477940;
+  this.upsampling_ir[50] = 0.000000000;  this.upsampling_ir[51] = -0.031036880; this.upsampling_ir[52] = -0.043264330; this.upsampling_ir[53] = -0.037128130; this.upsampling_ir[54] = -0.019598060;
+  this.upsampling_ir[55] = 0.000000000;  this.upsampling_ir[56] = 0.014039180;  this.upsampling_ir[57] = 0.019012450;  this.upsampling_ir[58] = 0.015768220;  this.upsampling_ir[59] = 0.007996489;
+  this.upsampling_ir[60] = 0.000000000;  this.upsampling_ir[61] = -0.005171423; this.upsampling_ir[62] = -0.006557025; this.upsampling_ir[63] = -0.005021744; this.upsampling_ir[64] = -0.002307397;
+  this.upsampling_ir[65] = 0.000000000;  this.upsampling_ir[66] = 0.001108887;  this.upsampling_ir[67] = 0.000000000;  this.upsampling_ir[68] = 0.000000000;  this.upsampling_ir[69] = 0.000000000;
+
+  this.upsampling_len = n_taps / 5;
+
+  this.upsampling_buffer_left = allocate(this.upsampling_len * 2);
+  this.upsampling_buffer_right = allocate(this.upsampling_len * 2);
+
+  this.upsampling_head = this.upsampling_len;
+);
+
+function Ozone3Limiter_init() local(max_lookahead)
+(
+  this.Ozone3Limiter_initUpsampling();
+
+  (srate <= 130000.0) ? (
+    (srate <= 50000.0) ? (
+      max_lookahead = 32;
+    ) : (
+      max_lookahead = 64;
+    );
+  ) : (
+    max_lookahead = 128;
+  );
+
+  max_lookahead = max_lookahead * 2 + 1;
+
+  // max hold buffer
+  this.max_hold_len = max_lookahead;
+  this.max_hold_head = 0;
+
+  this.max_hold_buffer = allocate(this.max_hold_len * 2);
+
+  this.max_hold_delay.DelayLine_Init(max_lookahead);
+
+  // attack IR buffer
+  this.attack_len = max_lookahead;
+  this.attack_ir = allocate(this.attack_len);
+  this.attack_buffer = allocate(this.attack_len * 2);
+  this.attack_head = 0;
+
+  // auto-release stuff
+  this.auto_release_len = floor(srate * 0.014);
+  this.auto_release_head = 0;
+  this.auto_release_sum = 0.0;
+
+  this.auto_release_buffer = allocate(this.auto_release_len);
+
+  this.delay_gr_1.DelayLine_init(this.auto_release_len);
+  this.delay_gr_2.DelayLine_init(this.auto_release_len);
+
+  // latency compensation
+  this.delay_left.DelayLine_Init(this.upsampling_len / 2 + this.max_hold_len - 1 + this.auto_release_len);
+  this.delay_right.DelayLine_Init(this.upsampling_len / 2 + this.max_hold_len - 1 + this.auto_release_len);
+);
+
+function Ozone3Limiter_reset()
+(
+  // upsampling stuff
+  this.upsampling_head = 0;
+
+  memset(this.upsampling_buffer_left, 0, this.upsampling_len);
+  memset(this.upsampling_buffer_right, 0, this.upsampling_len);
+
+  // max hold stuff
+  this.max_hold_head = 0;
+
+  memset(this.max_hold_buffer, 0, this.max_hold_len);
+
+  this.max_hold_delay.DelayLine_reset();
+
+  // attack stuff
+  this.attack_head = 0;
+
+  memset(this.attack_buffer, 0, this.attack_len);
+
+  // auto-release stuff
+  this.auto_release_head = 0;
+
+  memset(this.auto_release_buffer, 0, this.auto_release_len);
+
+  this.auto_release_sum = 0.0;
+
+  this.auto_release_state_1 = 0.0;
+  this.auto_release_state_2 = 0.0;
+
+  this.delay_gr_1.DelayLine_reset();
+  this.delay_gr_2.DelayLine_reset();
+
+  // latency compensation
+  this.delay_left.DelayLine_reset();
+  this.delay_right.DelayLine_reset();
+);
+
+function Ozone3Limiter_setThreshold(threshold_dB)
+(
+  this.threshold_dB = threshold_dB;
+);
+
+function Ozone3Limiter_setPreventISP(prevent_isp)
+(
+  this.prevent_isp = prevent_isp;
+);
+
+function Ozone3Limiter_getLatency()
+(
+  this.delay_left.DelayLine_getLatency();
+);
+
+MIN_LEVEL_DB = -200.0;
+MIN_LEVEL_LIN = DB_TO_K(MIN_LEVEL_DB);
+
+function Ozone3Limiter_detectLevel(input_left, input_right) local(i, j, x_left, x_right,
+    y0_left, y0_right, y0_max,
+    y1_left, y1_right, y1_max,
+    y2_left, y2_right, y2_max,
+    y3_left, y3_right, y3_max,
+    y4_left, y4_right, y4_max,
+    y5_left, y5_right, y5_max)
+(
+  // push the input
+  (this.upsampling_head == 0) ? (
+
+    memcpy(this.upsampling_buffer_left + this.upsampling_len, this.upsampling_buffer_left, this.upsampling_len);
+    memcpy(this.upsampling_buffer_right + this.upsampling_len, this.upsampling_buffer_right, this.upsampling_len);
+
+    this.upsampling_head = this.upsampling_len;
+  );
+  this.upsampling_head -= 1;
+
+  this.upsampling_buffer_left[this.upsampling_head] = input_left;
+  this.upsampling_buffer_right[this.upsampling_head] = input_right;
+
+  // get latency compensated input
+  y0_left = this.upsampling_buffer_left[this.upsampling_head + this.upsampling_len / 2];
+  y0_right = this.upsampling_buffer_right[this.upsampling_head + this.upsampling_len / 2];
+
+  y0_max = max(abs(y0_left), abs(y0_right));
+
+  (this.prevent_isp) ? (
+
+    // apply IR to get 5x upsampled samples
+
+    y1_left = 0.0;  y1_right = 0.0;
+    y2_left = 0.0;  y2_right = 0.0;
+    y3_left = 0.0;  y3_right = 0.0;
+    y4_left = 0.0;  y4_right = 0.0;
+    y5_left = 0.0;  y5_right = 0.0;
+
+    i = 0;
+    j = 0;
+
+    loop(this.upsampling_len,
+
+      x_left = this.upsampling_buffer_left[this.upsampling_head + i];
+      x_right = this.upsampling_buffer_right[this.upsampling_head + i];
+
+      y1_left += x_left * this.upsampling_ir[j];      y1_right += x_right * this.upsampling_ir[j];
+      y2_left += x_left * this.upsampling_ir[j + 1];  y2_right += x_right * this.upsampling_ir[j + 1];
+      y3_left += x_left * this.upsampling_ir[j + 2];  y3_right += x_right * this.upsampling_ir[j + 2];
+      y4_left += x_left * this.upsampling_ir[j + 3];  y4_right += x_right * this.upsampling_ir[j + 3];
+      y5_left += x_left * this.upsampling_ir[j + 4];  y5_right += x_right * this.upsampling_ir[j + 4];
+
+      i += 1;
+      j += 5;
+    );
+
+    // get maximum value
+    y1_max = max(abs(y1_left), abs(y1_right));
+    y2_max = max(abs(y2_left), abs(y2_right));
+    y3_max = max(abs(y3_left), abs(y3_right));
+    y4_max = max(abs(y4_left), abs(y4_right));
+    y5_max = max(abs(y5_left), abs(y5_right));
+
+    y0_max = max(y0_max, y1_max);
+    y0_max = max(y0_max, y2_max);
+    y0_max = max(y0_max, y3_max);
+    y0_max = max(y0_max, y4_max);
+    y0_max = max(y0_max, y5_max);
+  );
+
+  y0_max;
+);
+
+function Ozone3Limiter_applyMaxHold(input) local(max_value, i)
+(
+  // push the input
+  (this.max_hold_head == 0) ? (
+
+    memcpy(this.max_hold_buffer + this.max_hold_len, this.max_hold_buffer, this.max_hold_len);
+
+    this.max_hold_head = this.max_hold_len;
+  );
+  this.max_hold_head -= 1;
+
+  this.max_hold_buffer[this.max_hold_head] = input;
+
+  max_value = input;
+
+  // calculate the max
+  i = 1;
+
+  loop(this.max_hold_samples - 1,
+
+    max_value = max(max_value, this.max_hold_buffer[this.max_hold_head + i]);
+
+    i += 1;
+  );
+
+  max_value;
+);
+
+function Ozone3Limiter_applyRelease(input)
+(
+  this.release_state *= this.release_filter_k;  // release
+
+  (input > this.release_state) ? (
+    this.release_state = input;    // zero attack
+  );
+
+  this.release_state;
+);
+
+function Ozone3Limiter_applyAutoRelease(raw_gr_dB, max_hold_gr_dB, gr_with_release) local(raw_gr_delta, s1, s2, gr_output)
+(
+  raw_gr_delta = abs(raw_gr_dB - this.last_raw_gr);
+
+  this.last_raw_gr = raw_gr_dB;
+
+  // apply moving average/sum
+
+  this.auto_release_sum -= this.auto_release_buffer[this.auto_release_head];
+
+  this.auto_release_buffer[this.auto_release_head] = raw_gr_delta;
+
+  this.auto_release_sum += raw_gr_delta;
+
+  this.auto_release_head = (this.auto_release_head + 1) % this.auto_release_len;
+
+  // apply filter 1 to this.auto_release_sum
+
+  s1 = this.auto_release_k1 * this.auto_release_sum + this.auto_release_k2;
+
+  (s1 > 1.0) ? s1 = 1.0;
+
+  s2 = s1 * this.auto_release_k3 * this.auto_release_k4 + (1.0 - this.auto_release_k4) * this.auto_release_state_1;
+
+  (s2 < this.auto_release_state_1) ? (
+    this.auto_release_state_1 += (s2 - this.auto_release_state_1) * 2.0;
+  ) : (
+    this.auto_release_state_1 += (s2 - this.auto_release_state_1) * 0.3;
+  );
+
+  this.auto_release_state_1 = max(min(this.auto_release_state_1, 1.0), 0.0);
+
+  // delay max_hold_gr_dB and gr_with_release to match this.auto_release_buffer latency
+  max_hold_gr_dB = this.delay_gr_1.DelayLine_pushSample(max_hold_gr_dB);
+  gr_with_release = this.delay_gr_2.DelayLine_pushSample(gr_with_release);
+
+  // apply filter 2 to gr_with_release
+
+  this.auto_release_state_2 = gr_with_release * gr_with_release * this.auto_release_k5 + (1.0 - this.auto_release_k5) * this.auto_release_state_2;
+
+  // combine 2 filters
+  gr_output = sqrt(this.auto_release_state_2) * this.auto_release_state_1;
+
+  // combine the result
+  max(max_hold_gr_dB, gr_output);
+);
+
+function Ozone3Limiter_applyAttack(input) local(y, i, x)
+(
+  // push the input
+  (this.attack_head == 0) ? (
+
+    memcpy(this.attack_buffer + this.attack_len, this.attack_buffer, this.attack_len);
+
+    this.attack_head = this.attack_len;
+  );
+  this.attack_head -= 1;
+
+  this.attack_buffer[this.attack_head] = input;
+
+  // apply IR
+  y = 0.0;
+  i = 0;
+
+  loop(this.attack_len,
+
+    x = this.attack_buffer[this.attack_head + i];
+
+    y += x * this.attack_ir[i];
+
+    i += 1;
+  );
+
+  y;
+);
+
+function Ozone3Limiter_processSampleStereo(input_left, input_right) local(input_level, input_level_dB, raw_gr_dB, 
+    max_hold_gr_dB, gr_with_release, gr_with_auto_release, final_gr_dB, output_gr)
+(
+  // 1. detect level
+  input_level = this.Ozone3Limiter_detectLevel(input_left, input_right);
+
+  // 2. convert to dB scale
+  input_level_dB = (input_level < MIN_LEVEL_LIN) ? MIN_LEVEL_DB : K_TO_DB(input_level);
+
+  // 3. get positive gain reduction (actually "overshoot")
+  raw_gr_dB = max(input_level_dB - this.threshold_dB, 0.0);
+
+  // 4. apply max hold
+  max_hold_gr_dB = this.Ozone3Limiter_applyMaxHold(raw_gr_dB);
+
+  // 5. apply release
+  gr_with_release = this.Ozone3Limiter_applyRelease(raw_gr_dB);
+
+  // 6. apply auto release
+  gr_with_auto_release = (this.attack_filter_coefficient > 0.04) ?
+    this.Ozone3Limiter_applyAutoRelease(raw_gr_dB, max_hold_gr_dB, gr_with_release) :
+    this.delay_gr_1.DelayLine_pushSample(max_hold_gr_dB);
+
+  gr_with_auto_release = this.max_hold_delay.DelayLine_pushSample(gr_with_auto_release);   // compensate dynamic max hold
+
+  // 7. apply attack
+  final_gr_dB = this.Ozone3Limiter_applyAttack(gr_with_auto_release);
+
+  // 8. apply gain reduction
+  output_gr = DB_TO_K(-final_gr_dB);
+
+  this.y_left = this.delay_left.DelayLine_pushSample(input_left) * output_gr;
+  this.y_right = this.delay_right.DelayLine_pushSample(input_right) * output_gr;
+);
+
+function Ozone3Limiter_setAttack(attack_filter_coefficient) local(real_attack_block_size, sum, i, x, normalization,
+    release_x1, release_x2)
+(
+  this.attack_filter_coefficient = attack_filter_coefficient;
+
+  // refresh attack IR
+  real_attack_block_size = this.attack_len;
+
+  (attack_filter_coefficient < 0.3) ? (
+
+    real_attack_block_size = floor(sqrt(attack_filter_coefficient) * attack_filter_coefficient / (sqrt(0.3) * 0.3) * this.attack_len + 0.5);
+
+    ((real_attack_block_size & 1) == 0) ? real_attack_block_size += 1;
+  );
+
+  sum = 0.0;
+  i = 0;
+
+  loop(this.attack_len,
+
+    x = i - (this.attack_len - 1) / 2;
+
+    this.attack_ir[i] = 1.0 - cos((x / real_attack_block_size * 2.0 + 1.0) * $pi);
+
+    (i < (this.attack_len - real_attack_block_size) / 2 ||
+      i >= (this.attack_len + real_attack_block_size) / 2) ? (
+      this.attack_ir[i] = 0.0;
+    );
+
+    sum += this.attack_ir[i];
+    i += 1;
+  );
+
+  normalization = 1.0 / sum;
+  i = 0;
+
+  loop(this.attack_len,
+    this.attack_ir[i] *= normalization;
+    i += 1;
+  );
+
+  this.max_hold_samples = real_attack_block_size;
+
+  this.max_hold_delay.size = (this.attack_len - 1) / 2 - (real_attack_block_size - 1) / 2;
+
+  // refresh release coefficient
+
+  release_x1 = attack_filter_coefficient;
+  
+  (release_x1 > 1.0) ? release_x1 = 2.0 * release_x1 - 1.0;
+
+  release_x2 = release_x1 * 2.0;
+
+  this.release_filter_k = 1.0 - srate / (exp(release_x2) * 35.0) * (0.1 / 44100.0);
+
+  // auto-release stuff
+
+  this.auto_release_k1 = exp(release_x2) * 0.018181818;
+
+  this.auto_release_k2 = 0.0;
+
+  (release_x1 > 0.5) ? (
+    this.auto_release_k2 = (release_x1 - 0.5) * 0.7;
+    (this.auto_release_k2 > 0.9) ? this.auto_release_k2 = 0.9;
+  );
+
+  this.auto_release_k3 = 1.0;
+
+  (attack_filter_coefficient < 0.3) ? this.auto_release_k3 = attack_filter_coefficient * attack_filter_coefficient * 11.111111;
+
+  this.auto_release_k4 = 44.1 / srate;
+
+  this.auto_release_k5 = this.auto_release_k4;
+
+  (release_x1 > 0.7) ? this.auto_release_k5 += (release_x1 - 0.7) * (release_x1 - 0.7);
+
+  (this.auto_release_k5 > 1.0) ? this.auto_release_k5 = 1.0;
+
+);
+
+// continue @init:
+
+refresh_attack_filter_coefficient = 0;
+
+(sample_rate != srate) ? (
+
+  sample_rate = srate;
+  
+  // init memory buffers:
+
+  __memory_Index__ = 0;
+ 
+  limiter.Ozone3Limiter_init();
+
+  refresh_attack_filter_coefficient = 1;
+);
+
+limiter.Ozone3Limiter_init();
+
+// report latency
+pdc_delay = limiter.Ozone3Limiter_getLatency();
+pdc_bot_ch = 0;
+pdc_top_ch = 2; // delays the first two channels (spl0/spl1).
+
+@slider
+
+param_threshold_dB = slider1;
+param_margin_dB = slider2;
+param_character = slider3;
+param_prevent_isp = slider4;
+
+param_input_gain_k = DB_TO_K(-param_threshold_dB);
+
+limiter.Ozone3Limiter_setThreshold(param_margin_dB);
+
+param_attack_filter_coefficient = param_character * 0.15;
+
+(param_attack_filter_coefficient != limiter.attack_filter_coefficient || refresh_attack_filter_coefficient) ? (
+
+  limiter.Ozone3Limiter_setAttack(param_attack_filter_coefficient);
+
+);
+
+limiter.Ozone3Limiter_setPreventISP(param_prevent_isp);
+
+@block
+
+@sample
+
+limiter.Ozone3Limiter_processSampleStereo(spl0 * param_input_gain_k, spl1 * param_input_gain_k);
+
+spl0 = limiter.y_left;
+spl1 = limiter.y_right;

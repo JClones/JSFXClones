@@ -17,6 +17,7 @@ Also you may use [ysfx](https://github.com/jpcima/ysfx) or [ReaJS](https://www.r
   - [L2](#jclones_l2)
   - [Classic Master Limiter](#jclones_classic_master_limiter)
   - [Hyrax](#jclones_hyrax)
+  - [O3_Maximizer](#jclones_o3_maximizer)
 - Compressors
   - [RS124](#jclones_rs124)
   - [VBL](#jclones_vbl)
@@ -111,3 +112,8 @@ JClones_LMC1 is a clone of a compressor plugin modeled after the compressor foun
 JClones_Hyrax is a clone of a brickwall limiter module included in an open-source automatic mastering system that uses machine learning to match the characteristics of a reference track to the track you want to master. While the original limiter does offline processing of a track the algorithm was modified to work in realtime.
 
 [Detailed Description](https://github.com/JClones/JSFXClones/blob/master/JClones_Hyrax.md)
+
+# JClones_O3_Maximizer
+JClones_O3_Maximizer is a clone of maximizer module included in a comprehensive mastering plugin released in the mid-2000s. It was widely regarded for its all-in-one approach to mastering, offering a range of tools in a single interface that could handle EQ, dynamics, limiting, and more. It became a favorite for producers and engineers looking for a versatile, cost-effective solution for in-the-box mastering.
+
+[Detailed Description](https://github.com/JClones/JSFXClones/blob/master/JClones_O3_Maximizer.md)
