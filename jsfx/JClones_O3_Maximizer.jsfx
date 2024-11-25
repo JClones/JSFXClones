@@ -548,8 +548,9 @@ param_character = slider3;
 param_prevent_isp = slider4;
 
 param_input_gain_k = DB_TO_K(-param_threshold_dB);
+param_output_gain_k = DB_TO_K(param_margin_dB);
 
-limiter.Ozone3Limiter_setThreshold(param_margin_dB);
+limiter.Ozone3Limiter_setThreshold(0.0);
 
 param_attack_filter_coefficient = param_character * 0.15;
 
@@ -567,5 +568,5 @@ limiter.Ozone3Limiter_setPreventISP(param_prevent_isp);
 
 limiter.Ozone3Limiter_processSampleStereo(spl0 * param_input_gain_k, spl1 * param_input_gain_k);
 
-spl0 = limiter.y_left;
-spl1 = limiter.y_right;
+spl0 = limiter.y_left * param_output_gain_k;
+spl1 = limiter.y_right * param_output_gain_k;
