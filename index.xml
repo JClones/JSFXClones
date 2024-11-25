@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<index version="1" name="JSFXClones" commit="b33797f83999dd297d43fa90e560bc9e62a668eb">
+<index version="1" name="JSFXClones" commit="e84effe3043a7466b70e3fc50c6b5086f2e2071c">
   <category name="jsfx">
     <reapack name="JClones_AC1.jsfx" type="effect" desc="JClones_AC1">
       <metadata>
@@ -254,6 +254,28 @@
         <source>https://github.com/JClones/JSFXClones/raw/6ce8888e97dce615472daa6c36efba484a56e6fd/jsfx/JClones_LMC1.jsfx</source>
       </version>
     </reapack>
+    <reapack name="JClones_O3_Maximizer.jsfx" type="effect" desc="JClones_O3_Maximizer">
+      <metadata>
+        <description><![CDATA[{\rtf1\ansi\deff0{\fonttbl{\f0 \fswiss Helvetica;}{\f1 Courier;}}
+{\colortbl;\red255\green0\blue0;\red0\green0\blue255;}
+\widowctrl\hyphauto
+
+{\pard \ql \f0 \sa180 \li0 \fi0 \b \fs36 JClones_O3_Maximizer\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 JClones_O3_Maximizer is a clone of maximizer module included in a comprehensive mastering plugin released in the mid-2000s. It was widely regarded for its all-in-one approach to mastering, offering a range of tools in a single interface that could handle EQ, dynamics, limiting, and more. It became a favorite for producers and engineers looking for a versatile, cost-effective solution for in-the-box mastering.\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \b \fs32 Main Parameters\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\b Threshold:} Determines the level at which the Maximizer begins reducing peaks.Lowering the threshold increases the amount of limiting applied, resulting in a louder output.\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\b Margin:} Sets the maximum output level of the signal. Typically set to -0.1 dB or -0.3 dB to prevent inter-sample peaks that can occur in digital systems. Ensures the output does not exceed this level.\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\b Character:} Controls the behavior of the Maximizer in balancing loudness and transparency. This parameter adjusts between more transparent limiting and a more aggressive approach, depending on the desired effect.\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\b Prevent ISP:} When the option is enabled, the Maximizer actively detects and limits potential inter-sample peaks during the limiting process. It ensures that the audio remains clean and undistorted, even after digital-to-analog conversion or compression to lossy formats.\par}
+}
+]]></description>
+        <link rel="website">https://github.com/JClones/JSFXClones</link>
+        <link rel="screenshot">https://github.com/JClones/JSFXClones/blob/main/assets/screenshots/JClones_O3_Maximizer.png</link>
+      </metadata>
+      <version name="1.0.0" author="JClones" time="2024-11-25T13:03:12Z">
+        <source>https://github.com/JClones/JSFXClones/raw/e84effe3043a7466b70e3fc50c6b5086f2e2071c/jsfx/JClones_O3_Maximizer.jsfx</source>
+      </version>
+    </reapack>
     <reapack name="JClones_OInflator.jsfx" type="effect" desc="JClones_OInflator">
       <metadata>
         <description><![CDATA[{\rtf1\ansi\deff0{\fonttbl{\f0 \fswiss Helvetica;}{\f1 Courier;}}
@@ -488,6 +510,10 @@ Classic Master Limiter
 {\pard \ql \f0 \sa0 \li720 \fi-360 \endash \tx360\tab {\field{\*\fldinst{HYPERLINK "#jclones_hyrax"}}{\fldrslt{\ul
 Hyrax
 }}}
+\par}
+{\pard \ql \f0 \sa0 \li720 \fi-360 \endash \tx360\tab {\field{\*\fldinst{HYPERLINK "#jclones_o3_maximizer"}}{\fldrslt{\ul
+O3_Maximizer
+}}}
 \sa180\par}
 {\pard \ql \f0 \sa0 \li360 \fi-360 \bullet \tx360\tab Compressors\par}
 {\pard \ql \f0 \sa0 \li720 \fi-360 \endash \tx360\tab {\field{\*\fldinst{HYPERLINK "#jclones_rs124"}}{\fldrslt{\ul
@@ -628,6 +654,12 @@ Detailed Description
 {\pard \ql \f0 \sa180 \li0 \fi0 \b \fs36 JClones_Hyrax\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 JClones_Hyrax is a clone of a brickwall limiter module included in an open-source automatic mastering system that uses machine learning to match the characteristics of a reference track to the track you want to master. While the original limiter does offline processing of a track the algorithm was modified to work in realtime.\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 {\field{\*\fldinst{HYPERLINK "https://github.com/JClones/JSFXClones/blob/master/JClones_Hyrax.md"}}{\fldrslt{\ul
+Detailed Description
+}}}
+\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \b \fs36 JClones_O3_Maximizer\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 JClones_O3_Maximizer is a clone of maximizer module included in a comprehensive mastering plugin released in the mid-2000s. It was widely regarded for its all-in-one approach to mastering, offering a range of tools in a single interface that could handle EQ, dynamics, limiting, and more. It became a favorite for producers and engineers looking for a versatile, cost-effective solution for in-the-box mastering.\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\field{\*\fldinst{HYPERLINK "https://github.com/JClones/JSFXClones/blob/master/JClones_O3_Maximizer.md"}}{\fldrslt{\ul
 Detailed Description
 }}}
 \par}
