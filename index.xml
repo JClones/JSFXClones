@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<index version="1" name="JSFXClones" commit="e84effe3043a7466b70e3fc50c6b5086f2e2071c">
+<index version="1" name="JSFXClones" commit="52580d601fd5d482a1fc0318d0445fe1a1999e72">
   <category name="jsfx">
     <reapack name="JClones_AC1.jsfx" type="effect" desc="JClones_AC1">
       <metadata>
@@ -438,6 +438,30 @@
         <source>https://github.com/JClones/JSFXClones/raw/9040b313bc76fd8263ec7660f9c796c51924570d/jsfx/JClones_SatChannel.jsfx</source>
       </version>
     </reapack>
+    <reapack name="JClones_TubeDriver.jsfx" type="effect" desc="JClones_TubeDriver">
+      <metadata>
+        <description><![CDATA[{\rtf1\ansi\deff0{\fonttbl{\f0 \fswiss Helvetica;}{\f1 Courier;}}
+{\colortbl;\red255\green0\blue0;\red0\green0\blue255;}
+\widowctrl\hyphauto
+
+{\pard \ql \f0 \sa180 \li0 \fi0 \b \fs36 JClones_TubeDriver\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 JClones_TubeDriver is a clone of an older version of popular free plugin that emulates the characteristics of tube-based saturation and distortion. It\u8217's known for its straightforward design and effective results in adding warmth, grit, and harmonic richness to audio tracks.\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \b \fs32 Main Parameters\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\b Input Gain:} Controls the level of the signal entering the plugin.\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\b Drive:} Determines the amount of tube saturation and distortion applied to the signal.\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\b Bias:} Adjusts the electrical bias of the modeled tube.\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\b Boost:} Increases the signal level entering the tube emulation circuit.\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\b Output Gain:} Controls the level of the signal after processing.\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 Note: JClones version offers linear phase oversampling, auto gain Drive and Bias parameters compensation and additional DC remover.\par}
+}
+]]></description>
+        <link rel="website">https://github.com/JClones/JSFXClones</link>
+        <link rel="screenshot">https://github.com/JClones/JSFXClones/blob/master/assets/screenshots/JClones_TubeDriver.png</link>
+      </metadata>
+      <version name="1.0.0" author="JClones" time="2024-12-01T12:26:09Z">
+        <source>https://github.com/JClones/JSFXClones/raw/52580d601fd5d482a1fc0318d0445fe1a1999e72/jsfx/JClones_TubeDriver.jsfx</source>
+      </version>
+    </reapack>
     <reapack name="JClones_VBL.jsfx" type="effect" desc="JClones_VBL">
       <metadata>
         <description><![CDATA[{\rtf1\ansi\deff0{\fonttbl{\f0 \fswiss Helvetica;}{\f1 Courier;}}
@@ -543,6 +567,10 @@ Inflator
 \par}
 {\pard \ql \f0 \sa0 \li720 \fi-360 \endash \tx360\tab {\field{\*\fldinst{HYPERLINK "#jclones_fattener"}}{\fldrslt{\ul
 Fattener
+}}}
+\par}
+{\pard \ql \f0 \sa0 \li720 \fi-360 \endash \tx360\tab {\field{\*\fldinst{HYPERLINK "#jclones_tubedriver"}}{\fldrslt{\ul
+TubeDriver
 }}}
 \sa180\par}
 {\pard \ql \f0 \sa0 \li360 \fi-360 \bullet \tx360\tab Console Emulation\par}
@@ -660,6 +688,12 @@ Detailed Description
 {\pard \ql \f0 \sa180 \li0 \fi0 \b \fs36 JClones_O3_Maximizer\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 JClones_O3_Maximizer is a clone of maximizer module included in a comprehensive mastering plugin released in the mid-2000s. It was widely regarded for its all-in-one approach to mastering, offering a range of tools in a single interface that could handle EQ, dynamics, limiting, and more. It became a favorite for producers and engineers looking for a versatile, cost-effective solution for in-the-box mastering.\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 {\field{\*\fldinst{HYPERLINK "https://github.com/JClones/JSFXClones/blob/master/JClones_O3_Maximizer.md"}}{\fldrslt{\ul
+Detailed Description
+}}}
+\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \b \fs36 JClones_TubeDriver\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 JClones_TubeDriver is a clone of an older version of popular free plugin that emulates the characteristics of tube-based saturation and distortion. It\u8217's known for its straightforward design and effective results in adding warmth, grit, and harmonic richness to audio tracks.\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\field{\*\fldinst{HYPERLINK "https://github.com/JClones/JSFXClones/blob/master/JClones_TubeDriver.md"}}{\fldrslt{\ul
 Detailed Description
 }}}
 \par}
