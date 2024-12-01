@@ -27,6 +27,7 @@ Also you may use [ysfx](https://github.com/jpcima/ysfx) or [ReaJS](https://www.r
 - Soft-clippers
   - [Inflator](#jclones_oinflator)
   - [Fattener](#jclones_fattener)
+  - [TubeDriver](#jclones_tubedriver)
 - Console Emulation
   - [AC1](#jclones_ac1)
   - [SatChannel](#jclones_satchannel) / [SatBuss](#jclones_satbuss)
@@ -117,3 +118,8 @@ JClones_Hyrax is a clone of a brickwall limiter module included in an open-sourc
 JClones_O3_Maximizer is a clone of maximizer module included in a comprehensive mastering plugin released in the mid-2000s. It was widely regarded for its all-in-one approach to mastering, offering a range of tools in a single interface that could handle EQ, dynamics, limiting, and more. It became a favorite for producers and engineers looking for a versatile, cost-effective solution for in-the-box mastering.
 
 [Detailed Description](https://github.com/JClones/JSFXClones/blob/master/JClones_O3_Maximizer.md)
+
+# JClones_TubeDriver
+JClones_TubeDriver is a clone of an older version of popular free plugin that emulates the characteristics of tube-based saturation and distortion. It’s known for its straightforward design and effective results in adding warmth, grit, and harmonic richness to audio tracks.
+
+[Detailed Description](https://github.com/JClones/JSFXClones/blob/master/JClones_TubeDriver.md)
