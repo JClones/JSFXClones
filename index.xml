@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<index version="1" name="JSFXClones" commit="52580d601fd5d482a1fc0318d0445fe1a1999e72">
+<index version="1" name="JSFXClones" commit="f94f3fe663f4295dcafe48726bd8dd4d9abd6312">
   <category name="jsfx">
     <reapack name="JClones_AC1.jsfx" type="effect" desc="JClones_AC1">
       <metadata>
@@ -140,6 +140,27 @@
       </metadata>
       <version name="1.0.0" author="JClones" time="2024-07-18T18:15:30Z">
         <source>https://github.com/JClones/JSFXClones/raw/bd6d27854c3f0f3d170d19283d8061f9244b247d/jsfx/JClones_Classic_Master_Limiter.jsfx</source>
+      </version>
+    </reapack>
+    <reapack name="JClones_DaTube.jsfx" type="effect" desc="JClones_DaTube">
+      <metadata>
+        <description><![CDATA[{\rtf1\ansi\deff0{\fonttbl{\f0 \fswiss Helvetica;}{\f1 Courier;}}
+{\colortbl;\red255\green0\blue0;\red0\green0\blue255;}
+\widowctrl\hyphauto
+
+{\pard \ql \f0 \sa180 \li0 \fi0 \b \fs36 JClones_DaTube\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 JClones_DaTube is a clone of simple and effective tube saturation plugin included in popular DAW. It\u8217's designed to emulate the harmonic warmth and saturation characteristics of analog tube circuits, making it a useful tool for adding color, depth, and character to digital audio tracks.\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \b \fs32 Main Parameters\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\b Drive:} Controls the amount of tube saturation applied to the signal.\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\b Balance:} Adjusts the tonal balance of the processed signal.\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\b Output:} Adjusts the overall output level of the processed signal.\par}
+}
+]]></description>
+        <link rel="website">https://github.com/JClones/JSFXClones</link>
+        <link rel="screenshot">https://github.com/JClones/JSFXClones/blob/master/assets/screenshots/JClones_DaTube.png</link>
+      </metadata>
+      <version name="1.0.0" author="JClones" time="2024-12-05T20:50:36Z">
+        <source>https://github.com/JClones/JSFXClones/raw/f94f3fe663f4295dcafe48726bd8dd4d9abd6312/jsfx/JClones_DaTube.jsfx</source>
       </version>
     </reapack>
     <reapack name="JClones_Fattener.jsfx" type="effect" desc="JClones_Fattener">
@@ -568,10 +589,6 @@ Inflator
 {\pard \ql \f0 \sa0 \li720 \fi-360 \endash \tx360\tab {\field{\*\fldinst{HYPERLINK "#jclones_fattener"}}{\fldrslt{\ul
 Fattener
 }}}
-\par}
-{\pard \ql \f0 \sa0 \li720 \fi-360 \endash \tx360\tab {\field{\*\fldinst{HYPERLINK "#jclones_tubedriver"}}{\fldrslt{\ul
-TubeDriver
-}}}
 \sa180\par}
 {\pard \ql \f0 \sa0 \li360 \fi-360 \bullet \tx360\tab Console Emulation\par}
 {\pard \ql \f0 \sa0 \li720 \fi-360 \endash \tx360\tab {\field{\*\fldinst{HYPERLINK "#jclones_ac1"}}{\fldrslt{\ul
@@ -592,6 +609,15 @@ AC2
 \par}
 {\pard \ql \f0 \sa0 \li720 \fi-360 \endash \tx360\tab {\field{\*\fldinst{HYPERLINK "#jclones_phoenix"}}{\fldrslt{\ul
 Phoenix
+}}}
+\sa180\par}
+{\pard \ql \f0 \sa0 \li360 \fi-360 \bullet \tx360\tab Tube Saturation\par}
+{\pard \ql \f0 \sa0 \li720 \fi-360 \endash \tx360\tab {\field{\*\fldinst{HYPERLINK "#jclones_tubedriver"}}{\fldrslt{\ul
+TubeDriver
+}}}
+\par}
+{\pard \ql \f0 \sa0 \li720 \fi-360 \endash \tx360\tab {\field{\*\fldinst{HYPERLINK "#jclones_datube"}}{\fldrslt{\ul
+DaTube
 }}}
 \sa180\sa180\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 \b \fs36 JClones_L2\par}
@@ -694,6 +720,12 @@ Detailed Description
 {\pard \ql \f0 \sa180 \li0 \fi0 \b \fs36 JClones_TubeDriver\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 JClones_TubeDriver is a clone of an older version of popular free plugin that emulates the characteristics of tube-based saturation and distortion. It\u8217's known for its straightforward design and effective results in adding warmth, grit, and harmonic richness to audio tracks.\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 {\field{\*\fldinst{HYPERLINK "https://github.com/JClones/JSFXClones/blob/master/JClones_TubeDriver.md"}}{\fldrslt{\ul
+Detailed Description
+}}}
+\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \b \fs36 JClones_DaTube\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 JClones_DaTube is a clone of simple and effective tube saturation plugin included in popular DAW. It\u8217's designed to emulate the harmonic warmth and saturation characteristics of analog tube circuits, making it a useful tool for adding color, depth, and character to digital audio tracks.\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\field{\*\fldinst{HYPERLINK "https://github.com/JClones/JSFXClones/blob/master/JClones_DaTube.md"}}{\fldrslt{\ul
 Detailed Description
 }}}
 \par}
