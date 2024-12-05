@@ -1,0 +1,554 @@
+desc:       JClones_DaTube
+version:    1.0.0
+author:     JClones
+tags:       saturation
+link:       https://github.com/JClones/JSFXClones
+screenshot: https://github.com/JClones/JSFXClones/blob/master/assets/screenshots/JClones_DaTube.png
+about:
+    # JClones_DaTube
+    JClones_DaTube is a clone of simple and effective tube saturation plugin included in popular DAW. It’s designed to emulate the harmonic warmth and saturation characteristics of analog tube circuits, making it a useful tool for adding color, depth, and character to digital audio tracks.
+
+    ## Main Parameters
+
+    **Drive:** Controls the amount of tube saturation applied to the signal.
+
+    **Balance:** Adjusts the tonal balance of the processed signal.
+
+    **Output:** Adjusts the overall output level of the processed signal.
+     
+slider1:30<0,100,1>Drive, %
+slider2:100<0,100,1>Balance, %
+slider3:-6<-24,0,0.1>Output Gain, dB
+
+@init
+
+OVERSAMPLING_BLOCK_SIZE = 128;
+
+DC_REMOVER_FREQ_HZ = 5.0;
+
+// for allocator
+function allocate(size) local(result)
+(
+  result = __memory_Index__;
+  __memory_Index__ += size;
+  result;
+);
+
+// calculate FFT size
+function getFFTSize(N_max) local(fft_size)
+(
+  fft_size = 16;
+  
+  while (fft_size < N_max) (
+    fft_size *= 2;
+  );
+    
+  fft_size;
+);
+
+function DB_TO_K(x)
+(
+  10 ^ (x / 20)
+);
+
+function tanh(x) local(e2x)
+(
+  e2x = exp(2.0 * x);
+  (e2x - 1.0) / (e2x + 1.0);
+);
+
+/*
+ * OverlapAddLinPhase - fast convolution linear phase filter
+ */
+
+function OverlapAddLinPhase_reset()
+(
+  // reset state
+
+  this.buffer_index = 0;
+  this.write_offset = 0;
+
+  memset(this.output_0, 0, this.buffer_len);
+  memset(this.output_1, 0, this.buffer_len);
+
+  memset(this.input, 0, this.buffer_len);
+);
+
+function OverlapAddLinPhase_init(N_max)
+(
+  this.block_size = getFFTSize(N_max);
+  this.fft_size = this.block_size * 2;      // pad impulse with zeros up to 2*N
+  this.block_offset = this.fft_size / 4;
+   
+  // setup all buffers and transforms
+
+  // REAPER 5.25+ (not compatible with ReaJS):
+  //this.buffer_len = this.fft_size;
+  //this.fft_gain = (0.5 * 0.5) / this.fft_size;
+
+  // --- ReaJS compatible ---
+  this.buffer_len = this.fft_size * 2;
+  this.fft_gain = 1.0 / this.fft_size;
+  // ------------------------
+
+  this.input = allocate(this.buffer_len);     // input buffer
+  this.output_0 = allocate(this.buffer_len);
+  this.output_1 = allocate(this.buffer_len);  // overlap-add buffers
+  this.impulse = allocate(this.buffer_len);   // impulse
+
+  this.OverlapAddLinPhase_reset()
+);
+
+function OverlapAddLinPhase_setLinPhaseImpulse(ir, N) local(ir_offset, i, j)
+(
+  // zero pad
+  memset(this.impulse, 0, this.fft_size);
+  
+  ir_offset = this.fft_size - floor(N / 2);
+  
+  i = 0;
+  
+  loop(N,
+    // make IR center to have zero phase
+    this.impulse[(i + ir_offset) % this.fft_size] = ir[i] * this.fft_gain;
+    i += 1;
+  );
+  
+  // REAPER 5.25+ (not compatible with ReaJS):
+  // fft_real(this.impulse, this.fft_size);
+  
+  // --- ReaJS compatible ---
+  
+  i = this.fft_size - 1;
+  j = i * 2;
+  
+  loop(this.fft_size,
+    this.impulse[j] = this.impulse[i];    // Re
+    this.impulse[j + 1] = 0.0;            // Im
+    i -= 1;
+    j -= 2;
+  );
+  
+  fft(this.impulse, this.fft_size);
+
+  // ------------------------
+);
+
+function OverlapAddLinPhase_getLatency()
+(
+  this.block_size + this.block_size / 2;
+);
+
+function OverlapAddLinPhase_processSample(x) local(y, i, j, y_0, y_1)
+(
+  // write input into the buffer
+  this.input[this.block_offset + this.write_offset] = x;
+  
+  // prepare output plus overlapped value (overlap-add)
+  y = (this.buffer_index == 0) ?
+    this.output_0[this.write_offset] + this.output_1[this.write_offset + this.block_size] :
+    this.output_1[this.write_offset] + this.output_0[this.write_offset + this.block_size];
+    
+  this.write_offset += 1;
+  
+  (this.write_offset >= this.block_size) ? (
+  
+    (!this.is_bypass) ? (
+    
+      // process input buffer:
+      
+      /*
+      // REAPER 5.25+ (not compatible with ReaJS):
+      
+      // 1. forward FFT transform
+      fft_real(this.input, this.fft_size);
+      
+      // 2. apply convolution in F domain:
+      
+      // special processing
+      y_0 = this.input[0] * this.impulse[0];
+      y_1 = this.input[1] * this.impulse[1];
+
+      // complex multiplication
+      convolve_c(this.input, this.impulse, this.fft_size / 2);
+      
+      // bypass complex multiplication for DC and Nyquist
+      this.input[0] = y_0;
+      this.input[1] = y_1;
+      
+      // 3. backward FFT transform
+      ifft_real(this.input, this.fft_size);
+      */
+      
+      // --- ReaJS compatible ---
+      
+      i = this.fft_size - 1;
+      j = i * 2;
+      
+      loop(this.fft_size,
+        this.input[j] = this.input[i];    // Re
+        this.input[j + 1] = 0.0;          // Im
+        i -= 1;
+        j -= 2;
+      );
+      
+      // 1. forward FFT transform
+      fft(this.input, this.fft_size);
+      
+      // 2. apply convolution in F domain:
+      convolve_c(this.input, this.impulse, this.fft_size);
+      
+      // 3. backward FFT transform
+      ifft(this.input, this.fft_size);
+
+      i = 0;
+      j = 0;
+      
+      loop(this.fft_size,
+        this.input[i] = this.input[j];    // Re (ignore Im)
+        i += 1;
+        j += 2;
+      );
+    
+      // ------------------------
+    );
+  
+    // 3. switch buffers
+    this.buffer_index = 1 - this.buffer_index;
+    this.write_offset = 0;
+  
+    (this.buffer_index == 0) ?
+      memcpy(this.output_0, this.input, this.fft_size) :
+      memcpy(this.output_1, this.input, this.fft_size);
+  
+    memset(this.input, 0, this.fft_size);
+  );
+  
+  y;
+);
+
+/*
+ * FFTResampler2x
+ */
+ 
+function BH4(x)
+(
+  // https://www.mathworks.com/matlabcentral/mlc-downloads/downloads/submissions/46092/versions/3/previews/coswin.m/index.html
+  // % 4 Term Blackman-Harris window, 92 dB
+  0.358750287312166 - 0.4882901074726 * cos(2.0 * $pi * x) + 0.141279712970519 * cos(4.0 * $pi * x) - 0.011679892244715 * cos(6.0 * $pi * x);
+); 
+ 
+function FFTResampler2x_generateFilter(N, buffer) local(center_i, sum_y, i, sin_x, sinc_x, wnd_x, wnd_y)
+(
+  memset(buffer, 0, N);
+  
+  center_i = N / 2;
+  
+  sum_y = 0;
+  
+  i = 1;
+  
+  while (i < N / 2) (
+  
+    sin_x = ((i % 4) == 1) ? 1 : -1;
+    sinc_x = sin_x / (i * $pi / 2);
+  
+    // apply window
+    wnd_x = 0.5 + 0.5 * i / (N / 2 - 1);
+    wnd_y = BH4(wnd_x);
+    
+    sinc_x *= wnd_y;
+    
+    buffer[center_i + i] = sinc_x;
+    buffer[center_i - i] = sinc_x;     // symmetric
+    
+    sum_y += sinc_x + sinc_x;
+    
+    i += 2;
+  );
+  
+  buffer[center_i] = 1;
+  
+  sum_y += buffer[center_i];
+  
+  // normalize
+
+  i = 1;
+  
+  while (i < N / 2) (
+    buffer[center_i + i] /= sum_y;
+    buffer[center_i - i] /= sum_y;
+  
+    i += 2;
+  );
+
+  buffer[center_i] /= sum_y;
+);
+
+function FFTResampler2x_init(block_size) local(N, filter_ir)
+(
+  N = block_size * 2;     // 2x oversampling
+
+  filter_ir = __memory_Index__;
+  __memory_Index__ += N;
+  
+  this.FFTResampler2x_generateFilter(N, filter_ir);
+  
+  this.filter.OverlapAddLinPhase_init(N);
+  this.filter.OverlapAddLinPhase_setLinPhaseImpulse(filter_ir, N);
+);
+
+function FFTResampler2x_reset()
+(
+  this.filter.OverlapAddLinPhase_reset();
+);
+
+function FFTResampler2x_upsampleSample(x)
+(
+  this.y0 = this.filter.OverlapAddLinPhase_processSample(x * 2);
+  this.y1 = this.filter.OverlapAddLinPhase_processSample(0);
+);
+
+function FFTResampler2x_downsampleSample(x0, x1) local(y)
+(
+  y = this.filter.OverlapAddLinPhase_processSample(x0);
+  
+  this.filter.OverlapAddLinPhase_processSample(x1);
+  
+  y;
+);
+
+/*
+ * DaTube ADAA functions:
+ */ 
+
+// f(x)
+function DaTube_f(x)
+(
+  (x > 1.0) ? (
+    (1.0 - this.drive05) * x + this.drive05;
+  ) :
+  (x > 0.0) ? (
+    ((1.0 - x) - pow(1.0 - x, this.P)) * this.drive05 + x;
+  ) :
+  (x > -1.0) ? (
+    (pow(1.0 + x, this.P) - (x + 1.0)) * this.drive + x;
+  ) : (
+     (1.0 - this.drive) * x - this.drive;
+  );
+);
+
+// antiderivative(f(x))
+function DaTube_F0(x)
+(
+  (x > 1.0) ? (
+    (((1.0 - this.drive05) * x + this.drive) * x - this.drive / this.P1) * 0.5;
+  ) :
+  (x > 0.0) ? (
+    ((x * (1.0 - x * 0.5) + (pow(1.0 - x, this.P1) - 1.0) / this.P1) * this.drive + x * x) * 0.5;
+  ) :
+  (x > -1.0) ? (
+    ((pow(x + 1.0, this.P1) - 1.0) / this.P1 - (x * 0.5 + 1.0) * x) * this.drive + x * x * 0.5;
+  ) : (
+    ((0.5 - this.drive05) * x - this.drive) * x - this.drive / this.P1;
+  );
+);
+
+// antiderivative(x*f(x))
+function DaTube_F1(x)
+(
+  (x > 1.0) ? (
+    ((1.0 - this.drive05) * x / 3.0 + this.drive05 * 0.5) * x * x - this.drive05 / (this.P2 * this.P1);
+  ) :
+  (x > 0.0) ? (
+    this.drive05 / (this.P2 * this.P1) * (pow(1.0 - x, this.P1) * (x * this.P1 + 1.0) - 1.0) + ((1.0 - this.drive05) * x / 3.0 + this.drive05 * 0.5) * x * x;
+  ) :
+  (x > -1.0) ? (
+    ((1.0 - this.drive) * x / 3.0 - this.drive05) * x * x + this.drive / (this.P2 * this.P1) * ((x * this.P1 - 1.0) * pow(x + 1.0, this.P1) + 1.0);
+  ) : (
+    ((1.0 - this.drive) * x / 3.0 - this.drive05) * x * x + this.drive / (this.P2 * this.P1);
+  );
+);
+
+/*
+ * ADAA
+ * - second order ADAA
+ */
+
+ADAA_TOL = pow(10.0, -9);
+
+function ADAA_reset()
+(
+  this.x1 = 0.0;  this.F0_x1 = 0.0;  this.F0_x2 = 0.0;
+  this.x2 = 0.0;  this.F1_x1 = 0.0;  this.F1_x2 = 0.0;
+);
+
+function ADAA_getLatency()
+(
+  // 1 sample of latency
+  1;
+);
+
+function ADAA_processSample(x0, state_changed) local(F0_x0, F1_x0, y_1, y_2)
+(
+  F0_x0 = this..DaTube_F0(x0);
+  F1_x0 = this..DaTube_F1(x0);
+
+  (state_changed) ? (
+    this.F0_x1 = this..DaTube_F0(this.x1);  this.F0_x2 = this..DaTube_F0(this.x2);
+    this.F1_x1 = this..DaTube_F1(this.x1);  this.F1_x2 = this..DaTube_F1(this.x2);
+  );
+
+  // first term
+  y_1 = (abs(x0 - this.x1) < ADAA_TOL) ?
+    0.5 * this..DaTube_f((x0 + 2.0 * this.x1) / 3.0) :      // ill-conditioning
+    (x0 * (F0_x0 - this.F0_x1) - (F1_x0 - this.F1_x1)) / ((x0 - this.x1) * (x0 - this.x1));
+
+  // second term
+  y_2 = (abs(this.x1 - this.x2) < ADAA_TOL) ?
+    0.5 *  this..DaTube_f((this.x2 + 2.0 * this.x1) / 3.0) :      // ill-conditioning
+    (this.x2 * (this.F0_x2 - this.F0_x1) - (this.F1_x2 - this.F1_x1)) / ((this.x2 - this.x1) * (this.x2 - this.x1));
+
+  this.x2 = this.x1;
+  this.x1 = x0;
+
+  this.F0_x2 = this.F0_x1;  this.F0_x1 = F0_x0;
+  this.F1_x2 = this.F1_x1;  this.F1_x1 = F1_x0;
+
+  y_1 + y_2;
+);
+
+function ADAA_getDelayedInput()
+(
+  this.x2;
+);
+
+/*
+ * DaTube
+ */
+
+function DaTube_init()
+(
+  this.up2.FFTResampler2x_init(OVERSAMPLING_BLOCK_SIZE);
+  this.dn2.FFTResampler2x_init(OVERSAMPLING_BLOCK_SIZE);
+  
+  this.P = log(10.0) + 1.0;
+  this.P1 = this.P + 1.0;
+  this.P2 = this.P + 2.0;
+);
+
+function DaTube_setSampleRate()
+(
+  this.dc_k = DC_REMOVER_FREQ_HZ / (srate * 2.0) * 2.0 * $pi;   // 2x oversampled
+);
+
+function DaTube_getLatency()
+(
+  OVERSAMPLING_BLOCK_SIZE * 3 + 1;
+);
+
+function DaTube_reset()
+(
+  this.up2.FFTResampler2x_reset();
+  this.dn2.FFTResampler2x_reset();
+
+  this.adaa2.ADAA_reset();
+
+  this.state_changed = 0;
+
+  this.sample_delay = 0.0;
+  this.dc_s = 0.0;
+);
+
+function DaTube_setDrive(drive, balance, output_gain)
+(
+  (drive != this.drive) ? (
+    this.drive = drive;
+    this.drive05 = drive * 0.5;
+
+    this.state_changed = 1;
+  );
+
+  this.wet_mix = balance;
+
+  this.output_gain = output_gain * 2.0;
+);
+
+function DaTube_processSample_Oversampled(x) local(y, y1, x1)
+(
+  y = this.adaa2.ADAA_processSample(x, this.state_changed);
+  x1 = this.adaa2.ADAA_getDelayedInput();  // ADAA latency compensation
+
+  this.state_changed = 0;
+
+  // DC remover
+  y -= (this.dc_s += this.dc_k * (y - this.dc_s));
+
+  // dry mix
+  y = y * this.wet_mix + x1 * (1.0 - this.wet_mix);
+
+  // 1 sample delay (2 samples after 2x downsampling becomes 1)
+  y1 = this.sample_delay;
+  this.sample_delay = y;
+
+  y1;
+);
+
+function DaTube_processSample(x) local(y0, y1)
+(
+  x *= (this.drive + 0.5);
+
+  this.up2.FFTResampler2x_upsampleSample(x);
+
+  y0 = this.DaTube_processSample_Oversampled(this.up2.y0);
+  y1 = this.DaTube_processSample_Oversampled(this.up2.y1);
+
+  this.dn2.FFTResampler2x_downsampleSample(y0, y1) * this.output_gain;
+);
+
+// continue @init:
+
+(init_state == 0) ? (
+
+  init_state = 1;
+  
+  // init memory buffers:
+
+  __memory_Index__ = 0;
+
+  left.DaTube_init();
+  right.DaTube_init();
+);
+
+(srate != sample_rate) ? (
+
+  left.DaTube_setSampleRate();
+  right.DaTube_setSampleRate();
+
+  sample_rate = srate;
+);
+
+left.DaTube_reset();
+right.DaTube_reset();
+
+// report latency
+pdc_delay = left.DaTube_getLatency();
+pdc_bot_ch = 0;
+pdc_top_ch = 2; // delays the first two channels (spl0/spl1).
+
+@slider
+
+param_drive = slider1 / 100.0;
+param_balance = slider2 / 100.0;
+param_output_gain = DB_TO_K(slider3);
+
+left.DaTube_setDrive(param_drive, param_balance, param_output_gain);
+right.DaTube_setDrive(param_drive, param_balance, param_output_gain);
+
+@block
+
+@sample
+
+spl0 = left.DaTube_processSample(spl0);
+spl1 = right.DaTube_processSample(spl1);
+
