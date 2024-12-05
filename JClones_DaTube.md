@@ -9,3 +9,4 @@ JClones_DaTube is a clone of simple and effective tube saturation plugin include
 
 **Output:** Adjusts the overall output level of the processed signal.
  
+Note: JClones version offers linear phase oversampling plus ADAA method to reduce aliasing and also DC remover.

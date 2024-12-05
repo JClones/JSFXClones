@@ -16,6 +16,8 @@ about:
 
     **Output:** Adjusts the overall output level of the processed signal.
      
+    Note: JClones version offers linear phase oversampling plus ADAA method to reduce aliasing and also DC remover.
+
 slider1:30<0,100,1>Drive, %
 slider2:100<0,100,1>Balance, %
 slider3:-6<-24,0,0.1>Output Gain, dB
