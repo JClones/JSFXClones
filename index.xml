@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<index version="1" name="JSFXClones" commit="f94f3fe663f4295dcafe48726bd8dd4d9abd6312">
+<index version="1" name="JSFXClones" commit="b5484753fc6e6df7a4b675046f604debed267305">
   <category name="jsfx">
     <reapack name="JClones_AC1.jsfx" type="effect" desc="JClones_AC1">
       <metadata>
@@ -154,6 +154,7 @@
 {\pard \ql \f0 \sa180 \li0 \fi0 {\b Drive:} Controls the amount of tube saturation applied to the signal.\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 {\b Balance:} Adjusts the tonal balance of the processed signal.\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 {\b Output:} Adjusts the overall output level of the processed signal.\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 Note: JClones version offers linear phase oversampling plus ADAA method to reduce aliasing and also DC remover.\par}
 }
 ]]></description>
         <link rel="website">https://github.com/JClones/JSFXClones</link>
