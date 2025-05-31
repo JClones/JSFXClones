@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<index version="1" name="JSFXClones" commit="b5484753fc6e6df7a4b675046f604debed267305">
+<index version="1" name="JSFXClones" commit="8bd8a16361d4d91ff162914340b0409953764297">
   <category name="jsfx">
     <reapack name="JClones_AC1.jsfx" type="effect" desc="JClones_AC1">
       <metadata>
@@ -460,6 +460,29 @@
         <source>https://github.com/JClones/JSFXClones/raw/9040b313bc76fd8263ec7660f9c796c51924570d/jsfx/JClones_SatChannel.jsfx</source>
       </version>
     </reapack>
+    <reapack name="JClones_TapeHead.jsfx" type="effect" desc="JClones_TapeHead">
+      <metadata>
+        <description><![CDATA[{\rtf1\ansi\deff0{\fonttbl{\f0 \fswiss Helvetica;}{\f1 \fmodern Courier;}}
+{\colortbl;\red255\green0\blue0;\red0\green0\blue255;}
+\widowctrl\hyphauto
+
+{\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel0 \b \fs36 JClones_TapeHead\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 JClones_TapeHead is a clone of beloved analog tape saturation plugin developed by a company founded by a respected engineer/producer. Known for its simplicity and warm, musical sound, the plugin emulates the harmonic saturation and compression characteristics of vintage tape machines.\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel1 \b \fs32 Main Parameters\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\b Drive:} Controls the amount of tape saturation applied to the signal.\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\b Trim:} Adjusts the output level after saturation.\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\b Color:} Alters the tonal character of the saturation:\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\b Normal:} Provides a balanced tape saturation effect. {\b Medium:} Offers a midrange-focused saturation, useful for adding body to instruments. {\b Bright:} Emphasizes higher frequencies, adding clarity and presence.\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\b Clip:} JClones version specific. Turns off internal hard-clipping stage.\par}
+}
+]]></description>
+        <link rel="website">https://github.com/JClones/JSFXClones</link>
+        <link rel="screenshot">https://github.com/JClones/JSFXClones/blob/master/assets/screenshots/JClones_TapeHead.png</link>
+      </metadata>
+      <version name="1.0.0" author="JClones" time="2025-05-31T21:30:22Z">
+        <source>https://github.com/JClones/JSFXClones/raw/8bd8a16361d4d91ff162914340b0409953764297/jsfx/JClones_TapeHead.jsfx</source>
+      </version>
+    </reapack>
     <reapack name="JClones_TubeDriver.jsfx" type="effect" desc="JClones_TubeDriver">
       <metadata>
         <description><![CDATA[{\rtf1\ansi\deff0{\fonttbl{\f0 \fswiss Helvetica;}{\f1 Courier;}}
@@ -514,11 +537,11 @@
     </reapack>
   </category>
   <metadata>
-    <description><![CDATA[{\rtf1\ansi\deff0{\fonttbl{\f0 \fswiss Helvetica;}{\f1 Courier;}}
+    <description><![CDATA[{\rtf1\ansi\deff0{\fonttbl{\f0 \fswiss Helvetica;}{\f1 \fmodern Courier;}}
 {\colortbl;\red255\green0\blue0;\red0\green0\blue255;}
 \widowctrl\hyphauto
 
-{\pard \ql \f0 \sa180 \li0 \fi0 \b \fs36 \u8220"JClones\u8221" JSFX Plugins\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel0 \b \fs36 \u8220"JClones\u8221" JSFX Plugins\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 Free {\field{\*\fldinst{HYPERLINK "https://www.reaper.fm/sdk/js/"}}{\fldrslt{\ul
 JSFX
 }}}
@@ -526,7 +549,7 @@ JSFX
 Reaper
 }}}
 .\par}
-{\pard \ql \f0 \sa180 \li0 \fi0 \b \fs32 Installation\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel1 \b \fs32 Installation\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 If you have the {\field{\*\fldinst{HYPERLINK "https://reapack.com/"}}{\fldrslt{\ul
 ReaPack Extension
 }}}
@@ -543,7 +566,7 @@ ysfx
 ReaJS
 }}}
  to run JSFX plugin in another DAW.\par}
-{\pard \ql \f0 \sa180 \li0 \fi0 \b \fs36 Plugin Categories\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel0 \b \fs36 Plugin Categories\par}
 {\pard \ql \f0 \sa0 \li360 \fi-360 \bullet \tx360\tab Limiters\par}
 {\pard \ql \f0 \sa0 \li720 \fi-360 \endash \tx360\tab {\field{\*\fldinst{HYPERLINK "#jclones_l2"}}{\fldrslt{\ul
 L2
@@ -611,6 +634,10 @@ AC2
 {\pard \ql \f0 \sa0 \li720 \fi-360 \endash \tx360\tab {\field{\*\fldinst{HYPERLINK "#jclones_phoenix"}}{\fldrslt{\ul
 Phoenix
 }}}
+\par}
+{\pard \ql \f0 \sa0 \li720 \fi-360 \endash \tx360\tab {\field{\*\fldinst{HYPERLINK "#jclones_tapehead"}}{\fldrslt{\ul
+TapeHead
+}}}
 \sa180\par}
 {\pard \ql \f0 \sa0 \li360 \fi-360 \bullet \tx360\tab Tube Saturation\par}
 {\pard \ql \f0 \sa0 \li720 \fi-360 \endash \tx360\tab {\field{\*\fldinst{HYPERLINK "#jclones_tubedriver"}}{\fldrslt{\ul
@@ -621,68 +648,68 @@ TubeDriver
 DaTube
 }}}
 \sa180\sa180\par}
-{\pard \ql \f0 \sa180 \li0 \fi0 \b \fs36 JClones_L2\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel0 \b \fs36 JClones_L2\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 JClones_L2 is a clone of a highly regarded audio plugin known for its capabilities in mastering and dynamic range control. Featuring a state-of-the-art brickwall limiter with look-ahead technology, it ensures peak control and prevents clipping. Its intelligent release control adapts to the audio signal, providing smooth and transparent limiting without manual adjustments. The plugin also includes advanced dithering and noise shaping options to preserve audio quality when reducing bit depth.\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 {\field{\*\fldinst{HYPERLINK "https://github.com/JClones/JSFXClones/blob/master/JClones_L2.md"}}{\fldrslt{\ul
 Detailed Description
 }}}
 \par}
-{\pard \ql \f0 \sa180 \li0 \fi0 \b \fs36 JClones_OInflator\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel0 \b \fs36 JClones_OInflator\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 JClones_OInflator is a clone of a plugin renowned for its ability to enhance perceived loudness, warmth, and presence in audio without introducing distortion or reducing dynamic range. It operates by applying a unique process of harmonic enhancement that boosts the audio signal's energy, making it sound fuller and more impactful. Ideal for adding depth and richness to any audio source, it remains a go-to tool for professionals seeking to elevate their mixes with controlled and transparent processing.\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 {\field{\*\fldinst{HYPERLINK "https://github.com/JClones/JSFXClones/blob/master/JClones_OInflator.md"}}{\fldrslt{\ul
 Detailed Description
 }}}
 \par}
-{\pard \ql \f0 \sa180 \li0 \fi0 \b \fs36 JClones_Phoenix\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel0 \b \fs36 JClones_Phoenix\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 JClones_Phoenix is a clone of a renowned audio plugin designed to emulate the sound characteristics of analog tape recording. Created by a company known for its high-quality analog and digital audio equipment, the plugin is widely used by audio engineers and producers to add warmth, depth, and subtle harmonic distortion to digital recordings.\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 {\field{\*\fldinst{HYPERLINK "https://github.com/JClones/JSFXClones/blob/master/JClones_Phoenix.md"}}{\fldrslt{\ul
 Detailed Description
 }}}
 \par}
-{\pard \ql \f0 \sa180 \li0 \fi0 \b \fs36 JClones_AC1\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel0 \b \fs36 JClones_AC1\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 JClones_AC1 is a clone of a plugin, designed to emulate the characteristics and sonic qualities of analog mixing consoles. By simulating the behavior of analog circuits, the plugin brings the warmth, depth, and harmonic richness of analog gear to digital audio productions. The plugin is highly regarded for its ability to add subtle compression, harmonic distortion, and a sense of cohesion to mixes, making them sound more polished and professional.\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 {\field{\*\fldinst{HYPERLINK "https://github.com/JClones/JSFXClones/blob/master/JClones_AC1.md"}}{\fldrslt{\ul
 Detailed Description
 }}}
 \par}
-{\pard \ql \f0 \sa180 \li0 \fi0 \b \fs36 JClones_AC2\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel0 \b \fs36 JClones_AC2\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 JClones_AC2 is a clone of a plugin designed to emulate the classic sound and behavior of analog tape machines that captures the essence of tape saturation, compression, and harmonic richness, making it an invaluable asset for adding depth, warmth, and character to digital recordings. The plugin provides a range of controls that allow users to fine-tune the tape emulation to suit various audio materials and production styles.\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 {\field{\*\fldinst{HYPERLINK "https://github.com/JClones/JSFXClones/blob/master/JClones_AC2.md"}}{\fldrslt{\ul
 Detailed Description
 }}}
 \par}
-{\pard \ql \f0 \sa180 \li0 \fi0 \b \fs36 JClones_RS124\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel0 \b \fs36 JClones_RS124\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 JClones_RS124 is a clone of the first emulation of classic vari-mu compressor, originally developed in the 1960s by technical engineers of famous recording studio. This plugin captures the unique sonic characteristics and behavior of the original hardware, which was famously used on numerous iconic recordings by The Beatles and other legendary artists.\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 {\field{\*\fldinst{HYPERLINK "https://github.com/JClones/JSFXClones/blob/master/JClones_RS124.md"}}{\fldrslt{\ul
 Detailed Description
 }}}
 \par}
-{\pard \ql \f0 \sa180 \li0 \fi0 \b \fs36 JClones_Classic_Master_Limiter\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel0 \b \fs36 JClones_Classic_Master_Limiter\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 JClones_Classic_Master_Limiter is a clone of freeware limiter plugin designed to provide transparent limiting, allowing you to maximize the loudness of your audio tracks without introducing distortion or unwanted artifacts. Simple interface, low CPU usage, and essential controls make it an excellent choice for both beginners and experienced producers looking to increase the loudness of their tracks. However, the developer of the plugin disappeared from the market abruptly around 2007.\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 {\field{\*\fldinst{HYPERLINK "https://github.com/JClones/JSFXClones/blob/master/JClones_Classic_Master_Limiter.md"}}{\fldrslt{\ul
 Detailed Description
 }}}
 \par}
-{\pard \ql \f0 \sa180 \li0 \fi0 \b \fs36 JClones_VBL\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel0 \b \fs36 JClones_VBL\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 JClones_VBL is a clone of earlier version of vintage broadcast limiter plugin, which emulates the characteristics of classic tube-based broadcast limiters, providing warm analog-style compression and saturation. The plugin is designed to add character and color to digital recordings by incorporating tube harmonics and subtle distortions. It features controls for threshold, release, drive, output, and mix, allowing users to adjust the level of compression and saturation to achieve the desired sound. With its ability to enhance the richness and warmth of audio signals, it is a popular choice for adding vintage character to mixes.\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 {\field{\*\fldinst{HYPERLINK "https://github.com/JClones/JSFXClones/blob/master/JClones_VBL.md"}}{\fldrslt{\ul
 Detailed Description
 }}}
 \par}
-{\pard \ql \f0 \sa180 \li0 \fi0 \b \fs36 JClones_CL1B\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel0 \b \fs36 JClones_CL1B\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 JClones_CL1B plugin is a clone of older version of digital emulation of the renowned optical compressor, which is widely used in professional audio production. The modelled hardware compressor is highly regarded for its smooth, warm, and musical compression characteristics, making it a popular choice for vocals, bass, drums, and other instruments.\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 {\field{\*\fldinst{HYPERLINK "https://github.com/JClones/JSFXClones/blob/master/JClones_CL1B.md"}}{\fldrslt{\ul
 Detailed Description
 }}}
 \par}
-{\pard \ql \f0 \sa180 \li0 \fi0 \b \fs36 JClones_CA2A\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel0 \b \fs36 JClones_CA2A\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 JClones_CA2A plugin is a clone of digital emulation of the legendary LA-2A optical compressor, which is highly regarded in the audio industry for its smooth and musical compression characteristics. The original plugin was developed by a company, known for their popular digital audio workstation (DAW) software. The plugin was designed to replicate the unique sound and behavior of the original hardware LA-2A, a tube-based optical compressor that became famous for its warm, natural-sounding compression. The original plugin was discontinued due to the acquisition of the development company in 2013.\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 {\field{\*\fldinst{HYPERLINK "https://github.com/JClones/JSFXClones/blob/master/JClones_CA2A.md"}}{\fldrslt{\ul
 Detailed Description
 }}}
 \par}
-{\pard \ql \f0 \sa180 \li0 \fi0 \b \fs36 JClones_SatChannel\par}
-{\pard \ql \f0 \sa180 \li0 \fi0 \b \fs36 JClones_SatBuss\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel0 \b \fs36 JClones_SatChannel\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel0 \b \fs36 JClones_SatBuss\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 These plugins are clones of popular audio plugin that emulates the sound and characteristics of an analog mixing console. It is designed to add warmth, character, and subtle harmonic distortion to digital audio, mimicking the nonlinearities and saturation that occur in analog gear. The plugin is often used in digital audio production to give mixes a more "analog" feel, adding depth and presence to individual tracks and overall mixes.\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 The original plugin has two versions: Channel and Buss. Channel version is typically used on individual tracks within a mix. It emulates the behavior of a single channel on an analog console, adding mild saturation and coloration to the audio signal.\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 {\field{\*\fldinst{HYPERLINK "https://github.com/JClones/JSFXClones/blob/master/JClones_SatChannel.md"}}{\fldrslt{\ul
@@ -694,39 +721,45 @@ Channel Description
 Buss Description
 }}}
 \par}
-{\pard \ql \f0 \sa180 \li0 \fi0 \b \fs36 JClones_Fattener\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel0 \b \fs36 JClones_Fattener\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 JClones_Fattener is a clone of popular audio plugin developed by a duo known for their electronic dance music. The plugin is designed to add warmth, distortion, and overall fatness to audio signals, making it a favorite among producers for enhancing the character of their tracks.\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 {\field{\*\fldinst{HYPERLINK "https://github.com/JClones/JSFXClones/blob/master/JClones_Fattener.md"}}{\fldrslt{\ul
 Detailed Description
 }}}
 \par}
-{\pard \ql \f0 \sa180 \li0 \fi0 \b \fs36 JClones_LMC1\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel0 \b \fs36 JClones_LMC1\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 JClones_LMC1 is a clone of a compressor plugin modeled after the compressor found in the legendary consoles. The original hardware compressor was designed to manage signals from talkback or listen microphones in recording studios. However, engineers quickly discovered its aggressive compression characteristics were fantastic for creative use, especially on drums.\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 {\field{\*\fldinst{HYPERLINK "https://github.com/JClones/JSFXClones/blob/master/JClones_LMC1.md"}}{\fldrslt{\ul
 Detailed Description
 }}}
 \par}
-{\pard \ql \f0 \sa180 \li0 \fi0 \b \fs36 JClones_Hyrax\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel0 \b \fs36 JClones_Hyrax\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 JClones_Hyrax is a clone of a brickwall limiter module included in an open-source automatic mastering system that uses machine learning to match the characteristics of a reference track to the track you want to master. While the original limiter does offline processing of a track the algorithm was modified to work in realtime.\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 {\field{\*\fldinst{HYPERLINK "https://github.com/JClones/JSFXClones/blob/master/JClones_Hyrax.md"}}{\fldrslt{\ul
 Detailed Description
 }}}
 \par}
-{\pard \ql \f0 \sa180 \li0 \fi0 \b \fs36 JClones_O3_Maximizer\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel0 \b \fs36 JClones_O3_Maximizer\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 JClones_O3_Maximizer is a clone of maximizer module included in a comprehensive mastering plugin released in the mid-2000s. It was widely regarded for its all-in-one approach to mastering, offering a range of tools in a single interface that could handle EQ, dynamics, limiting, and more. It became a favorite for producers and engineers looking for a versatile, cost-effective solution for in-the-box mastering.\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 {\field{\*\fldinst{HYPERLINK "https://github.com/JClones/JSFXClones/blob/master/JClones_O3_Maximizer.md"}}{\fldrslt{\ul
 Detailed Description
 }}}
 \par}
-{\pard \ql \f0 \sa180 \li0 \fi0 \b \fs36 JClones_TubeDriver\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel0 \b \fs36 JClones_TubeDriver\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 JClones_TubeDriver is a clone of an older version of popular free plugin that emulates the characteristics of tube-based saturation and distortion. It\u8217's known for its straightforward design and effective results in adding warmth, grit, and harmonic richness to audio tracks.\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 {\field{\*\fldinst{HYPERLINK "https://github.com/JClones/JSFXClones/blob/master/JClones_TubeDriver.md"}}{\fldrslt{\ul
 Detailed Description
 }}}
 \par}
-{\pard \ql \f0 \sa180 \li0 \fi0 \b \fs36 JClones_DaTube\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel0 \b \fs36 JClones_DaTube\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 JClones_DaTube is a clone of simple and effective tube saturation plugin included in popular DAW. It\u8217's designed to emulate the harmonic warmth and saturation characteristics of analog tube circuits, making it a useful tool for adding color, depth, and character to digital audio tracks.\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 {\field{\*\fldinst{HYPERLINK "https://github.com/JClones/JSFXClones/blob/master/JClones_DaTube.md"}}{\fldrslt{\ul
+Detailed Description
+}}}
+\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel0 \b \fs36 JClones_TapeHead\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 JClones_TapeHead is a clone of beloved analog tape saturation plugin developed by a company founded by a respected engineer/producer. Known for its simplicity and warm, musical sound, the plugin emulates the harmonic saturation and compression characteristics of vintage tape machines.\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\field{\*\fldinst{HYPERLINK "https://github.com/JClones/JSFXClones/blob/master/JClones_TapeHead.md"}}{\fldrslt{\ul
 Detailed Description
 }}}
 \par}
