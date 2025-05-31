@@ -1,0 +1,132 @@
+desc:       JClones_TapeHead
+version:    1.0.0
+author:     JClones
+tags:       saturation
+link:       https://github.com/JClones/JSFXClones
+screenshot: https://github.com/JClones/JSFXClones/blob/master/assets/screenshots/JClones_TapeHead.png
+about:
+    # JClones_TapeHead
+    JClones_TapeHead is a clone of beloved analog tape saturation plugin developed by a company founded by a respected engineer/producer. Known for its simplicity and warm, musical sound, the plugin emulates the harmonic saturation and compression characteristics of vintage tape machines.
+
+    ## Main Parameters
+
+    **Drive:** Controls the amount of tape saturation applied to the signal.
+
+    **Trim:** Adjusts the output level after saturation.
+
+    **Color:** Alters the tonal character of the saturation:
+
+    **Normal:** Provides a balanced tape saturation effect.
+    **Medium:** Offers a midrange-focused saturation, useful for adding body to instruments.
+    **Bright:** Emphasizes higher frequencies, adding clarity and presence.
+     
+    **Clip:** JClones version specific. Turns off internal hard-clipping stage.
+
+slider1:3.5<1,10,1>Drive
+slider2:-3<-21,0,1>Trim, dB
+slider3:0<0,2,1{normal,medium,bright}>Color
+slider4:1<0,1,1{off,on}>Clip
+
+@init
+
+function TapeHead_setDrive(drive_logical)
+(
+  // 1 .. 10
+  this.drive_k = pow(10.0, (drive_logical - 1.0) / 9.0) * 0.8;
+);
+
+function TapeHead_setTrim(trim_dB)
+(
+  this.trim_k = pow(10.0, trim_dB / 20.0) * 0.7;
+);
+
+function TapeHead_setColor(color) local(freq_hz, gain)
+(
+  freq_hz = (color == 0) ? 2100.0 : ((color == 1) ? 3680.0 : 5000.0);
+
+  this.k1 = 5.0 / 7.0;
+  this.k2 = 2.0 * sin(freq_hz * $pi / srate);
+  this.k3 = 1.4 * (this.k2 * -1.0);
+
+  gain = (srate < 88200.0) ? 1.4 : 2.0;
+
+  this.g3 = pow(10.0, gain * 3.0 / 20.0) * -1.0 * this.k1;
+);
+
+function TapeHead_reset()
+(
+  this.y1 = 0.0;
+  this.y2 = 0.0;
+  this.y3 = 0.0;
+);
+
+function TapeHead_clip(x)
+(
+  (x < -1.0) ? -1.0 : (x > 1.0 ? 1.0 : x);
+);
+
+function TapeHead_smoothstep(x) local(y)
+(
+  (x < -1.0) ? (
+    y = -1.0;
+  ) : ((x > 1.0) ? (
+    y = 1.0;
+  ) : (
+    y = x * 1.5 - x * x * x * 0.5;
+  ));
+
+  y;
+);
+
+function TapeHead_processSample(x) local(y1_sat, y2_sat, y3, y)
+(
+  (this.hard_clip) ?
+    x = TapeHead_clip(x);
+
+  // filter
+  this.y1 += this.y2 * this.k2;
+  this.y3 = this.y1 * this.k1 + this.y2 - x;
+  this.y2 += this.y3 * this.k3;
+
+  y1_sat = TapeHead_smoothstep(this.y1 * this.drive_k);
+  y2_sat = TapeHead_smoothstep(this.y2 * this.drive_k);
+  y3 = this.hard_clip ? TapeHead_clip(this.y3) : this.y3;
+
+  y = (y3 * this.g3 + y1_sat + y2_sat) * this.trim_k;
+
+  (this.hard_clip) ?
+    y = TapeHead_clip(y);
+
+  y;
+);
+
+function TapeHead_setHardClip(hard_clip)
+(
+  this.hard_clip = hard_clip;
+);
+
+// continue @init:
+
+left.TapeHead_reset();
+right.TapeHead_reset();
+
+@slider
+
+left.TapeHead_setDrive(slider1);
+right.TapeHead_setDrive(slider1);
+
+left.TapeHead_setTrim(slider2);
+right.TapeHead_setTrim(slider2);
+
+left.TapeHead_setColor(slider3);
+right.TapeHead_setColor(slider3);
+
+left.TapeHead_setHardClip(slider4);
+right.TapeHead_setHardClip(slider4);
+
+@block
+
+@sample
+
+spl0 = left.TapeHead_processSample(spl0);
+spl1 = right.TapeHead_processSample(spl1);

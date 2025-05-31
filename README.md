@@ -33,6 +33,7 @@ Also you may use [ysfx](https://github.com/jpcima/ysfx) or [ReaJS](https://www.r
 - Tape Saturation
   - [AC2](#jclones_ac2)
   - [Phoenix](#jclones_phoenix)
+  - [TapeHead](#jclones_tapehead)
 - Tube Saturation
   - [TubeDriver](#jclones_tubedriver)
   - [DaTube](#jclones_datube)
@@ -130,3 +131,8 @@ JClones_TubeDriver is a clone of an older version of popular free plugin that em
 JClones_DaTube is a clone of simple and effective tube saturation plugin included in popular DAW. It’s designed to emulate the harmonic warmth and saturation characteristics of analog tube circuits, making it a useful tool for adding color, depth, and character to digital audio tracks.
 
 [Detailed Description](https://github.com/JClones/JSFXClones/blob/master/JClones_DaTube.md)
+
+# JClones_TapeHead
+JClones_TapeHead is a clone of beloved analog tape saturation plugin developed by a company founded by a respected engineer/producer. Known for its simplicity and warm, musical sound, the plugin emulates the harmonic saturation and compression characteristics of vintage tape machines.
+
+[Detailed Description](https://github.com/JClones/JSFXClones/blob/master/JClones_TapeHead.md)
