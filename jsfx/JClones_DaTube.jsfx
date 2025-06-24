@@ -1,5 +1,5 @@
 desc:       JClones_DaTube
-version:    1.0.0
+version:    1.0.1
 author:     JClones
 tags:       saturation
 link:       https://github.com/JClones/JSFXClones
@@ -16,8 +16,6 @@ about:
 
     **Output:** Adjusts the overall output level of the processed signal.
      
-    Note: JClones version offers linear phase oversampling plus ADAA method to reduce aliasing and also DC remover.
-
 slider1:30<0,100,1>Drive, %
 slider2:100<0,100,1>Balance, %
 slider3:-6<-24,0,0.1>Output Gain, dB
@@ -51,12 +49,6 @@ function getFFTSize(N_max) local(fft_size)
 function DB_TO_K(x)
 (
   10 ^ (x / 20)
-);
-
-function tanh(x) local(e2x)
-(
-  e2x = exp(2.0 * x);
-  (e2x - 1.0) / (e2x + 1.0);
 );
 
 /*
@@ -377,7 +369,7 @@ function DaTube_F1(x)
  * - second order ADAA
  */
 
-ADAA_TOL = pow(10.0, -9);
+ADAA_TOL = pow(10.0, -6);
 
 function ADAA_reset()
 (
@@ -441,12 +433,13 @@ function DaTube_init()
 
 function DaTube_setSampleRate()
 (
-  this.dc_k = DC_REMOVER_FREQ_HZ / (srate * 2.0) * 2.0 * $pi;   // 2x oversampled
+  this.oversampling = (srate < 88200.0) ? 2 : 1;
+  this.dc_k = DC_REMOVER_FREQ_HZ / (srate * this.oversampling) * 2.0 * $pi;
 );
 
 function DaTube_getLatency()
 (
-  OVERSAMPLING_BLOCK_SIZE * 3 + 1;
+  (this.oversampling > 1) ? (OVERSAMPLING_BLOCK_SIZE * 3 + 1) : 1;
 );
 
 function DaTube_reset()
@@ -467,7 +460,6 @@ function DaTube_setDrive(drive, balance, output_gain)
   (drive != this.drive) ? (
     this.drive = drive;
     this.drive05 = drive * 0.5;
-
     this.state_changed = 1;
   );
 
@@ -496,16 +488,25 @@ function DaTube_processSample_Oversampled(x) local(y, y1, x1)
   y1;
 );
 
-function DaTube_processSample(x) local(y0, y1)
+function DaTube_processSample(x) local(y0, y1, y)
 (
   x *= (this.drive + 0.5);
 
-  this.up2.FFTResampler2x_upsampleSample(x);
-
-  y0 = this.DaTube_processSample_Oversampled(this.up2.y0);
-  y1 = this.DaTube_processSample_Oversampled(this.up2.y1);
-
-  this.dn2.FFTResampler2x_downsampleSample(y0, y1) * this.output_gain;
+  (this.oversampling > 1) ? (
+    // 2x oversampling
+    this.up2.FFTResampler2x_upsampleSample(x);
+  
+    y0 = this.DaTube_processSample_Oversampled(this.up2.y0);
+    y1 = this.DaTube_processSample_Oversampled(this.up2.y1);
+  
+    y = this.dn2.FFTResampler2x_downsampleSample(y0, y1);
+    
+  ) : (
+    // no oversampling
+    y = this.DaTube_processSample_Oversampled(x);
+  );
+  
+  y * this.output_gain;
 );
 
 // continue @init:
