@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<index version="1" name="JSFXClones" commit="16aa2cfdd4ce6cd77f9b83024aab716929a929f9">
+<index version="1" name="JSFXClones" commit="d28282c7bbd8b1a7d639c4c529d87afd5149987b">
   <category name="jsfx">
     <reapack name="JClones_AC1.jsfx" type="effect" desc="JClones_AC1">
       <metadata>
@@ -144,17 +144,16 @@
     </reapack>
     <reapack name="JClones_DaTube.jsfx" type="effect" desc="JClones_DaTube">
       <metadata>
-        <description><![CDATA[{\rtf1\ansi\deff0{\fonttbl{\f0 \fswiss Helvetica;}{\f1 Courier;}}
+        <description><![CDATA[{\rtf1\ansi\deff0{\fonttbl{\f0 \fswiss Helvetica;}{\f1 \fmodern Courier;}}
 {\colortbl;\red255\green0\blue0;\red0\green0\blue255;}
 \widowctrl\hyphauto
 
-{\pard \ql \f0 \sa180 \li0 \fi0 \b \fs36 JClones_DaTube\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel0 \b \fs36 JClones_DaTube\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 JClones_DaTube is a clone of simple and effective tube saturation plugin included in popular DAW. It\u8217's designed to emulate the harmonic warmth and saturation characteristics of analog tube circuits, making it a useful tool for adding color, depth, and character to digital audio tracks.\par}
-{\pard \ql \f0 \sa180 \li0 \fi0 \b \fs32 Main Parameters\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel1 \b \fs32 Main Parameters\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 {\b Drive:} Controls the amount of tube saturation applied to the signal.\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 {\b Balance:} Adjusts the tonal balance of the processed signal.\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 {\b Output:} Adjusts the overall output level of the processed signal.\par}
-{\pard \ql \f0 \sa180 \li0 \fi0 Note: JClones version offers linear phase oversampling plus ADAA method to reduce aliasing and also DC remover.\par}
 }
 ]]></description>
         <link rel="website">https://github.com/JClones/JSFXClones</link>
@@ -162,6 +161,9 @@
       </metadata>
       <version name="1.0.0" author="JClones" time="2024-12-05T20:50:36Z">
         <source>https://github.com/JClones/JSFXClones/raw/f94f3fe663f4295dcafe48726bd8dd4d9abd6312/jsfx/JClones_DaTube.jsfx</source>
+      </version>
+      <version name="1.0.1" author="JClones" time="2025-06-24T19:55:34Z">
+        <source>https://github.com/JClones/JSFXClones/raw/d28282c7bbd8b1a7d639c4c529d87afd5149987b/jsfx/JClones_DaTube.jsfx</source>
       </version>
     </reapack>
     <reapack name="JClones_DuTape.jsfx" type="effect" desc="JClones_DuTape">
