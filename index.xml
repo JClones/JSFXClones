@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<index version="1" name="JSFXClones" commit="8bd8a16361d4d91ff162914340b0409953764297">
+<index version="1" name="JSFXClones" commit="16aa2cfdd4ce6cd77f9b83024aab716929a929f9">
   <category name="jsfx">
     <reapack name="JClones_AC1.jsfx" type="effect" desc="JClones_AC1">
       <metadata>
@@ -162,6 +162,30 @@
       </metadata>
       <version name="1.0.0" author="JClones" time="2024-12-05T20:50:36Z">
         <source>https://github.com/JClones/JSFXClones/raw/f94f3fe663f4295dcafe48726bd8dd4d9abd6312/jsfx/JClones_DaTube.jsfx</source>
+      </version>
+    </reapack>
+    <reapack name="JClones_DuTape.jsfx" type="effect" desc="JClones_DuTape">
+      <metadata>
+        <description><![CDATA[{\rtf1\ansi\deff0{\fonttbl{\f0 \fswiss Helvetica;}{\f1 \fmodern Courier;}}
+{\colortbl;\red255\green0\blue0;\red0\green0\blue255;}
+\widowctrl\hyphauto
+
+{\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel0 \b \fs36 JClones_DuTape\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 JClones_DuTape is a clone of a classic analog tape saturation emulation developed by a company known for its innovative DSP tools in the late 1990s and early 2000s.\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel1 \b \fs32 Main Parameters\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\b Input:} Controls how hard the signal hits the tape emulation stage.\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\b Output:} Adjusts the final output volume after processing.\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\b Machine Brand:} Allows to choose between several distinct tape machine profiles, each designed to emulate the sonic characteristics of different eras or hardware behaviors.\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\b Speed:} Simulates the playback/record speed - a key factor in shaping the frequency response of tape.\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\b Noise Reduction:} Allows to manage how much tape hiss and background noise is retained or removed in the tape emulation.\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\b Dithering:} JClones version specific. Turns off internal signal dithering used in original plugin.\par}
+}
+]]></description>
+        <link rel="website">https://github.com/JClones/JSFXClones</link>
+        <link rel="screenshot">https://github.com/JClones/JSFXClones/blob/master/assets/screenshots/JClones_DuTape.png</link>
+      </metadata>
+      <version name="1.0.0" author="JClones" time="2025-06-07T00:14:03Z">
+        <source>https://github.com/JClones/JSFXClones/raw/16aa2cfdd4ce6cd77f9b83024aab716929a929f9/jsfx/JClones_DuTape.jsfx</source>
       </version>
     </reapack>
     <reapack name="JClones_Fattener.jsfx" type="effect" desc="JClones_Fattener">
@@ -638,6 +662,10 @@ Phoenix
 {\pard \ql \f0 \sa0 \li720 \fi-360 \endash \tx360\tab {\field{\*\fldinst{HYPERLINK "#jclones_tapehead"}}{\fldrslt{\ul
 TapeHead
 }}}
+\par}
+{\pard \ql \f0 \sa0 \li720 \fi-360 \endash \tx360\tab {\field{\*\fldinst{HYPERLINK "#jclones_dutape"}}{\fldrslt{\ul
+DuTape
+}}}
 \sa180\par}
 {\pard \ql \f0 \sa0 \li360 \fi-360 \bullet \tx360\tab Tube Saturation\par}
 {\pard \ql \f0 \sa0 \li720 \fi-360 \endash \tx360\tab {\field{\*\fldinst{HYPERLINK "#jclones_tubedriver"}}{\fldrslt{\ul
@@ -760,6 +788,12 @@ Detailed Description
 {\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel0 \b \fs36 JClones_TapeHead\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 JClones_TapeHead is a clone of beloved analog tape saturation plugin developed by a company founded by a respected engineer/producer. Known for its simplicity and warm, musical sound, the plugin emulates the harmonic saturation and compression characteristics of vintage tape machines.\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 {\field{\*\fldinst{HYPERLINK "https://github.com/JClones/JSFXClones/blob/master/JClones_TapeHead.md"}}{\fldrslt{\ul
+Detailed Description
+}}}
+\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel0 \b \fs36 JClones_DuTape\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 JClones_DuTape is a clone of a classic analog tape saturation emulation developed by a company known for its innovative DSP tools in the late 1990s and early 2000s.\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\field{\*\fldinst{HYPERLINK "https://github.com/JClones/JSFXClones/blob/master/JClones_DuTape.md"}}{\fldrslt{\ul
 Detailed Description
 }}}
 \par}
