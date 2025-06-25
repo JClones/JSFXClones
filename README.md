@@ -38,6 +38,7 @@ Also you may use [ysfx](https://github.com/jpcima/ysfx) or [ReaJS](https://www.r
 - Tube Saturation
   - [TubeDriver](#jclones_tubedriver)
   - [DaTube](#jclones_datube)
+  - [DuValve](#jclones_duvalve)
 
 # JClones_L2
 
@@ -142,3 +143,8 @@ JClones_TapeHead is a clone of beloved analog tape saturation plugin developed b
 JClones_DuTape is a clone of a classic analog tape saturation emulation developed by a company known for its innovative DSP tools in the late 1990s and early 2000s.
 
 [Detailed Description](https://github.com/JClones/JSFXClones/blob/master/JClones_DuTape.md)
+
+# JClones_DuValve
+JClones_DuValve is a clone of valve (tube) amplifiers non-linear characteristics simulation plugin from a respected developer known for pioneering professional-grade audio plugins in the early digital era.
+
+[Detailed Description](https://github.com/JClones/JSFXClones/blob/master/JClones_DuValve.md)
