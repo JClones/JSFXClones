@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<index version="1" name="JSFXClones" commit="d28282c7bbd8b1a7d639c4c529d87afd5149987b">
+<index version="1" name="JSFXClones" commit="13f8c8db0064895d84b50c5ee871774afd1003cd">
   <category name="jsfx">
     <reapack name="JClones_AC1.jsfx" type="effect" desc="JClones_AC1">
       <metadata>
@@ -188,6 +188,30 @@
       </metadata>
       <version name="1.0.0" author="JClones" time="2025-06-07T00:14:03Z">
         <source>https://github.com/JClones/JSFXClones/raw/16aa2cfdd4ce6cd77f9b83024aab716929a929f9/jsfx/JClones_DuTape.jsfx</source>
+      </version>
+    </reapack>
+    <reapack name="JClones_DuValve.jsfx" type="effect" desc="JClones_DuValve">
+      <metadata>
+        <description><![CDATA[{\rtf1\ansi\deff0{\fonttbl{\f0 \fswiss Helvetica;}{\f1 \fmodern Courier;}}
+{\colortbl;\red255\green0\blue0;\red0\green0\blue255;}
+\widowctrl\hyphauto
+
+{\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel0 \b \fs36 JClones_DuValve\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 JClones_DuValve is a clone of valve (tube) amplifiers non-linear characteristics simulation plugin from a respected developer known for pioneering professional-grade audio plugins in the early digital era.\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel1 \b \fs32 Main Parameters\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\b Input:} Adjusts the level on the plugin input.\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\b Pusher:} Controls how hard the signal drives the virtual "tube" stage.\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\b Dynamic Model:} Controls dynamic virtual "tube" stage behavior.\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\b Spectral Model:} Controls time domain virtual "tube" stage behavior.\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\b Lobe Flip:} Flips the virtual "tube" stage asymmetric response upside down.\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\b Output:} (JClones version specific) Adjusts the final output volume after processing.\par}
+}
+]]></description>
+        <link rel="website">https://github.com/JClones/JSFXClones</link>
+        <link rel="screenshot">https://github.com/JClones/JSFXClones/blob/master/assets/screenshots/JClones_DuValve.png</link>
+      </metadata>
+      <version name="1.0.0" author="JClones" time="2025-06-25T15:14:08Z">
+        <source>https://github.com/JClones/JSFXClones/raw/13f8c8db0064895d84b50c5ee871774afd1003cd/jsfx/JClones_DuValve.jsfx</source>
       </version>
     </reapack>
     <reapack name="JClones_Fattener.jsfx" type="effect" desc="JClones_Fattener">
@@ -677,6 +701,10 @@ TubeDriver
 {\pard \ql \f0 \sa0 \li720 \fi-360 \endash \tx360\tab {\field{\*\fldinst{HYPERLINK "#jclones_datube"}}{\fldrslt{\ul
 DaTube
 }}}
+\par}
+{\pard \ql \f0 \sa0 \li720 \fi-360 \endash \tx360\tab {\field{\*\fldinst{HYPERLINK "#jclones_duvalve"}}{\fldrslt{\ul
+DuValve
+}}}
 \sa180\sa180\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel0 \b \fs36 JClones_L2\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 JClones_L2 is a clone of a highly regarded audio plugin known for its capabilities in mastering and dynamic range control. Featuring a state-of-the-art brickwall limiter with look-ahead technology, it ensures peak control and prevents clipping. Its intelligent release control adapts to the audio signal, providing smooth and transparent limiting without manual adjustments. The plugin also includes advanced dithering and noise shaping options to preserve audio quality when reducing bit depth.\par}
@@ -796,6 +824,12 @@ Detailed Description
 {\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel0 \b \fs36 JClones_DuTape\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 JClones_DuTape is a clone of a classic analog tape saturation emulation developed by a company known for its innovative DSP tools in the late 1990s and early 2000s.\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 {\field{\*\fldinst{HYPERLINK "https://github.com/JClones/JSFXClones/blob/master/JClones_DuTape.md"}}{\fldrslt{\ul
+Detailed Description
+}}}
+\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel0 \b \fs36 JClones_DuValve\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 JClones_DuValve is a clone of valve (tube) amplifiers non-linear characteristics simulation plugin from a respected developer known for pioneering professional-grade audio plugins in the early digital era.\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\field{\*\fldinst{HYPERLINK "https://github.com/JClones/JSFXClones/blob/master/JClones_DuValve.md"}}{\fldrslt{\ul
 Detailed Description
 }}}
 \par}
