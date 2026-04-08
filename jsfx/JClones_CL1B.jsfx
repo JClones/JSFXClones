@@ -37,6 +37,8 @@ slider6:0<-24,24,0.1>Output Gain, dB
 
 @init
 
+ext_gr_meter = 0.0;
+
 function DB_TO_K(x)
 (
   10 ^ (x / 20)
@@ -285,6 +287,8 @@ function CLCompressor_processSampleStereo(x1, x2)
   // output
   y1 = x1 * this.T10 * this.T11 * gain_reduction * 33.768673;
   y2 = x2 * this.T10 * this.T11 * gain_reduction * 33.768673;
+  
+  this.gr = gain_reduction;
 
   // post_eq
   this.post_eq_s1 += (y1 - this.post_eq_s1) * this.post_eq_k;
@@ -681,6 +685,8 @@ effect.CLCompressor_setParameters(
 @sample
 
 effect.CLCompressor_processSampleStereo(spl0, spl1);
+
+ext_gr_meter = 20 * log10(effect.gr);
 
 spl0 = effect.y1;
 spl1 = effect.y2;

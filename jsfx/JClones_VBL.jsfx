@@ -43,6 +43,8 @@ slider10:1<0,1,1{Off,On}>Trafo
 
 @init
 
+ext_gr_meter = 0.0;
+
 function DB_TO_K(x)
 (
   10 ^ (x / 20)
@@ -722,4 +724,6 @@ spl1 = input1 * dry_mix_k + (1.0 - dry_mix_k) * spl1 * output_gain_k;
 // "trafo" (post dry mix because of phase rotation)
 spl0 = left.sat.VblSaturator_applyTrafo(spl0, spl1);
 spl1 = right.sat.VblSaturator_applyTrafo(spl1, spl0);
+
+ext_gr_meter = 20 * log10(min(left.sat.feedback_gr, right.sat.feedback_gr));
 

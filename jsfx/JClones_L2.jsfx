@@ -88,6 +88,8 @@ slider7:2<0,3,1{None,Moderate,Normal,Ultra}>Shaping
 
 @init
 
+ext_gr_meter = 0.0;
+
 // for allocator
 function allocate(size) local(result)
 (
@@ -796,6 +798,8 @@ min_gr = delay_min_gr.DelayLineMin_getMin();
 // smooth GR by attack
 output_gr = moving_average_gr_1.MovingAverageFilter_pushSample(output_gr);
 output_gr = moving_average_gr_2.MovingAverageFilter_pushSample(output_gr);
+
+ext_gr_meter = 20 * log10(output_gr);
 
 // delay input
 input_left = delay_line_left.DelayLine_pushSample(spl0);

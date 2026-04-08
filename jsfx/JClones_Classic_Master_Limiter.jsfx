@@ -16,6 +16,8 @@ slider1:-5<-20,0,0.1>Threshold, dB
 
 @init
 
+ext_gr_meter = 0.0;
+
 // for allocator
 function allocate(size) local(result)
 (
@@ -170,7 +172,8 @@ function ClassicLimiter_processSample(x) local(L, iGR_1, y1, y2, iGR_2, y3, iGR_
   this.iGR_X = min(this.iGR_X, this.iGR_B);
 
   // apply attack to GR, apply GR
-  y1 = x * (1.0 - this.attack.Filter1_processSample(this.iGR_X));
+  gr1 = (1.0 - this.attack.Filter1_processSample(this.iGR_X));
+  y1 = x * gr1;
 
   // pass#2
   L = abs(y1);
@@ -179,8 +182,10 @@ function ClassicLimiter_processSample(x) local(L, iGR_1, y1, y2, iGR_2, y3, iGR_
     iGR_2 = (1.0 - this.threshold_k / L);
 
     // apply GR^3 (T*3 with soft knee)
-    y2 = y1 * (1.0 - iGR_2 * iGR_2 * iGR_2);
+    gr2 = (1.0 - iGR_2 * iGR_2 * iGR_2);
+    y2 = y1 * gr2;
   ) : (
+    gr2 = 1.0;
     y2 = y1;
   );
 
@@ -208,7 +213,8 @@ function ClassicLimiter_processSample(x) local(L, iGR_1, y1, y2, iGR_2, y3, iGR_
   this.iGR_E += (this.iGR_D - this.iGR_E) * this.kE;   // secondary release
   this.iGR_E = min(this.iGR_E, this.iGR_D);
 
-  y4 = y3 * (1.0 - this.iGR_E);
+  gr3 = (1.0 - this.iGR_E);
+  y4 = y3 * gr3;
 
   // pass#4
   L = abs(y4) + ONE_E_20;
@@ -218,7 +224,9 @@ function ClassicLimiter_processSample(x) local(L, iGR_1, y1, y2, iGR_2, y3, iGR_
   iGR_4 = max(iGR_4, ONE_E_20);
 
   // apply gain reduction and master gain
-  y4 * (1.0 - iGR_4) * this.master_gain;
+  gr4 = 1.0 - iGR_4;
+  this.gr = gr1 * gr2 * gr3 * gr4;
+  y4 * gr4 * this.master_gain;
 );
 
 // continue @init:
@@ -254,4 +262,6 @@ right.ClassicLimiter_setThreshold(threshold_k);
 
 spl0 = left.ClassicLimiter_processSample(spl0);
 spl1 = right.ClassicLimiter_processSample(spl1);
+
+ext_gr_meter = 20 * log10(min(left.gr, right.gr));
 
