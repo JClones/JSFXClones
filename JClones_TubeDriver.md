@@ -13,4 +13,4 @@ JClones_TubeDriver is a clone of an older version of popular free plugin that em
 
 **Output Gain:** Controls the level of the signal after processing.
 
-Note: JClones version offers linear phase oversampling, auto gain Drive and Bias parameters compensation and additional DC remover.
+Note: JClones version offers auto gain Drive and Bias parameters compensation and additional DC remover.

@@ -206,12 +206,18 @@ function Phoenix_setProcessing(processing)
   this.auto_gain = 1.0 + processing * this.auto_gain_a1 + processing * processing * this.auto_gain_a2;
 );
 
-function Phoenix_sat(x) local(y, x2, x4, x6, x8)
+const_1_2_PI = $pi / 2.0;
+const_3_2_PI = 3.0 / 2.0 * $pi;
+const_5_2_PI = 5.0 / 2.0 * $pi;
+const_7_2_PI = 7.0 / 2.0 * $pi;
+
+function Phoenix_sat(x) local(y, x2, x4, x6, x8, a, b)
 (
   y = 0.0;
   
-  // polynomial approximation instead of table lookup
   (this.sat_type == 0) ? (
+
+  // polynomial approximation instead of table lookup
 
     // hard clip
     x = max(-1.0, min(x, 1.0));
@@ -240,57 +246,25 @@ function Phoenix_sat(x) local(y, x2, x4, x6, x8)
   );
   (this.sat_type == 1) ? (
 
-    // hard clip
-    x = max(-0.991184403, min(x, 0.990821248));
+    // function reconstructed from original 8192 elements lookup table
 
-    x2 = x * x;
-    x4 = x2 * x2;
-    x6 = x4 * x2;
-    x8 = x4 * x4;
-  
-    y = x * 1.501040337 +
-      x2 * -0.0002757478168 +
-      x2 * x * -0.301802438 +
-      x4 * 0.003273802 +
-      x4 * x * 1.786333688 +
-      x6 * -0.046104732 +
-      x6 * x * -24.582679252 +
-      x8 * 0.110553367 +
-      x8 * x * 41.112226106 +
-      x8 * x2 * -0.092987632 +
-      x8 * x2 * x * -16.724196818 +
-      x8 * x4 * 0.01857341 +
-      x8 * x4 * x * -9.331919223 +
-      x8 * x6 * 0.006696015 +
-      x8 * x6 * x * 6.543207186;
+    // hard clip
+    x = max(-1.0, min(x, 1.0));
+
+    y = -sin(const_1_2_PI * x) * -0.479960539 +
+      sin(const_3_2_PI * x) * 0.325640796 -
+      sin(const_5_2_PI * x) * 0.132427442 +
+      sin(const_7_2_PI * x) * 0.022275243;
 
   );
   (this.sat_type == 2) ? (
 
-    // hard clip
-    x = max(-0.991022224, min(x, 0.990984424));
+    // function reconstructed from original 8192 elements lookup table
 
-    x2 = x * x;
-    x4 = x2 * x2;
-    x6 = x4 * x2;
-    x8 = x4 * x4;
-  
-    y = x * 2.063930806 +
-      x2 * 0.0002008141989 +
-      x2 * x * -0.414990906 +
-      x4 * -0.003741183 +
-      x4 * x * 2.456380956 +
-      x6 * 0.03108163 +
-      x6 * x * -33.802027499 +
-      x8 * -0.092816819 +
-      x8 * x * 56.531406839 +
-      x8 * x2 * 0.134928028 +
-      x8 * x2 * x * -22.998647073 +
-      x8 * x4 * -0.098216457 +
-      x8 * x4 * x * -12.829323005 +
-      x8 * x6 * 0.028676158 +
-      x8 * x6 * x * 8.996306767;
-
+    a = 2.052;
+    b = 1.350;
+    y = x * a / exp(abs((x * b)^5));
+    
   );
   
   y;
