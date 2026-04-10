@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<index version="1" name="JSFXClones" commit="13f8c8db0064895d84b50c5ee871774afd1003cd">
+<index version="1" name="JSFXClones" commit="c760a50e54f4218cf29a311139162137d1139169">
   <category name="jsfx">
     <reapack name="JClones_AC1.jsfx" type="effect" desc="JClones_AC1">
       <metadata>
@@ -154,6 +154,8 @@
 {\pard \ql \f0 \sa180 \li0 \fi0 {\b Drive:} Controls the amount of tube saturation applied to the signal.\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 {\b Balance:} Adjusts the tonal balance of the processed signal.\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 {\b Output:} Adjusts the overall output level of the processed signal.\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\b Bit Reduction:} Match original plugin sound quality with its 12-bit lookup table\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\b Fold Back:} Match original plugin hard clipping fold back distorion\par}
 }
 ]]></description>
         <link rel="website">https://github.com/JClones/JSFXClones</link>
@@ -387,32 +389,32 @@
     </reapack>
     <reapack name="JClones_Phoenix.jsfx" type="effect" desc="JClones_Phoenix">
       <metadata>
-        <description><![CDATA[{\rtf1\ansi\deff0{\fonttbl{\f0 \fswiss Helvetica;}{\f1 Courier;}}
+        <description><![CDATA[{\rtf1\ansi\deff0{\fonttbl{\f0 \fswiss Helvetica;}{\f1 \fmodern Courier;}}
 {\colortbl;\red255\green0\blue0;\red0\green0\blue255;}
 \widowctrl\hyphauto
 
-{\pard \ql \f0 \sa180 \li0 \fi0 \b \fs36 JClones_Phoenix\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel0 \b \fs36 JClones_Phoenix\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 JClones_Phoenix is a clone of a renowned audio plugin designed to emulate the sound characteristics of analog tape recording. Created by a company known for its high-quality analog and digital audio equipment, the plugin is widely used by audio engineers and producers to add warmth, depth, and subtle harmonic distortion to digital recordings.\par}
-{\pard \ql \f0 \sa180 \li0 \fi0 \b \fs32 Main Parameters\par}
-{\pard \ql \f0 \sa180 \li0 \fi0 \b \fs28 Input Trim\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel1 \b \fs32 Main Parameters\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel2 \b \fs28 Input Trim\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 {\b Function:} Adjusts the level of the input signal before it is processed by the tape emulation.\par}
-{\pard \ql \f0 \sa180 \li0 \fi0 {\b Range:} Typically \u177?10 dB.\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\b Range:} Typically \u177 ?10 dB.\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 {\b Usage:} Increase the input trim to drive the signal harder into the tape effect, resulting in more pronounced saturation and harmonic distortion. Lower the trim for a cleaner, subtler effect. Use this control to set the initial level of processing intensity.\par}
-{\pard \ql \f0 \sa180 \li0 \fi0 \b \fs28 Process\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel2 \b \fs28 Process\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 {\b Function:} Controls the amount of tape saturation and harmonic distortion applied to the signal.\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 {\b Range:} Variable from light to heavy saturation.\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 {\b Usage:} Increase the drive to add more analog warmth, compression, and harmonic richness. Higher drive settings emulate the effect of pushing tape harder, which is useful for adding depth and character to instruments and vocals. Adjust to taste depending on the desired level of tape coloration.\par}
-{\pard \ql \f0 \sa180 \li0 \fi0 \b \fs28 Output Trim\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel2 \b \fs28 Output Trim\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 {\b Function:} Sets the final output level after the tape emulation process.\par}
-{\pard \ql \f0 \sa180 \li0 \fi0 {\b Range:} Typically \u177?6 dB.\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\b Range:} Typically \u177 ?6 dB.\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 {\b Usage:} Use the output trim to balance the level of the processed signal with the rest of your mix. This ensures that the enhanced audio fits seamlessly within the overall mix without causing level inconsistencies or clipping. Adjust to achieve the desired output volume.\par}
-{\pard \ql \f0 \sa180 \li0 \fi0 \b \fs28 Brightness\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel2 \b \fs28 Brightness\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 {\b Function:} Affects the way high frequencies are treated during the tape emulation process. It modifies the spectral balance by either enhancing or attenuating the upper frequencies, which can significantly influence the perceived clarity, presence, and airiness of the audio.\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 {\b Options:}\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 {\b Opal:} Designed to offer a neutral to slightly bright high-frequency response.\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 {\b Gold:} Provides a balanced enhancement that brings out a smooth and warm high-frequency presence.\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 {\b Sapphire:} Emphasizes high-frequency clarity and brightness, offering the most pronounced enhancement of the three modes.\par}
-{\pard \ql \f0 \sa180 \li0 \fi0 \b \fs28 Type (Tape Modes):\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel2 \b \fs28 Type (Tape Modes):\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 {\b Function:} Selects the specific tape emulation mode.\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 {\b Options:}\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 {\b Luminescent:} Adds brightness and clarity with subtle tape coloration.\par}
@@ -421,7 +423,7 @@
 {\pard \ql \f0 \sa180 \li0 \fi0 {\b Dark Essence:} Provides a darker, more saturated tone, emphasizing low-end warmth.\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 {\b Luster:} Combines tape saturation with compression, producing a smooth and cohesive sound.\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 {\b Usage:} Choose the mode that best suits the desired effect for the audio material. Experiment with different modes to find the perfect tonal character for your mix.\par}
-{\pard \ql \f0 \sa180 \li0 \fi0 \b \fs28 Auto Gain:\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel2 \b \fs28 Auto Gain:\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 This function is added to JClones version to compensate gain boost in different tape modes.\par}
 }
 ]]></description>
@@ -535,19 +537,19 @@
     </reapack>
     <reapack name="JClones_TubeDriver.jsfx" type="effect" desc="JClones_TubeDriver">
       <metadata>
-        <description><![CDATA[{\rtf1\ansi\deff0{\fonttbl{\f0 \fswiss Helvetica;}{\f1 Courier;}}
+        <description><![CDATA[{\rtf1\ansi\deff0{\fonttbl{\f0 \fswiss Helvetica;}{\f1 \fmodern Courier;}}
 {\colortbl;\red255\green0\blue0;\red0\green0\blue255;}
 \widowctrl\hyphauto
 
-{\pard \ql \f0 \sa180 \li0 \fi0 \b \fs36 JClones_TubeDriver\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel0 \b \fs36 JClones_TubeDriver\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 JClones_TubeDriver is a clone of an older version of popular free plugin that emulates the characteristics of tube-based saturation and distortion. It\u8217's known for its straightforward design and effective results in adding warmth, grit, and harmonic richness to audio tracks.\par}
-{\pard \ql \f0 \sa180 \li0 \fi0 \b \fs32 Main Parameters\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel1 \b \fs32 Main Parameters\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 {\b Input Gain:} Controls the level of the signal entering the plugin.\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 {\b Drive:} Determines the amount of tube saturation and distortion applied to the signal.\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 {\b Bias:} Adjusts the electrical bias of the modeled tube.\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 {\b Boost:} Increases the signal level entering the tube emulation circuit.\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 {\b Output Gain:} Controls the level of the signal after processing.\par}
-{\pard \ql \f0 \sa180 \li0 \fi0 Note: JClones version offers linear phase oversampling, auto gain Drive and Bias parameters compensation and additional DC remover.\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 Note: JClones version offers auto gain Drive and Bias parameters compensation and additional DC remover.\par}
 }
 ]]></description>
         <link rel="website">https://github.com/JClones/JSFXClones</link>
