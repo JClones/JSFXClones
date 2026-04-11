@@ -36,6 +36,8 @@ slider5:1<0,1,1{Classic,Fast}>Opto Cell
 
 @init
 
+ext_gr_meter = 0.0;
+
 function DB_TO_K(x)
 (
   10 ^ (x / 20)
@@ -374,6 +376,8 @@ function LACompressor_processSampleStereo(x1, x2) local(sc_left, sc_right,
   v5 = pow(this.gr_const_D / (this.gr_const_D + v4), !this.is_limit ? 0.79 : 0.94);
 
   gain_reduction = this.LACompressor_getGainReduction(v5);
+  
+  this.gr = gain_reduction;
 
   // input saturation
 
@@ -499,6 +503,8 @@ comp.LACompressor_setOptoCell(!opto_cell);
 @sample
 
 comp.LACompressor_processSampleStereo(spl0, spl1);
+
+ext_gr_meter = 20 * log10(comp.gr);
 
 spl0 = comp.y1;
 spl1 = comp.y2;

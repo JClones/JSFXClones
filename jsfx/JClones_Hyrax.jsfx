@@ -19,6 +19,8 @@ slider2:-1<-18,0,0.1>Threshold, dB
 
 @init
 
+ext_gr_meter = 0.0;
+
 // for allocator
 function allocate(size) local(result)
 (
@@ -476,6 +478,8 @@ function Limiter_processSampleStereo(x_left, x_right) local(level_x, flip_gr, sl
   this.y_right = this.x_right_compensation.DelayLine_pushSample(x_right);
 
   total_flip_gr = max(max(attack, release), flip_gr);
+  
+  this.gr = 1.0 - total_flip_gr;
 
   this.y_left *= (1.0 - total_flip_gr);
   this.y_right *= (1.0 - total_flip_gr);
@@ -515,6 +519,8 @@ limiter.Limiter_setThreshold(DB_TO_K(threshold_dB));
 @sample
 
 limiter.Limiter_processSampleStereo(spl0 * input_gain_k, spl1 * input_gain_k);
+
+ext_gr_meter = 20 * log10(limiter.gr);
 
 spl0 = limiter.y_left;
 spl1 = limiter.y_right;

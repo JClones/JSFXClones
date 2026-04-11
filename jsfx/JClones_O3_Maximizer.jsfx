@@ -25,6 +25,8 @@ slider4:0<0,1,1{Off,On}>Prevent ISP
 
 @init
 
+ext_gr_meter = 0.0;
+
 // for allocator
 function allocate(size) local(result)
 (
@@ -431,6 +433,7 @@ function Ozone3Limiter_processSampleStereo(input_left, input_right) local(input_
 
   // 8. apply gain reduction
   output_gr = DB_TO_K(-final_gr_dB);
+  this.gr = output_gr;
 
   this.y_left = this.delay_left.DelayLine_pushSample(input_left) * output_gr;
   this.y_right = this.delay_right.DelayLine_pushSample(input_right) * output_gr;
@@ -567,6 +570,8 @@ limiter.Ozone3Limiter_setPreventISP(param_prevent_isp);
 @sample
 
 limiter.Ozone3Limiter_processSampleStereo(spl0 * param_input_gain_k, spl1 * param_input_gain_k);
+
+ext_gr_meter = 20 * log10(limiter.gr);
 
 spl0 = limiter.y_left * param_output_gain_k;
 spl1 = limiter.y_right * param_output_gain_k;
