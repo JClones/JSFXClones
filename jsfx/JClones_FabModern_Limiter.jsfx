@@ -1,0 +1,338 @@
+desc:       JClones_FabModern_Limiter
+version:    1.0.0
+author:     JClones
+tags:       compressor
+link:       https://github.com/JClones/JSFXClones
+screenshot: https://github.com/JClones/JSFXClones/blob/master/assets/screenshots/JClones_FabModern_Limiter.png
+about:
+
+
+slider1:0<-18,18,0.1>Input Gain, dB
+slider2:-1<-20,0,0.1>Threshold, dB
+
+@init
+
+// for allocator
+function allocate(size) local(result)
+(
+  result = __memory_Index__;
+  __memory_Index__ += size;
+  result;
+);
+
+function DB_TO_K(x)
+(
+  10 ^ (x / 20)
+);
+
+/*
+ * Filter1
+ */
+
+function Filter1_init(a0, a1, b1)
+(
+  this.a0 = a0;
+  this.a1 = a1;
+  this.b1 = b1;
+);
+ 
+function Filter1_ButLPFilter1(freq_k) local(w0, KK, a0, a1, b0, b1)
+(
+  w0 = freq_k * 2.0 * $pi;
+
+  // prepare for BLT
+  KK = 1.0 / tan(w0 / 2.0);
+
+  // perform BLT
+  a0 = 1.0;
+  a1 = 1.0;
+  b0 = 1.0 + KK;
+  b1 = 1.0 - KK;
+
+  // make b0 == 1, also change the sign for b1 and b2 in our calculations
+  this.a0 = a0 / b0;
+  this.a1 = a1 / b0;
+  this.b1 = -b1 / b0;
+);
+
+function ButLPFilter1_step99(raise_99_sec)
+(
+  this.Filter1_ButLPFilter1((0.732936 / raise_99_sec) / srate);
+);
+
+function Filter1_reset(value)
+(
+  this.x1 = value;
+  this.y1 = value;
+);
+
+function Filter1_processSample(x) local(y)
+(
+  y = this.a0 * x + this.a1 * this.x1 + this.b1 * this.y1;
+  
+  this.x1 = x;
+  this.y1 = y;
+  
+  y;
+);
+
+function Filter1_passSample(x)
+(
+  this.x1 = x;
+  this.y1 = x;
+  
+  x;
+);
+
+function Filter1_back()
+(
+  this.y1;
+);
+
+/*
+ * DelayLine
+ */
+ 
+function DelayLine_init(delay_line_size)
+(
+  this.size = delay_line_size;
+  this.line = allocate(delay_line_size);
+  this.head = 0;
+); 
+
+function DelayLine_pushSample(x) local(y)
+(
+  y = this.line[this.head]; 
+  this.line[this.head] = x;
+  this.head = (this.head + 1) % this.size;
+  
+  y
+);
+
+function DelayLine_reset(value)
+(
+  this.head = 0;
+  
+  memset(this.line, value, this.size);
+);
+
+function DelayLine_getLatency()
+(
+  this.size;
+);
+
+function DelayLine_getMin() local(min_value, i)
+(
+  min_value = this.line[0];
+  i = 1;
+  loop(this.size - 1,
+    min_value = min(min_value, this.line[i]);
+    i += 1;
+  );
+  min_value;
+);
+
+/*
+ * MovingAverageFilter
+ */
+ 
+function MovingAverageFilter_init(size)
+(
+  this.delay_line_size = size;
+  this.delay_line = allocate(size);
+);
+
+function MovingAverageFilter_reset(default_value)
+(
+  memset(this.delay_line, default_value, this.delay_line_size);
+
+  this.head = 0;
+  this.sum = default_value * this.delay_line_size;
+);
+
+function MovingAverageFilter_pushSample(x)
+(
+  this.sum -= this.delay_line[this.head];
+  
+  this.delay_line[this.head] = x;
+
+  this.head += 1;
+  
+  (this.head >= this.delay_line_size) ? ( this.head = 0 );
+  
+  this.sum += x;
+
+  // result:  
+  this.sum / this.delay_line_size
+);
+
+
+/*
+ * SlowGR
+ */
+
+function SlowGR_init()
+(
+  this.attack_1.ButLPFilter1_step99(0.025);
+  this.attack_2.Filter1_init(this.attack_1.a0, this.attack_1.a1, this.attack_1.b1);
+
+  this.release_1.ButLPFilter1_step99(0.200);
+  this.release_2.Filter1_init(this.release_1.a0, this.release_1.a1, this.release_1.b1);
+
+  this.slow_attack.ButLPFilter1_step99(0.150);
+  this.slow_release.ButLPFilter1_step99(1.5);
+);
+
+function SlowGR_reset()
+(
+  this.attack_1.Filter1_reset(1.0);
+  this.attack_2.Filter1_reset(1.0);
+
+  this.release_1.Filter1_reset(1.0);
+  this.release_2.Filter1_reset(1.0);
+
+  this.slow_attack.Filter1_reset(1.0);
+  this.slow_release.Filter1_reset(1.0);
+);
+
+function SlowGR_processSample(gr_x) local(gr_x2)
+(
+  // S-shaped stage:
+
+  gr_x2 = gr_x * gr_x;
+
+  // attack
+  gr_x2 = this.attack_1.Filter1_processSample(gr_x2);
+  gr_x2 = this.attack_2.Filter1_processSample(gr_x2);
+
+  // release
+  gr_x2 = (gr_x2 > this.release_1.Filter1_back()) ?
+    this.release_1.Filter1_processSample(gr_x2) :
+    this.release_1.Filter1_passSample(gr_x2);
+
+  gr_x2 = (gr_x2 > this.release_2.Filter1_back()) ? 
+    this.release_2.Filter1_processSample(gr_x2) :
+    this.release_2.Filter1_passSample(gr_x2);
+
+  // exp-shaped stage:
+
+  // attack
+  gr_x = this.slow_attack.Filter1_processSample(gr_x);
+
+  // release
+  gr_x = (gr_x > this.slow_release.Filter1_back()) ?
+    this.slow_release.Filter1_processSample(gr_x) :
+    this.slow_release.Filter1_passSample(gr_x);
+
+  // combine both stages
+  min(gr_x, sqrt(max(gr_x2, 0.0)));
+);
+
+/*
+ * ModernLimiter
+ */
+
+function ModernLimiter_init() local(lookahead_sec, lookahead_samples)
+(
+  lookahead_sec = 0.00018;
+  lookahead_samples = floor(lookahead_sec * srate + 0.5);
+
+  this.delay_x.DelayLine_init(lookahead_samples - 1);
+  this.delay_min.DelayLine_init(lookahead_samples);
+
+  this.flt.MovingAverageFilter_init(lookahead_samples);
+);
+
+function ModernLimiter_reset()
+(
+  this.delay_x.DelayLine_reset();
+  this.delay_min.DelayLine_reset(1.0);
+
+  this.flt.MovingAverageFilter_reset(1.0);
+);
+
+function ModernLimiter_setThreshold(threshold_k)
+(
+  this.threshold_k = threshold_k;
+);
+
+function ModernLimiter_getLatency()
+(
+  this.delay_x.DelayLine_getLatency();
+);
+
+function ModernLimiter_getGR(x) local(level_x)
+(
+  level_x = abs(x);
+
+  (level_x <= this.threshold_k) ? 1.0 : (this.threshold_k / level_x);
+);
+
+
+function ModernLimiter_processGR(x, fast_gr, slow_gr) local(gr_x)
+(
+  gr_x = min(fast_gr, slow_gr);
+
+  // apply max hold
+  this.delay_min.DelayLine_pushSample(gr_x);
+
+  gr_x = this.delay_min.DelayLine_getMin();
+
+  gr_x = this.flt.MovingAverageFilter_pushSample(gr_x);
+
+  // compensate latency
+  x = this.delay_x.DelayLine_pushSample(x);
+
+  x * gr_x;
+);
+
+// continue @init:
+
+(sample_rate != srate) ? (
+
+  sample_rate = srate;
+  
+  // init memory buffers:
+
+  __memory_Index__ = 0;
+
+  slow_gr.SlowGR_init();
+  limiter_left.ModernLimiter_init();
+  limiter_right.ModernLimiter_init();
+);
+
+slow_gr.SlowGR_reset();
+limiter_left.ModernLimiter_reset();
+limiter_right.ModernLimiter_reset();
+
+// report latency
+pdc_delay = limiter_left.ModernLimiter_getLatency();
+pdc_bot_ch = 0;
+pdc_top_ch = 2; // delays the first two channels (spl0/spl1).
+
+@slider
+
+param_input_gain_dB = slider1;
+param_threshold_dB = slider2;
+
+input_gain_k = DB_TO_K(param_input_gain_dB);
+
+limiter_left.ModernLimiter_setThreshold(DB_TO_K(param_threshold_dB));
+limiter_right.ModernLimiter_setThreshold(DB_TO_K(param_threshold_dB));
+
+@block
+
+@sample
+
+spl0 *= input_gain_k;
+spl1 *= input_gain_k;
+
+gr_left = limiter_left.ModernLimiter_getGR(spl0);
+gr_right = limiter_right.ModernLimiter_getGR(spl1);
+
+gr_linked = min(gr_left, gr_right);
+
+slow_gr = slow_gr.SlowGR_processSample(gr_linked);
+
+spl0 = limiter_left.ModernLimiter_processGR(spl0, gr_left, slow_gr);
+spl1 = limiter_right.ModernLimiter_processGR(spl1, gr_right, slow_gr);

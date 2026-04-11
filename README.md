@@ -18,6 +18,7 @@ Also you may use [ysfx](https://github.com/jpcima/ysfx) or [ReaJS](https://www.r
   - [Classic Master Limiter](#jclones_classic_master_limiter)
   - [Hyrax](#jclones_hyrax)
   - [O3_Maximizer](#jclones_o3_maximizer)
+  - [FabModern_Limiter](#jclones_fabmodern_limiter)
 - Compressors
   - [RS124](#jclones_rs124)
   - [VBL](#jclones_vbl)
@@ -148,3 +149,8 @@ JClones_DuTape is a clone of a classic analog tape saturation emulation develope
 JClones_DuValve is a clone of valve (tube) amplifiers non-linear characteristics simulation plugin from a respected developer known for pioneering professional-grade audio plugins in the early digital era.
 
 [Detailed Description](https://github.com/JClones/JSFXClones/blob/master/JClones_DuValve.md)
+
+# JClones_FabModern_Limiter
+JClones_FabModern_Limiter is not really a clone but instead is a plugin inspired by default mode in popular modern brickwall limiter. The plugin is as simple as possible with tiny lookahead latency of 0.18 ms.
+
+[Detailed Description](https://github.com/JClones/JSFXClones/blob/master/JClones_FabModern_Limiter.md)
