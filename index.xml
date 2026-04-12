@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<index version="1" name="JSFXClones" commit="e7dc4fecdc6bbe2e1f19055843b135cda33b4ba4">
+<index version="1" name="JSFXClones" commit="9486f9cb9bc7b929d8e5db2959db0b97326d1a18">
   <category name="jsfx">
     <reapack name="JClones_AC1.jsfx" type="effect" desc="JClones_AC1">
       <metadata>
@@ -28,6 +28,10 @@
       <version name="1.0.0" author="JClones" time="2024-06-28T15:20:22Z">
         <source>https://github.com/JClones/JSFXClones/raw/eaed11c2c419950a62760395de17f30921f71f5d/jsfx/JClones_AC1.jsfx</source>
         <source file="JClones_AC1.jsfx.rpl">https://github.com/JClones/JSFXClones/raw/eaed11c2c419950a62760395de17f30921f71f5d/jsfx/JClones_AC1.jsfx.rpl</source>
+      </version>
+      <version name="1.1.0" author="JClones" time="2026-04-12T19:06:18Z">
+        <source>https://github.com/JClones/JSFXClones/raw/9486f9cb9bc7b929d8e5db2959db0b97326d1a18/jsfx/JClones_AC1.jsfx</source>
+        <source file="JClones_AC1.jsfx.rpl">https://github.com/JClones/JSFXClones/raw/9486f9cb9bc7b929d8e5db2959db0b97326d1a18/jsfx/JClones_AC1.jsfx.rpl</source>
       </version>
     </reapack>
     <reapack name="JClones_AC2.jsfx" type="effect" desc="JClones_AC2">
@@ -68,6 +72,9 @@
       <version name="1.0.0" author="JClones" time="2024-06-30T13:16:04Z">
         <source>https://github.com/JClones/JSFXClones/raw/8a1d5b307326ea0f15ea59b86dbcf3deb47daab7/jsfx/JClones_AC2.jsfx</source>
       </version>
+      <version name="1.1.0" author="JClones" time="2026-04-12T19:06:18Z">
+        <source>https://github.com/JClones/JSFXClones/raw/9486f9cb9bc7b929d8e5db2959db0b97326d1a18/jsfx/JClones_AC2.jsfx</source>
+      </version>
     </reapack>
     <reapack name="JClones_CA2A.jsfx" type="effect" desc="JClones_CA2A">
       <metadata>
@@ -94,6 +101,9 @@
       </metadata>
       <version name="1.0.0" author="JClones" time="2024-08-31T19:26:13Z">
         <source>https://github.com/JClones/JSFXClones/raw/c0b04bd022d4bc0dd766043862b25ffaf9b8d177/jsfx/JClones_CA2A.jsfx</source>
+      </version>
+      <version name="1.1.0" author="JClones" time="2026-04-12T19:06:18Z">
+        <source>https://github.com/JClones/JSFXClones/raw/9486f9cb9bc7b929d8e5db2959db0b97326d1a18/jsfx/JClones_CA2A.jsfx</source>
       </version>
     </reapack>
     <reapack name="JClones_CL1B.jsfx" type="effect" desc="JClones_CL1B">
@@ -122,6 +132,9 @@
       <version name="1.0.0" author="JClones" time="2024-08-27T20:45:47Z">
         <source>https://github.com/JClones/JSFXClones/raw/f4eddabdd5fd43931417468ac7ed3fc79e3bb569/jsfx/JClones_CL1B.jsfx</source>
       </version>
+      <version name="1.1.0" author="JClones" time="2026-04-12T19:06:18Z">
+        <source>https://github.com/JClones/JSFXClones/raw/9486f9cb9bc7b929d8e5db2959db0b97326d1a18/jsfx/JClones_CL1B.jsfx</source>
+      </version>
     </reapack>
     <reapack name="JClones_Classic_Master_Limiter.jsfx" type="effect" desc="JClones_Classic_Master_Limiter">
       <metadata>
@@ -140,6 +153,9 @@
       </metadata>
       <version name="1.0.0" author="JClones" time="2024-07-18T18:15:30Z">
         <source>https://github.com/JClones/JSFXClones/raw/bd6d27854c3f0f3d170d19283d8061f9244b247d/jsfx/JClones_Classic_Master_Limiter.jsfx</source>
+      </version>
+      <version name="1.1.0" author="JClones" time="2026-04-12T19:06:18Z">
+        <source>https://github.com/JClones/JSFXClones/raw/9486f9cb9bc7b929d8e5db2959db0b97326d1a18/jsfx/JClones_Classic_Master_Limiter.jsfx</source>
       </version>
     </reapack>
     <reapack name="JClones_DaTube.jsfx" type="effect" desc="JClones_DaTube">
@@ -167,6 +183,9 @@
       <version name="1.0.1" author="JClones" time="2025-06-24T19:55:34Z">
         <source>https://github.com/JClones/JSFXClones/raw/d28282c7bbd8b1a7d639c4c529d87afd5149987b/jsfx/JClones_DaTube.jsfx</source>
       </version>
+      <version name="1.1.0" author="JClones" time="2026-04-12T19:06:18Z">
+        <source>https://github.com/JClones/JSFXClones/raw/9486f9cb9bc7b929d8e5db2959db0b97326d1a18/jsfx/JClones_DaTube.jsfx</source>
+      </version>
     </reapack>
     <reapack name="JClones_DuTape.jsfx" type="effect" desc="JClones_DuTape">
       <metadata>
@@ -190,6 +209,9 @@
       </metadata>
       <version name="1.0.0" author="JClones" time="2025-06-07T00:14:03Z">
         <source>https://github.com/JClones/JSFXClones/raw/16aa2cfdd4ce6cd77f9b83024aab716929a929f9/jsfx/JClones_DuTape.jsfx</source>
+      </version>
+      <version name="1.1.0" author="JClones" time="2026-04-12T19:06:18Z">
+        <source>https://github.com/JClones/JSFXClones/raw/9486f9cb9bc7b929d8e5db2959db0b97326d1a18/jsfx/JClones_DuTape.jsfx</source>
       </version>
     </reapack>
     <reapack name="JClones_DuValve.jsfx" type="effect" desc="JClones_DuValve">
@@ -215,6 +237,9 @@
       <version name="1.0.0" author="JClones" time="2025-06-25T15:14:08Z">
         <source>https://github.com/JClones/JSFXClones/raw/13f8c8db0064895d84b50c5ee871774afd1003cd/jsfx/JClones_DuValve.jsfx</source>
       </version>
+      <version name="1.1.0" author="JClones" time="2026-04-12T19:06:18Z">
+        <source>https://github.com/JClones/JSFXClones/raw/9486f9cb9bc7b929d8e5db2959db0b97326d1a18/jsfx/JClones_DuValve.jsfx</source>
+      </version>
     </reapack>
     <reapack name="JClones_FabModern_Limiter.jsfx" type="effect" desc="JClones_FabModern_Limiter">
       <metadata>
@@ -224,16 +249,19 @@
       <version name="1.0.0" author="JClones" time="2026-04-11T13:25:21Z">
         <source>https://github.com/JClones/JSFXClones/raw/7eb99a21ba759dbfdd39b0c3f3c81f994c0a125f/jsfx/JClones_FabModern_Limiter.jsfx</source>
       </version>
+      <version name="1.1.0" author="JClones" time="2026-04-12T19:06:18Z">
+        <source>https://github.com/JClones/JSFXClones/raw/9486f9cb9bc7b929d8e5db2959db0b97326d1a18/jsfx/JClones_FabModern_Limiter.jsfx</source>
+      </version>
     </reapack>
     <reapack name="JClones_Fattener.jsfx" type="effect" desc="JClones_Fattener">
       <metadata>
-        <description><![CDATA[{\rtf1\ansi\deff0{\fonttbl{\f0 \fswiss Helvetica;}{\f1 Courier;}}
+        <description><![CDATA[{\rtf1\ansi\deff0{\fonttbl{\f0 \fswiss Helvetica;}{\f1 \fmodern Courier;}}
 {\colortbl;\red255\green0\blue0;\red0\green0\blue255;}
 \widowctrl\hyphauto
 
-{\pard \ql \f0 \sa180 \li0 \fi0 \b \fs36 JClones_Fattener\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel0 \b \fs36 JClones_Fattener\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 JClones_Fattener is a clone of popular audio plugin developed by a duo known for their electronic dance music. The plugin is designed to add warmth, distortion, and overall fatness to audio signals, making it a favorite among producers for enhancing the character of their tracks.\par}
-{\pard \ql \f0 \sa180 \li0 \fi0 \b \fs32 Main Parameters\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel1 \b \fs32 Main Parameters\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 {\b Fattness:} Controls the amount of distortion and saturation applied to the audio signal. Increasing this parameter adds more warmth and thickness to the sound.\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 {\b Color:} Modifies the frequency response of the distortion effect, adjusting how the harmonic content and saturation interact with the signal. It affects the tonal balance of the processed audio, adding or removing certain frequency characteristics.\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 {\b Gain:} Controls the overall output level of the processed signal. This parameter is crucial for adjusting the volume of the effect to match the desired level in the mix.\par}
@@ -244,6 +272,9 @@
       </metadata>
       <version name="1.0.0" author="JClones" time="2024-08-31T20:36:06Z">
         <source>https://github.com/JClones/JSFXClones/raw/8140718b238a57d6655e996e3439f0a4561e7f33/jsfx/JClones_Fattener.jsfx</source>
+      </version>
+      <version name="1.1.0" author="JClones" time="2026-04-12T19:06:18Z">
+        <source>https://github.com/JClones/JSFXClones/raw/9486f9cb9bc7b929d8e5db2959db0b97326d1a18/jsfx/JClones_Fattener.jsfx</source>
       </version>
     </reapack>
     <reapack name="JClones_Hyrax.jsfx" type="effect" desc="JClones_Hyrax">
@@ -264,6 +295,9 @@
       </metadata>
       <version name="1.0.0" author="JClones" time="2024-10-24T21:51:16Z">
         <source>https://github.com/JClones/JSFXClones/raw/b33797f83999dd297d43fa90e560bc9e62a668eb/jsfx/JClones_Hyrax.jsfx</source>
+      </version>
+      <version name="1.1.0" author="JClones" time="2026-04-12T19:06:18Z">
+        <source>https://github.com/JClones/JSFXClones/raw/9486f9cb9bc7b929d8e5db2959db0b97326d1a18/jsfx/JClones_Hyrax.jsfx</source>
       </version>
     </reapack>
     <reapack name="JClones_L2.jsfx" type="effect" desc="JClones_L2">
@@ -314,6 +348,9 @@
       <version name="1.0.0" author="JClones" time="2024-06-22T17:26:21Z">
         <source>https://github.com/JClones/JSFXClones/raw/7560c0a8b6831662cbab27c34b1436eca1d8529e/jsfx/JClones_L2.jsfx</source>
       </version>
+      <version name="1.1.0" author="JClones" time="2026-04-12T19:06:18Z">
+        <source>https://github.com/JClones/JSFXClones/raw/9486f9cb9bc7b929d8e5db2959db0b97326d1a18/jsfx/JClones_L2.jsfx</source>
+      </version>
     </reapack>
     <reapack name="JClones_LMC1.jsfx" type="effect" desc="JClones_LMC1">
       <metadata>
@@ -335,6 +372,9 @@
       </metadata>
       <version name="1.0.0" author="JClones" time="2024-10-22T13:57:25Z">
         <source>https://github.com/JClones/JSFXClones/raw/6ce8888e97dce615472daa6c36efba484a56e6fd/jsfx/JClones_LMC1.jsfx</source>
+      </version>
+      <version name="1.1.0" author="JClones" time="2026-04-12T19:06:18Z">
+        <source>https://github.com/JClones/JSFXClones/raw/9486f9cb9bc7b929d8e5db2959db0b97326d1a18/jsfx/JClones_LMC1.jsfx</source>
       </version>
     </reapack>
     <reapack name="JClones_O3_Maximizer.jsfx" type="effect" desc="JClones_O3_Maximizer">
@@ -358,34 +398,37 @@
       <version name="1.0.0" author="JClones" time="2024-11-25T13:03:12Z">
         <source>https://github.com/JClones/JSFXClones/raw/e84effe3043a7466b70e3fc50c6b5086f2e2071c/jsfx/JClones_O3_Maximizer.jsfx</source>
       </version>
+      <version name="1.1.0" author="JClones" time="2026-04-12T19:06:18Z">
+        <source>https://github.com/JClones/JSFXClones/raw/9486f9cb9bc7b929d8e5db2959db0b97326d1a18/jsfx/JClones_O3_Maximizer.jsfx</source>
+      </version>
     </reapack>
     <reapack name="JClones_OInflator.jsfx" type="effect" desc="JClones_OInflator">
       <metadata>
-        <description><![CDATA[{\rtf1\ansi\deff0{\fonttbl{\f0 \fswiss Helvetica;}{\f1 Courier;}}
+        <description><![CDATA[{\rtf1\ansi\deff0{\fonttbl{\f0 \fswiss Helvetica;}{\f1 \fmodern Courier;}}
 {\colortbl;\red255\green0\blue0;\red0\green0\blue255;}
 \widowctrl\hyphauto
 
-{\pard \ql \f0 \sa180 \li0 \fi0 \b \fs36 JClones_OInflator\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel0 \b \fs36 JClones_OInflator\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 JClones_OInflator is a clone of a plugin renowned for its ability to enhance perceived loudness, warmth, and presence in audio without introducing distortion or reducing dynamic range. It operates by applying a unique process of harmonic enhancement that boosts the audio signal's energy, making it sound fuller and more impactful. Ideal for adding depth and richness to any audio source, it remains a go-to tool for professionals seeking to elevate their mixes with controlled and transparent processing.\par}
-{\pard \ql \f0 \sa180 \li0 \fi0 \b \fs32 Main Controls\par}
-{\pard \ql \f0 \sa180 \li0 \fi0 \b \fs28 Input:\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel1 \b \fs32 Main Controls\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel2 \b \fs28 Input:\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 {\b Function:} Adjusts the level of the signal entering the Inflator.\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 {\b Usage:} Use this control to ensure the input signal is at an optimal level before processing. This helps in achieving the desired loudness and character without clipping or unwanted distortion. Start with the input at a neutral level and adjust as needed to match the output and desired effect.\par}
-{\pard \ql \f0 \sa180 \li0 \fi0 \b \fs28 Effect:\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel2 \b \fs28 Effect:\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 {\b Function:} Determines the amount of the Inflator's effect applied to the audio signal.\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 {\b Range:} 0% to 100%.\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 {\b Usage:} Increasing the Effect level enhances the perceived loudness, warmth, and punch of the audio. At lower levels, the effect is subtle, while higher levels introduce a more pronounced, fuller sound. Start at a lower percentage and gradually increase until you achieve the desired enhancement.\par}
-{\pard \ql \f0 \sa180 \li0 \fi0 \b \fs28 Curve:\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel2 \b \fs28 Curve:\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 {\b Function:} Shapes the characteristic of the enhancement effect applied by the Inflator.\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 {\b Range:} -50% to +50%.\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 {\b Usage:}\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 {\b Negative Curve Values (-50% to 0%):} Provide a softer, more rounded enhancement, ideal for preserving the natural dynamics and warmth of the audio.\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 {\b Positive Curve Values (0% to +50%):} Offer a sharper, more aggressive enhancement, adding more punch and presence, which can be especially effective for drums or vocals.\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 Adjust this control to fine-tune the tonal character of the enhancement based on the specific needs of your audio material.\par}
-{\pard \ql \f0 \sa180 \li0 \fi0 \b \fs28 Output:\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel2 \b \fs28 Output:\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 {\b Function:} Sets the level of the signal after processing by the Inflator.\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 {\b Usage:} Use this control to balance the processed signal\u8217's level with other elements in your mix. It ensures that the overall volume remains consistent and prevents clipping. Start with the output at a neutral level and adjust as needed to match your mix.\par}
-{\pard \ql \f0 \sa180 \li0 \fi0 \b \fs28 Band Split Mode:\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel2 \b \fs28 Band Split Mode:\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 Band Split Mode allows for independent processing of three frequency bands (Low, Mid, and High), providing a more detailed and nuanced approach to enhancing different parts of the audio spectrum.\par}
 }
 ]]></description>
@@ -394,6 +437,9 @@
       </metadata>
       <version name="1.0.0" author="JClones" time="2024-06-22T19:30:19Z">
         <source>https://github.com/JClones/JSFXClones/raw/15f3f9d34194214a1bddce26feb7a0eee8c5bd5e/jsfx/JClones_OInflator.jsfx</source>
+      </version>
+      <version name="1.1.0" author="JClones" time="2026-04-12T19:06:18Z">
+        <source>https://github.com/JClones/JSFXClones/raw/9486f9cb9bc7b929d8e5db2959db0b97326d1a18/jsfx/JClones_OInflator.jsfx</source>
       </version>
     </reapack>
     <reapack name="JClones_Phoenix.jsfx" type="effect" desc="JClones_Phoenix">
@@ -442,6 +488,9 @@
       <version name="1.0.0" author="JClones" time="2024-06-25T23:02:09Z">
         <source>https://github.com/JClones/JSFXClones/raw/6c2548aa315023d94f82b15bf9d545e7ec929d18/jsfx/JClones_Phoenix.jsfx</source>
       </version>
+      <version name="1.1.0" author="JClones" time="2026-04-12T19:06:18Z">
+        <source>https://github.com/JClones/JSFXClones/raw/9486f9cb9bc7b929d8e5db2959db0b97326d1a18/jsfx/JClones_Phoenix.jsfx</source>
+      </version>
     </reapack>
     <reapack name="JClones_RS124.jsfx" type="effect" desc="JClones_RS124">
       <metadata>
@@ -469,17 +518,20 @@
       <version name="1.0.0" author="JClones" time="2024-07-17T18:12:16Z">
         <source>https://github.com/JClones/JSFXClones/raw/2943d11793da7f7a0a17eaf5bc19f9804aea7841/jsfx/JClones_RS124.jsfx</source>
       </version>
+      <version name="1.1.0" author="JClones" time="2026-04-12T19:06:18Z">
+        <source>https://github.com/JClones/JSFXClones/raw/9486f9cb9bc7b929d8e5db2959db0b97326d1a18/jsfx/JClones_RS124.jsfx</source>
+      </version>
     </reapack>
     <reapack name="JClones_SatBuss.jsfx" type="effect" desc="JClones_SatBuss">
       <metadata>
-        <description><![CDATA[{\rtf1\ansi\deff0{\fonttbl{\f0 \fswiss Helvetica;}{\f1 Courier;}}
+        <description><![CDATA[{\rtf1\ansi\deff0{\fonttbl{\f0 \fswiss Helvetica;}{\f1 \fmodern Courier;}}
 {\colortbl;\red255\green0\blue0;\red0\green0\blue255;}
 \widowctrl\hyphauto
 
-{\pard \ql \f0 \sa180 \li0 \fi0 \b \fs36 JClones_SatBuss\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel0 \b \fs36 JClones_SatBuss\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 JClones_SatBuss plugin is a clone of popular audio plugin that emulates the sound and characteristics of an analog mixing console. It is designed to add warmth, character, and subtle harmonic distortion to digital audio, mimicking the nonlinearities and saturation that occur in analog gear. The plugin is often used in digital audio production to give mixes a more "analog" feel, adding depth and presence to individual tracks and overall mixes.\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 The original plugin has two versions: Channel and Buss. Buss version is used on subgroups or the master bus. It emulates the sound of a console's summing bus, providing a slightly different character and allowing for more pronounced saturation when driven hard.\par}
-{\pard \ql \f0 \sa180 \li0 \fi0 \b \fs32 Main Parameters\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel1 \b \fs32 Main Parameters\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 {\b Crosstalk:} Simulates the effect of crosstalk between busses in an analog mixing console. Crosstalk refers to the unintended transfer of signal between channels or busses, which can add a sense of warmth, depth, and cohesion to the mix. The Crosstalk parameter offers three settings: Off, Modern, and Vintage.\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 {\b Off:} No crosstalk effect, maintaining a clean and isolated mix.\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 {\b Modern:} Subtle and controlled crosstalk for a contemporary blend and warmth.\par}
@@ -494,17 +546,20 @@
       <version name="1.0.0" author="JClones" time="2024-08-31T20:14:22Z">
         <source>https://github.com/JClones/JSFXClones/raw/9040b313bc76fd8263ec7660f9c796c51924570d/jsfx/JClones_SatBuss.jsfx</source>
       </version>
+      <version name="1.1.0" author="JClones" time="2026-04-12T19:06:18Z">
+        <source>https://github.com/JClones/JSFXClones/raw/9486f9cb9bc7b929d8e5db2959db0b97326d1a18/jsfx/JClones_SatBuss.jsfx</source>
+      </version>
     </reapack>
     <reapack name="JClones_SatChannel.jsfx" type="effect" desc="JClones_SatChannel">
       <metadata>
-        <description><![CDATA[{\rtf1\ansi\deff0{\fonttbl{\f0 \fswiss Helvetica;}{\f1 Courier;}}
+        <description><![CDATA[{\rtf1\ansi\deff0{\fonttbl{\f0 \fswiss Helvetica;}{\f1 \fmodern Courier;}}
 {\colortbl;\red255\green0\blue0;\red0\green0\blue255;}
 \widowctrl\hyphauto
 
-{\pard \ql \f0 \sa180 \li0 \fi0 \b \fs36 JClones_SatChannel\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel0 \b \fs36 JClones_SatChannel\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 JClones_SatChannel plugin is a clone of popular audio plugin that emulates the sound and characteristics of an analog mixing console. It is designed to add warmth, character, and subtle harmonic distortion to digital audio, mimicking the nonlinearities and saturation that occur in analog gear. The plugin is often used in digital audio production to give mixes a more "analog" feel, adding depth and presence to individual tracks and overall mixes.\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 The plugin has two versions: Channel and Buss. Channel version is typically used on individual tracks within a mix. It emulates the behavior of a single channel on an analog console, adding mild saturation and coloration to the audio signal.\par}
-{\pard \ql \f0 \sa180 \li0 \fi0 \b \fs32 Main Parameters\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel1 \b \fs32 Main Parameters\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 {\b Gain:} Adjusts the input level of the signal entering the plugin. This allows users to set the proper gain staging, which is crucial for achieving the desired amount of saturation and analog warmth.\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 {\b High-Pass:} Cuts low frequencies from the signal. This is useful for removing unwanted low-end rumble or clearing up muddiness in the mix.\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 {\b High-Pass Slope:} Controls the steepness of the high-pass filter's cutoff slope. This filter is used to remove low-frequency content from the signal, which can help clean up unwanted rumble or sub-bass frequencies and improve the clarity of the mix.\par}
@@ -519,6 +574,9 @@
       </metadata>
       <version name="1.0.0" author="JClones" time="2024-08-31T20:14:22Z">
         <source>https://github.com/JClones/JSFXClones/raw/9040b313bc76fd8263ec7660f9c796c51924570d/jsfx/JClones_SatChannel.jsfx</source>
+      </version>
+      <version name="1.1.0" author="JClones" time="2026-04-12T19:06:18Z">
+        <source>https://github.com/JClones/JSFXClones/raw/9486f9cb9bc7b929d8e5db2959db0b97326d1a18/jsfx/JClones_SatChannel.jsfx</source>
       </version>
     </reapack>
     <reapack name="JClones_TapeHead.jsfx" type="effect" desc="JClones_TapeHead">
@@ -543,6 +601,9 @@
       <version name="1.0.0" author="JClones" time="2025-05-31T21:30:22Z">
         <source>https://github.com/JClones/JSFXClones/raw/8bd8a16361d4d91ff162914340b0409953764297/jsfx/JClones_TapeHead.jsfx</source>
       </version>
+      <version name="1.1.0" author="JClones" time="2026-04-12T19:06:18Z">
+        <source>https://github.com/JClones/JSFXClones/raw/9486f9cb9bc7b929d8e5db2959db0b97326d1a18/jsfx/JClones_TapeHead.jsfx</source>
+      </version>
     </reapack>
     <reapack name="JClones_TubeDriver.jsfx" type="effect" desc="JClones_TubeDriver">
       <metadata>
@@ -566,6 +627,9 @@
       </metadata>
       <version name="1.0.0" author="JClones" time="2024-12-01T12:26:09Z">
         <source>https://github.com/JClones/JSFXClones/raw/52580d601fd5d482a1fc0318d0445fe1a1999e72/jsfx/JClones_TubeDriver.jsfx</source>
+      </version>
+      <version name="1.1.0" author="JClones" time="2026-04-12T19:06:18Z">
+        <source>https://github.com/JClones/JSFXClones/raw/9486f9cb9bc7b929d8e5db2959db0b97326d1a18/jsfx/JClones_TubeDriver.jsfx</source>
       </version>
     </reapack>
     <reapack name="JClones_VBL.jsfx" type="effect" desc="JClones_VBL">
@@ -595,6 +659,9 @@
       <version name="1.0.0" author="JClones" time="2024-08-25T22:05:36Z">
         <source>https://github.com/JClones/JSFXClones/raw/1a6860dd9a2f0810163f4d445b155bd5f6f8020d/jsfx/JClones_VBL.jsfx</source>
       </version>
+      <version name="1.1.0" author="JClones" time="2026-04-12T19:06:18Z">
+        <source>https://github.com/JClones/JSFXClones/raw/9486f9cb9bc7b929d8e5db2959db0b97326d1a18/jsfx/JClones_VBL.jsfx</source>
+      </version>
     </reapack>
   </category>
   <metadata>
@@ -616,8 +683,8 @@ ReaPack Extension
 }}}
  installed, you can add the repository to Reaper with this URL:\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 \f1 https://github.com/JClones/JSFXClones/raw/master/index.xml\par}
-{\pard \ql \f0 \sa180 \li0 \fi0 If you {\b don't} have ReaPack installed, you may download plugins on per-file basis or use this {\field{\*\fldinst{HYPERLINK "https://github.com/JClones/JSFXClones/releases/tag/v1.0.0"}}{\fldrslt{\ul
-v1.0.0 release
+{\pard \ql \f0 \sa180 \li0 \fi0 If you {\b don't} have ReaPack installed, you may download plugins on per-file basis or use this {\field{\*\fldinst{HYPERLINK "https://github.com/JClones/JSFXClones/releases/tag/v1.1.0"}}{\fldrslt{\ul
+v1.1.0 release
 }}}
 .\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 Also you may use {\field{\*\fldinst{HYPERLINK "https://github.com/jpcima/ysfx"}}{\fldrslt{\ul
