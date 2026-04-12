@@ -25,6 +25,11 @@ function DB_TO_K(x)
   10 ^ (x / 20)
 );
 
+function K_TO_DB(x)
+(
+  20 * log10(x)
+);
+
 /*
  * Filter1
  */
@@ -280,6 +285,8 @@ function ModernLimiter_processGR(x, fast_gr, slow_gr) local(gr_x)
 
   gr_x = this.flt.MovingAverageFilter_pushSample(gr_x);
 
+  this.gr = gr_x;
+
   // compensate latency
   x = this.delay_x.DelayLine_pushSample(x);
 
@@ -310,6 +317,8 @@ pdc_delay = limiter_left.ModernLimiter_getLatency();
 pdc_bot_ch = 0;
 pdc_top_ch = 2; // delays the first two channels (spl0/spl1).
 
+hold_max_gr = 1.0;
+
 @slider
 
 param_input_gain_dB = slider1;
@@ -321,6 +330,10 @@ limiter_left.ModernLimiter_setThreshold(DB_TO_K(param_threshold_dB));
 limiter_right.ModernLimiter_setThreshold(DB_TO_K(param_threshold_dB));
 
 @block
+
+ext_gr_meter = K_TO_DB(hold_max_gr);
+
+hold_max_gr = 1.0;
 
 @sample
 
@@ -336,3 +349,6 @@ slow_gr = slow_gr.SlowGR_processSample(gr_linked);
 
 spl0 = limiter_left.ModernLimiter_processGR(spl0, gr_left, slow_gr);
 spl1 = limiter_right.ModernLimiter_processGR(spl1, gr_right, slow_gr);
+
+hold_max_gr = min(hold_max_gr, min(limiter_left.gr, limiter_right.gr));
+

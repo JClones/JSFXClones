@@ -103,6 +103,11 @@ function DB_TO_K(x)
   10 ^ (x / 20)
 );
 
+function K_TO_DB(x)
+(
+  20 * log10(x)
+);
+
 /*
  * DelayLineMin
  */
@@ -715,6 +720,10 @@ dither.IDRDither_setMode(16 + quantize * 2, dither, shaping);
 
 @block
 
+ext_gr_meter = K_TO_DB(hold_max_gr);
+
+hold_max_gr = 1.0;
+
 @sample
 
 spl0 *= input_gain_k;
@@ -799,7 +808,7 @@ min_gr = delay_min_gr.DelayLineMin_getMin();
 output_gr = moving_average_gr_1.MovingAverageFilter_pushSample(output_gr);
 output_gr = moving_average_gr_2.MovingAverageFilter_pushSample(output_gr);
 
-ext_gr_meter = 20 * log10(output_gr);
+hold_max_gr = min(hold_max_gr, output_gr);
 
 // delay input
 input_left = delay_line_left.DelayLine_pushSample(spl0);

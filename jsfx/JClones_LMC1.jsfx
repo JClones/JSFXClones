@@ -138,6 +138,8 @@ function LMC_processSample(x) local(next_s, y, output, y2, ar_k, level_lin, leve
 left.LMC_reset();
 right.LMC_reset();
 
+hold_max_gr = 1.0;
+
 @slider
 
 input_gain_k = DB_TO_K(slider1);
@@ -150,10 +152,14 @@ right.LMC_setThreshold(threshold_dB, use_box_tone);
 
 @block
 
+ext_gr_meter = K_TO_DB(hold_max_gr);
+
+hold_max_gr = 1.0;
+
 @sample
 
 spl0 = left.LMC_processSample(spl0 * input_gain_k) * output_gain_k;
 spl1 = right.LMC_processSample(spl1 * input_gain_k) * output_gain_k;
 
-ext_gr_meter = 20 * log10(min(left.feedback_gr, right.feedback_gr));
+hold_max_gr = min(hold_max_gr, min(left.feedback_gr, right.feedback_gr));
 

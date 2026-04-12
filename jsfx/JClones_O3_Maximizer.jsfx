@@ -543,6 +543,8 @@ pdc_delay = limiter.Ozone3Limiter_getLatency();
 pdc_bot_ch = 0;
 pdc_top_ch = 2; // delays the first two channels (spl0/spl1).
 
+hold_max_gr = 1.0;
+
 @slider
 
 param_threshold_dB = slider1;
@@ -567,11 +569,15 @@ limiter.Ozone3Limiter_setPreventISP(param_prevent_isp);
 
 @block
 
+ext_gr_meter = K_TO_DB(hold_max_gr);
+
+hold_max_gr = 1.0;
+
 @sample
 
 limiter.Ozone3Limiter_processSampleStereo(spl0 * param_input_gain_k, spl1 * param_input_gain_k);
 
-ext_gr_meter = 20 * log10(limiter.gr);
+hold_max_gr = min(hold_max_gr, limiter.gr);
 
 spl0 = limiter.y_left * param_output_gain_k;
 spl1 = limiter.y_right * param_output_gain_k;

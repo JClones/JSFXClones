@@ -627,7 +627,7 @@ eq_type = slider10;
 is_modern = slider11;
 
 // auto-gain
-(auto_gain) ? ( output_gain = get_auto_gain(bias, tape_speed, is_modern, input_gain); );
+(auto_gain) ? ( output_gain *= get_auto_gain(bias, tape_speed, is_modern, input_gain); );
 
 left.Tape202_setGain(input_gain, output_gain);
 right.Tape202_setGain(input_gain, output_gain);

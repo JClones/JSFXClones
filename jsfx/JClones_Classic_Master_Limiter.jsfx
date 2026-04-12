@@ -31,6 +31,11 @@ function DB_TO_K(x)
   10 ^ (x / 20)
 );
 
+function K_TO_DB(x)
+(
+  20 * log10(x)
+);
+
 /*
  * Filter1
  */
@@ -249,6 +254,8 @@ pdc_delay = left.ClassicLimiter_getLatency();
 pdc_bot_ch = 0;
 pdc_top_ch = 2; // delays the first two channels (spl0/spl1).
 
+hold_max_gr = 1.0;
+
 @slider
 
 threshold_k = DB_TO_K(slider1);
@@ -258,10 +265,14 @@ right.ClassicLimiter_setThreshold(threshold_k);
 
 @block
 
+ext_gr_meter = K_TO_DB(hold_max_gr);
+
+hold_max_gr = 1.0;
+
 @sample
 
 spl0 = left.ClassicLimiter_processSample(spl0);
 spl1 = right.ClassicLimiter_processSample(spl1);
 
-ext_gr_meter = 20 * log10(min(left.gr, right.gr));
+hold_max_gr = min(hold_max_gr, min(left.gr, right.gr));
 

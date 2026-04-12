@@ -44,6 +44,11 @@ function DB_TO_K(x)
  10 ^ (x / 20)
 );
 
+function K_TO_DB(x)
+(
+  20 * log10(x)
+);
+
 // for allocator
 function allocate(size) local(result)
 (
@@ -789,6 +794,8 @@ function init_tables() local(i)
 left.RS124Compressor_reset();
 right.RS124Compressor_reset();
 
+hold_max_gr = 1.0;
+
 @slider
 
 // scale our -24..+24 (JClones specific) to original 0..10
@@ -799,12 +806,14 @@ right.RS124Compressor_setParameters(slider1, input_gain_org, slider3, slider4, s
 
 @block
 
+ext_gr_meter = K_TO_DB(hold_max_gr);
+
+hold_max_gr = 1.0;
+
 @sample
 
 spl0 = left.RS124Compressor_processSample(spl0);
 spl1 = right.RS124Compressor_processSample(spl1);
 
-ext_gr_meter = 20 * log10(min(left.feedback_gr, right.feedback_gr));
-
-
+hold_max_gr = min(hold_max_gr, min(left.feedback_gr, right.feedback_gr));
 

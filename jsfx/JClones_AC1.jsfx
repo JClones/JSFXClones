@@ -51,6 +51,11 @@ function DB_TO_K(x)
   10 ^ (x / 20)
 );
 
+function K_TO_DB(x)
+(
+  20 * log10(x)
+);
+
 /*
  * AChannel
  */
@@ -87,7 +92,8 @@ function AChannel_setParameters(input_gain, output_gain, drive, curve, auto_gain
   this.input_gain = input_gain;
   this.drive = drive;
   this.a = 0.75 - (curve - 1.0) * 0.075;
-  this.output_gain = (!auto_gain) ? output_gain : min((1.0 / (1.0 - (curve - 1.0) * 0.075)) / input_gain, 16.0);
+  this.output_gain = output_gain;
+  (auto_gain) ? ( this.output_gain *= min((1.0 / (1.0 - (curve - 1.0) * 0.075)) / input_gain, 16.0) );
   this.ac101_mode = ac101_mode;
 );
 
@@ -103,6 +109,8 @@ function AChannel_setAttackRelease(attack_sec, release_sec)
 // reset filters
 left.AChannel_reset();
 right.AChannel_reset();
+
+hold_max_gr = 1.0;
 
 @slider
 
@@ -124,6 +132,10 @@ right.AChannel_setAttackRelease(attack_ms * 0.001, release_ms * 0.001);
 
 @block
 
+ext_gr_meter = K_TO_DB(hold_max_gr);
+
+hold_max_gr = 1.0;
+
 @sample
 
 level_1 = abs(spl0);
@@ -134,5 +146,5 @@ level_2 = abs(spl1);
 spl0 = left.AChannel_processSample(spl0, level_1);
 spl1 = right.AChannel_processSample(spl1, level_2);
 
-ext_gr_meter = 20 * log10(min(left.gr, right.gr));
+hold_max_gr = min(hold_max_gr, min(left.gr, right.gr));
 

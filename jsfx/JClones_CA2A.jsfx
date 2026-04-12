@@ -484,6 +484,8 @@ function LACompressor_setSampleRate()
 // reset filters
 comp.LACompressor_reset();
 
+hold_max_gr = 1.0;
+
 @slider
 
 peak_reduction = slider1 / 100.0;
@@ -500,11 +502,15 @@ comp.LACompressor_setOptoCell(!opto_cell);
 
 @block
 
+ext_gr_meter = K_TO_DB(hold_max_gr);
+
+hold_max_gr = 1.0;
+
 @sample
 
 comp.LACompressor_processSampleStereo(spl0, spl1);
 
-ext_gr_meter = 20 * log10(comp.gr);
+hold_max_gr = min(hold_max_gr, comp.gr);
 
 spl0 = comp.y1;
 spl1 = comp.y2;

@@ -34,6 +34,11 @@ function DB_TO_K(x)
   10 ^ (x / 20)
 );
 
+function K_TO_DB(x)
+(
+  20 * log10(x)
+);
+
 /*
  * Filter1
  */
@@ -505,6 +510,8 @@ pdc_delay = limiter.Limiter_getLatency();
 pdc_bot_ch = 0;
 pdc_top_ch = 2; // delays the first two channels (spl0/spl1).
 
+hold_max_gr = 1.0;
+
 @slider
 
 input_gain_dB = slider1;
@@ -516,11 +523,16 @@ limiter.Limiter_setThreshold(DB_TO_K(threshold_dB));
 
 @block
 
+ext_gr_meter = K_TO_DB(hold_max_gr);
+
+hold_max_gr = 1.0;
+
 @sample
 
 limiter.Limiter_processSampleStereo(spl0 * input_gain_k, spl1 * input_gain_k);
 
-ext_gr_meter = 20 * log10(limiter.gr);
+hold_max_gr = min(hold_max_gr, limiter.gr);
 
 spl0 = limiter.y_left;
 spl1 = limiter.y_right;
+

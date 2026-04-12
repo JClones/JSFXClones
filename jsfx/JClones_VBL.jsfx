@@ -631,6 +631,8 @@ right.comp.VblComp_reset();
 left.sat.VblSaturator_reset();
 right.sat.VblSaturator_reset();
 
+hold_max_gr = 1.0;
+
 @slider
 
 input_gain_dB = slider1;
@@ -674,6 +676,10 @@ left.sat.VblSaturator_setTrafo(trafo_on);
 right.sat.VblSaturator_setTrafo(trafo_on);
 
 @block
+
+ext_gr_meter = K_TO_DB(hold_max_gr);
+
+hold_max_gr = 1.0;
 
 @sample
 
@@ -725,5 +731,5 @@ spl1 = input1 * dry_mix_k + (1.0 - dry_mix_k) * spl1 * output_gain_k;
 spl0 = left.sat.VblSaturator_applyTrafo(spl0, spl1);
 spl1 = right.sat.VblSaturator_applyTrafo(spl1, spl0);
 
-ext_gr_meter = 20 * log10(min(left.sat.feedback_gr, right.sat.feedback_gr));
+hold_max_gr = min(hold_max_gr, min(left.sat.feedback_gr, right.sat.feedback_gr));
 
