@@ -152,7 +152,7 @@ function ClassicLimiter_getLatency()
 
 ONE_E_20 = pow(10, -20);
 
-function ClassicLimiter_processSample(x) local(L, iGR_1, y1, y2, iGR_2, y3, iGR_3, y4, iGR_4)
+function ClassicLimiter_processSample(x) local(L, iGR_1, y1, y2, iGR_2, y3, iGR_3, y4, iGR_4, gr1, gr2, gr3, gr4)
 (
   // pass#1
   L = abs(x) + ONE_E_20;
@@ -230,7 +230,9 @@ function ClassicLimiter_processSample(x) local(L, iGR_1, y1, y2, iGR_2, y3, iGR_
 
   // apply gain reduction and master gain
   gr4 = 1.0 - iGR_4;
+  
   this.gr = gr1 * gr2 * gr3 * gr4;
+
   y4 * gr4 * this.master_gain;
 );
 
