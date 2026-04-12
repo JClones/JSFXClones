@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<index version="1" name="JSFXClones" commit="7eb99a21ba759dbfdd39b0c3f3c81f994c0a125f">
+<index version="1" name="JSFXClones" commit="e7dc4fecdc6bbe2e1f19055843b135cda33b4ba4">
   <category name="jsfx">
     <reapack name="JClones_AC1.jsfx" type="effect" desc="JClones_AC1">
       <metadata>
-        <description><![CDATA[{\rtf1\ansi\deff0{\fonttbl{\f0 \fswiss Helvetica;}{\f1 Courier;}}
+        <description><![CDATA[{\rtf1\ansi\deff0{\fonttbl{\f0 \fswiss Helvetica;}{\f1 \fmodern Courier;}}
 {\colortbl;\red255\green0\blue0;\red0\green0\blue255;}
 \widowctrl\hyphauto
 
-{\pard \ql \f0 \sa180 \li0 \fi0 \b \fs36 JClones_AC1\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel0 \b \fs36 JClones_AC1\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 JClones_AC1 is a clone of a plugin, designed to emulate the characteristics and sonic qualities of analog mixing consoles. By simulating the behavior of analog circuits, the plugin brings the warmth, depth, and harmonic richness of analog gear to digital audio productions. The plugin is highly regarded for its ability to add subtle compression, harmonic distortion, and a sense of cohesion to mixes, making them sound more polished and professional.\par}
-{\pard \ql \f0 \sa180 \li0 \fi0 \b \fs32 Main Parameters\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel1 \b \fs32 Main Parameters\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 {\b Input Gain:} Adjusts the input signal level before processing.\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 {\b Output Gain:} Sets the final output level after processing.\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 {\b Auto Gain:} Engages primitive loudness compensation algorithm.\par}
@@ -32,13 +32,13 @@
     </reapack>
     <reapack name="JClones_AC2.jsfx" type="effect" desc="JClones_AC2">
       <metadata>
-        <description><![CDATA[{\rtf1\ansi\deff0{\fonttbl{\f0 \fswiss Helvetica;}{\f1 Courier;}}
+        <description><![CDATA[{\rtf1\ansi\deff0{\fonttbl{\f0 \fswiss Helvetica;}{\f1 \fmodern Courier;}}
 {\colortbl;\red255\green0\blue0;\red0\green0\blue255;}
 \widowctrl\hyphauto
 
-{\pard \ql \f0 \sa180 \li0 \fi0 \b \fs36 JClones_AC2\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel0 \b \fs36 JClones_AC2\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 JClones_AC2 is a clone of a plugin designed to emulate the classic sound and behavior of analog tape machines that captures the essence of tape saturation, compression, and harmonic richness, making it an invaluable asset for adding depth, warmth, and character to digital recordings. The plugin provides a range of controls that allow users to fine-tune the tape emulation to suit various audio materials and production styles.\par}
-{\pard \ql \f0 \sa180 \li0 \fi0 \b \fs32 Main Parameters\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel1 \b \fs32 Main Parameters\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 {\b Input Gain:} Adjusts the input signal level before processing.\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 {\b Output Gain:} Sets the final output level after processing.\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 {\b Auto Gain:} Engages primitive loudness compensation algorithm.\par}
@@ -71,13 +71,13 @@
     </reapack>
     <reapack name="JClones_CA2A.jsfx" type="effect" desc="JClones_CA2A">
       <metadata>
-        <description><![CDATA[{\rtf1\ansi\deff0{\fonttbl{\f0 \fswiss Helvetica;}{\f1 Courier;}}
+        <description><![CDATA[{\rtf1\ansi\deff0{\fonttbl{\f0 \fswiss Helvetica;}{\f1 \fmodern Courier;}}
 {\colortbl;\red255\green0\blue0;\red0\green0\blue255;}
 \widowctrl\hyphauto
 
-{\pard \ql \f0 \sa180 \li0 \fi0 \b \fs36 JClones_CA2A\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel0 \b \fs36 JClones_CA2A\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 JClones_CA2A plugin is a clone of digital emulation of the legendary LA-2A optical compressor, which is highly regarded in the audio industry for its smooth and musical compression characteristics. The original plugin was developed by a company, known for their popular digital audio workstation (DAW) software. The plugin was designed to replicate the unique sound and behavior of the original hardware LA-2A, a tube-based optical compressor that became famous for its warm, natural-sounding compression. The original plugin was discontinued due to the acquisition of the development company in 2013.\par}
-{\pard \ql \f0 \sa180 \li0 \fi0 \b \fs32 Main Parameters\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel1 \b \fs32 Main Parameters\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 {\b Peak Reduction:} This control sets the amount of compression applied to the input signal. It determines how much gain reduction occurs when the signal exceeds the threshold.\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 {\b Gain:} The Gain control adjusts the output level of the signal after compression has been applied. This is often referred to as "makeup gain," as it compensates for the gain reduction caused by compression.\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 {\b Mode:} This switch toggles between two different compression modes \u8212- Compress and Limit.\par}
@@ -98,13 +98,13 @@
     </reapack>
     <reapack name="JClones_CL1B.jsfx" type="effect" desc="JClones_CL1B">
       <metadata>
-        <description><![CDATA[{\rtf1\ansi\deff0{\fonttbl{\f0 \fswiss Helvetica;}{\f1 Courier;}}
+        <description><![CDATA[{\rtf1\ansi\deff0{\fonttbl{\f0 \fswiss Helvetica;}{\f1 \fmodern Courier;}}
 {\colortbl;\red255\green0\blue0;\red0\green0\blue255;}
 \widowctrl\hyphauto
 
-{\pard \ql \f0 \sa180 \li0 \fi0 \b \fs36 JClones_CL1B\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel0 \b \fs36 JClones_CL1B\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 JClones_CL1B plugin is a clone of older version of digital emulation of the renowned optical compressor, which is widely used in professional audio production. The modelled hardware compressor is highly regarded for its smooth, warm, and musical compression characteristics, making it a popular choice for vocals, bass, drums, and other instruments.\par}
-{\pard \ql \f0 \sa180 \li0 \fi0 \b \fs32 Main Parameters\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel1 \b \fs32 Main Parameters\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 {\b Ratio:} The ratio control determines the amount of gain reduction applied once the signal exceeds the threshold.\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 {\b Threshold:} This control sets the level at which compression begins. When the input signal exceeds the threshold level, compression is applied. JClones specific: the parameter sets exact dB value unlike the cloned plugin, which models the hardware knob behavior.\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 {\b Attack:} The attack parameter controls how quickly the compressor responds to signals that exceed the threshold. Note: the parameter is ignored in "Fixed" mode.\par}
@@ -125,13 +125,13 @@
     </reapack>
     <reapack name="JClones_Classic_Master_Limiter.jsfx" type="effect" desc="JClones_Classic_Master_Limiter">
       <metadata>
-        <description><![CDATA[{\rtf1\ansi\deff0{\fonttbl{\f0 \fswiss Helvetica;}{\f1 Courier;}}
+        <description><![CDATA[{\rtf1\ansi\deff0{\fonttbl{\f0 \fswiss Helvetica;}{\f1 \fmodern Courier;}}
 {\colortbl;\red255\green0\blue0;\red0\green0\blue255;}
 \widowctrl\hyphauto
 
-{\pard \ql \f0 \sa180 \li0 \fi0 \b \fs36 JClones_Classic_Master_Limiter\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel0 \b \fs36 JClones_Classic_Master_Limiter\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 JClones_Classic_Master_Limiter is a clone of freeware limiter plugin designed to provide transparent limiting, allowing you to maximize the loudness of your audio tracks without introducing distortion or unwanted artifacts. Simple interface, low CPU usage, and essential controls make it an excellent choice for both beginners and experienced producers looking to increase the loudness of their tracks. However, the developer of the plugin disappeared from the market abruptly around 2007.\par}
-{\pard \ql \f0 \sa180 \li0 \fi0 \b \fs32 Main Parameters\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel1 \b \fs32 Main Parameters\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 {\b Threshold:} Sets the level at which the limiting begins. Any signal that exceeds this threshold will be limited. Lower the threshold to apply more limiting and increase the perceived loudness of the audio.\par}
 }
 ]]></description>
@@ -248,13 +248,13 @@
     </reapack>
     <reapack name="JClones_Hyrax.jsfx" type="effect" desc="JClones_Hyrax">
       <metadata>
-        <description><![CDATA[{\rtf1\ansi\deff0{\fonttbl{\f0 \fswiss Helvetica;}{\f1 Courier;}}
+        <description><![CDATA[{\rtf1\ansi\deff0{\fonttbl{\f0 \fswiss Helvetica;}{\f1 \fmodern Courier;}}
 {\colortbl;\red255\green0\blue0;\red0\green0\blue255;}
 \widowctrl\hyphauto
 
-{\pard \ql \f0 \sa180 \li0 \fi0 \b \fs36 JClones_Hyrax\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel0 \b \fs36 JClones_Hyrax\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 JClones_Hyrax is a clone of a brickwall limiter module included in an open-source automatic mastering system that uses machine learning to match the characteristics of a reference track to the track you want to master. While the original limiter does offline processing of a track the algorithm was modified to work in realtime.\par}
-{\pard \ql \f0 \sa180 \li0 \fi0 \b \fs32 Main Parameters\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel1 \b \fs32 Main Parameters\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 {\b Input Gain:} Adjusts the input signal level before processing.\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 {\b Threshold:} Sets the level at which the limiting begins. Any signal that exceeds this threshold will be limited. Lower the threshold to apply more limiting and increase the perceived loudness of the audio.\par}
 }
@@ -268,37 +268,37 @@
     </reapack>
     <reapack name="JClones_L2.jsfx" type="effect" desc="JClones_L2">
       <metadata>
-        <description><![CDATA[{\rtf1\ansi\deff0{\fonttbl{\f0 \fswiss Helvetica;}{\f1 Courier;}}
+        <description><![CDATA[{\rtf1\ansi\deff0{\fonttbl{\f0 \fswiss Helvetica;}{\f1 \fmodern Courier;}}
 {\colortbl;\red255\green0\blue0;\red0\green0\blue255;}
 \widowctrl\hyphauto
 
-{\pard \ql \f0 \sa180 \li0 \fi0 \b \fs36 JClones_L2\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel0 \b \fs36 JClones_L2\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 JClones_L2 is a clone of a highly regarded audio plugin known for its capabilities in mastering and dynamic range control. Featuring a state-of-the-art brickwall limiter with look-ahead technology, it ensures peak control and prevents clipping. Its intelligent release control adapts to the audio signal, providing smooth and transparent limiting without manual adjustments. The plugin also includes advanced dithering and noise shaping options to preserve audio quality when reducing bit depth.\par}
-{\pard \ql \f0 \sa180 \li0 \fi0 \b \fs32 Main Controls\par}
-{\pard \ql \f0 \sa180 \li0 \fi0 \b \fs28 Threshold:\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel1 \b \fs32 Main Controls\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel2 \b \fs28 Threshold:\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 {\b Function:} Sets the level at which the limiting begins.\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 {\b Range:} Typically ranges from 0 dB down to -30 dB.\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 {\b Usage:} Lowering the threshold increases the amount of gain reduction applied, making the audio louder but reducing its dynamic range. Start with a moderate setting and adjust according to the desired loudness and dynamic control.\par}
-{\pard \ql \f0 \sa180 \li0 \fi0 \b \fs28 Ceiling (Output Ceiling):\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel2 \b \fs28 Ceiling (Output Ceiling):\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 {\b Function:} Determines the maximum output level after processing.\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 {\b Range:} Can be set from 0 dB down to -30 dB.\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 {\b Usage:} Setting the output ceiling slightly below 0 dB (commonly around -0.1 dB to -0.3 dB) prevents clipping and allows headroom for digital playback systems. Adjust based on your final output format requirements.\par}
-{\pard \ql \f0 \sa180 \li0 \fi0 \b \fs28 Release:\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel2 \b \fs28 Release:\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 {\b Function:} Controls the speed at which the limiter stops reducing gain after the input signal drops below the threshold.\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 {\b Range:} Ranges from 0.01 ms to 1,000 ms.\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 {\b Usage:} Short release times (fast) are suitable for transient-rich material like drums but can introduce distortion if too short. Longer release times (slow) provide a smoother sound but can cause pumping. It\u8217's often effective to use the "Auto Release" (Auto Release Control) mode, which dynamically adjusts the release time to suit the incoming audio.\par}
-{\pard \ql \f0 \sa180 \li0 \fi0 \b \fs32 Advanced Controls\par}
-{\pard \ql \f0 \sa180 \li0 \fi0 \b \fs28 Quantize:\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel1 \b \fs32 Advanced Controls\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel2 \b \fs28 Quantize:\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 {\b Function:} Sets the target bit depth for the processed audio.\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 {\b Options:} Choices include 24-bit, 22-bit, 20-bit, 18-bit, and 16-bit.\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 {\b Usage:} Choose the bit depth based on the final delivery format. For instance, 16-bit is standard for CD audio. If no bit depth reduction is required, set it to 24-bit.\par}
-{\pard \ql \f0 \sa180 \li0 \fi0 \b \fs28 Dither:\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel2 \b \fs28 Dither:\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 {\b Function:} Adds low-level noise to mask quantization distortion when reducing bit depth.\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 {\b Options:} Type 1 and Type 2.\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 {\b Type 1:} Suitable for most material; provides a good balance between noise and distortion masking.\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 {\b Type 2:} Used for recordings with very low-level detail and high dynamic range; it has a slightly different noise character.\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 {\b Usage:} Choose the dither type based on the material and the desired noise profile. Typically, Type 1 is a safe choice for most applications.\par}
-{\pard \ql \f0 \sa180 \li0 \fi0 \b \fs28 Shaping:\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel2 \b \fs28 Shaping:\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 {\b Function:} Adjusts the frequency spectrum of the dithering noise to make it less audible.\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 {\b Options:} None, Moderate, Normal, and Ultra.\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 {\b None:} Applies no noise shaping.\par}
@@ -317,13 +317,13 @@
     </reapack>
     <reapack name="JClones_LMC1.jsfx" type="effect" desc="JClones_LMC1">
       <metadata>
-        <description><![CDATA[{\rtf1\ansi\deff0{\fonttbl{\f0 \fswiss Helvetica;}{\f1 Courier;}}
+        <description><![CDATA[{\rtf1\ansi\deff0{\fonttbl{\f0 \fswiss Helvetica;}{\f1 \fmodern Courier;}}
 {\colortbl;\red255\green0\blue0;\red0\green0\blue255;}
 \widowctrl\hyphauto
 
-{\pard \ql \f0 \sa180 \li0 \fi0 \b \fs36 JClones_LMC1\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel0 \b \fs36 JClones_LMC1\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 JClones_LMC1 is a clone of a compressor plugin modeled after the compressor found in the legendary consoles. The original hardware compressor was designed to manage signals from talkback or listen microphones in recording studios. However, engineers quickly discovered its aggressive compression characteristics were fantastic for creative use, especially on drums.\par}
-{\pard \ql \f0 \sa180 \li0 \fi0 \b \fs32 Main Parameters\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel1 \b \fs32 Main Parameters\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 {\b Input (Gain):} Adjusts the input signal level before processing.\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 {\b Threshold:} Determines when the compression kicks in, controlling how much of the signal gets affected.\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 {\b Output (Gain):} Sets the final output level after processing.\par}
@@ -339,13 +339,13 @@
     </reapack>
     <reapack name="JClones_O3_Maximizer.jsfx" type="effect" desc="JClones_O3_Maximizer">
       <metadata>
-        <description><![CDATA[{\rtf1\ansi\deff0{\fonttbl{\f0 \fswiss Helvetica;}{\f1 Courier;}}
+        <description><![CDATA[{\rtf1\ansi\deff0{\fonttbl{\f0 \fswiss Helvetica;}{\f1 \fmodern Courier;}}
 {\colortbl;\red255\green0\blue0;\red0\green0\blue255;}
 \widowctrl\hyphauto
 
-{\pard \ql \f0 \sa180 \li0 \fi0 \b \fs36 JClones_O3_Maximizer\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel0 \b \fs36 JClones_O3_Maximizer\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 JClones_O3_Maximizer is a clone of maximizer module included in a comprehensive mastering plugin released in the mid-2000s. It was widely regarded for its all-in-one approach to mastering, offering a range of tools in a single interface that could handle EQ, dynamics, limiting, and more. It became a favorite for producers and engineers looking for a versatile, cost-effective solution for in-the-box mastering.\par}
-{\pard \ql \f0 \sa180 \li0 \fi0 \b \fs32 Main Parameters\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel1 \b \fs32 Main Parameters\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 {\b Threshold:} Determines the level at which the Maximizer begins reducing peaks.Lowering the threshold increases the amount of limiting applied, resulting in a louder output.\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 {\b Margin:} Sets the maximum output level of the signal. Typically set to -0.1 dB or -0.3 dB to prevent inter-sample peaks that can occur in digital systems. Ensures the output does not exceed this level.\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 {\b Character:} Controls the behavior of the Maximizer in balancing loudness and transparency. This parameter adjusts between more transparent limiting and a more aggressive approach, depending on the desired effect.\par}
@@ -445,13 +445,13 @@
     </reapack>
     <reapack name="JClones_RS124.jsfx" type="effect" desc="JClones_RS124">
       <metadata>
-        <description><![CDATA[{\rtf1\ansi\deff0{\fonttbl{\f0 \fswiss Helvetica;}{\f1 Courier;}}
+        <description><![CDATA[{\rtf1\ansi\deff0{\fonttbl{\f0 \fswiss Helvetica;}{\f1 \fmodern Courier;}}
 {\colortbl;\red255\green0\blue0;\red0\green0\blue255;}
 \widowctrl\hyphauto
 
-{\pard \ql \f0 \sa180 \li0 \fi0 \b \fs36 JClones_RS124\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel0 \b \fs36 JClones_RS124\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 JClones_RS124 is a clone of the first emulation of classic vari-mu compressor, originally developed in the 1960s by technical engineers of famous recording studio. This plugin captures the unique sonic characteristics and behavior of the original hardware, which was famously used on numerous iconic recordings by The Beatles and other legendary artists.\par}
-{\pard \ql \f0 \sa180 \li0 \fi0 \b \fs32 Main Parameters\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel1 \b \fs32 Main Parameters\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 {\b Model:} The plugin offers three different models of the RS124 compressor, each with unique characteristics and sonic qualities. These models are based on different historical units used at Abbey Road Studios, and they capture the distinct behavior and tonal nuances of the original hardware units.\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 {\b 60050A}: Known for its smooth and musical compression.\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 {\b 61010B}: Features a faster attack and release time than the 60050A model.\par}
@@ -570,13 +570,13 @@
     </reapack>
     <reapack name="JClones_VBL.jsfx" type="effect" desc="JClones_VBL">
       <metadata>
-        <description><![CDATA[{\rtf1\ansi\deff0{\fonttbl{\f0 \fswiss Helvetica;}{\f1 Courier;}}
+        <description><![CDATA[{\rtf1\ansi\deff0{\fonttbl{\f0 \fswiss Helvetica;}{\f1 \fmodern Courier;}}
 {\colortbl;\red255\green0\blue0;\red0\green0\blue255;}
 \widowctrl\hyphauto
 
-{\pard \ql \f0 \sa180 \li0 \fi0 \b \fs36 JClones_VBL\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel0 \b \fs36 JClones_VBL\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 JClones_VBL is a clone of earlier version of vintage broadcast limiter plugin, which emulates the characteristics of classic tube-based broadcast limiters, providing warm analog-style compression and saturation. The plugin is designed to add character and color to digital recordings by incorporating tube harmonics and subtle distortions. It features controls for threshold, release, drive, output, and mix, allowing users to adjust the level of compression and saturation to achieve the desired sound. With its ability to enhance the richness and warmth of audio signals, it is a popular choice for adding vintage character to mixes.\par}
-{\pard \ql \f0 \sa180 \li0 \fi0 \b \fs32 Main Parameters\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel1 \b \fs32 Main Parameters\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 {\b Input (Gain):} Adjusts the input level.\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 {\b Comp (Compression):} Controls the amount of compression applied to the input signal. It essentially determines how aggressively the plugin compresses the signal once it surpasses the threshold level.\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 {\b Emphasis:} Controls the frequency-dependent compression behavior by emphasizing certain frequency ranges before they hit the compression stage. This parameter essentially shapes how the compressor responds to different parts of the frequency spectrum, allowing users to accentuate or de-emphasize specific frequencies during the compression process.\par}
