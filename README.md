@@ -25,6 +25,7 @@ Also you may use [ysfx](https://github.com/jpcima/ysfx) or [ReaJS](https://www.r
   - [CL1B](#jclones_cl1b)
   - [CA2A](#jclones_ca2a)
   - [LMC1](#jclones_lmc1)
+  - [Molot](#jclones_molot)
 - Soft-clippers
   - [Inflator](#jclones_oinflator)
   - [Fattener](#jclones_fattener)
@@ -154,3 +155,8 @@ JClones_DuValve is a clone of valve (tube) amplifiers non-linear characteristics
 JClones_FabModern_Limiter is not really a clone but instead is a plugin inspired by default mode in popular modern brickwall limiter. The plugin is as simple as possible with tiny lookahead latency of 0.18 ms.
 
 [Detailed Description](https://github.com/JClones/JSFXClones/blob/master/JClones_FabModern_Limiter.md)
+
+# JClones_Molot
+JClones_Molot is a clone of colorful, character compressor from the late 2000s / early 2010s
+
+[Detailed Description](https://github.com/JClones/JSFXClones/blob/master/JClones_Molot.md)
