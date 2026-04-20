@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<index version="1" name="JSFXClones" commit="9486f9cb9bc7b929d8e5db2959db0b97326d1a18">
+<index version="1" name="JSFXClones" commit="c7d1a1e9ebe0c6aaf187d1650054ac4f4043ce8e">
   <category name="jsfx">
     <reapack name="JClones_AC1.jsfx" type="effect" desc="JClones_AC1">
       <metadata>
@@ -377,6 +377,43 @@
         <source>https://github.com/JClones/JSFXClones/raw/9486f9cb9bc7b929d8e5db2959db0b97326d1a18/jsfx/JClones_LMC1.jsfx</source>
       </version>
     </reapack>
+    <reapack name="JClones_Molot.jsfx" type="effect" desc="JClones_Molot">
+      <metadata>
+        <description><![CDATA[{\rtf1\ansi\deff0{\fonttbl{\f0 \fswiss Helvetica;}{\f1 \fmodern Courier;}}
+{\colortbl;\red255\green0\blue0;\red0\green0\blue255;}
+\widowctrl\hyphauto
+
+{\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel0 \b \fs36 JClones_Molot\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 JClones_Molot is a clone of colorful, character compressor from the late 2000s / early 2010s\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel1 \b \fs32 Main Parameters\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\b Input:} Controls how hard the signal hits the compressor.\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\b SC Filter Freq.:} Reduces low-frequency influence on compression.\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\b SC Filter:} Enables or disables the sidechain filter.\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\b Threshold:} Sets the level where compression begins.\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\b Ratio:} Determines how strongly the signal is compressed after crossing threshold.\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\b Knee:} Controls how gradually compression starts. Soft knee (smaller values): Smoother, more musical onset. Hard knee (larger values): More aggressive, punchy. In Molot, Knee has a very audible effect - more than in many compressors.\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\b Attack:} Controls how fast compression engages.\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\b Attack Mode:} Switches between two detection behaviors.\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\b Alpha:} Smoother, more \u8220"musical\u8221", less aggressive.\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\b Sigma:} More reactive, punchier, stronger transient shaping.\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\b Release:} Controls how fast compression recovers.\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\b Sat:} Enables or disables the saturation.\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\b Sat Drive:} Increasing the level introduces harmonics.\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\b Makeup:} Adjusts the final level after compression.\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\b Dry Mix:} Blend compressed and original signal.\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\b Mode:} Sets stereo processing mode.\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\b Bypass:} Switches the processing off.\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\b Sidechain:} Switches between internal and external sidechain.\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 Note: JClones version of Molot doesn't include limiter, EQ and oversampling stages present in the original plugin.\par}
+}
+]]></description>
+        <link rel="website">https://github.com/JClones/JSFXClones</link>
+        <link rel="screenshot">https://github.com/JClones/JSFXClones/blob/master/assets/screenshots/JClones_Molot.png</link>
+      </metadata>
+      <version name="1.0.0" author="JClones" time="2026-04-19T21:43:46Z">
+        <source>https://github.com/JClones/JSFXClones/raw/c7d1a1e9ebe0c6aaf187d1650054ac4f4043ce8e/jsfx/JClones_Molot.jsfx</source>
+      </version>
+    </reapack>
     <reapack name="JClones_O3_Maximizer.jsfx" type="effect" desc="JClones_O3_Maximizer">
       <metadata>
         <description><![CDATA[{\rtf1\ansi\deff0{\fonttbl{\f0 \fswiss Helvetica;}{\f1 \fmodern Courier;}}
@@ -736,6 +773,10 @@ CA2A
 {\pard \ql \f0 \sa0 \li720 \fi-360 \endash \tx360\tab {\field{\*\fldinst{HYPERLINK "#jclones_lmc1"}}{\fldrslt{\ul
 LMC1
 }}}
+\par}
+{\pard \ql \f0 \sa0 \li720 \fi-360 \endash \tx360\tab {\field{\*\fldinst{HYPERLINK "#jclones_molot"}}{\fldrslt{\ul
+Molot
+}}}
 \sa180\par}
 {\pard \ql \f0 \sa0 \li360 \fi-360 \bullet \tx360\tab Soft-clippers\par}
 {\pard \ql \f0 \sa0 \li720 \fi-360 \endash \tx360\tab {\field{\*\fldinst{HYPERLINK "#jclones_oinflator"}}{\fldrslt{\ul
@@ -918,6 +959,12 @@ Detailed Description
 {\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel0 \b \fs36 JClones_FabModern_Limiter\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 JClones_FabModern_Limiter is not really a clone but instead is a plugin inspired by default mode in popular modern brickwall limiter. The plugin is as simple as possible with tiny lookahead latency of 0.18 ms.\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 {\field{\*\fldinst{HYPERLINK "https://github.com/JClones/JSFXClones/blob/master/JClones_FabModern_Limiter.md"}}{\fldrslt{\ul
+Detailed Description
+}}}
+\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel0 \b \fs36 JClones_Molot\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 JClones_Molot is a clone of colorful, character compressor from the late 2000s / early 2010s\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\field{\*\fldinst{HYPERLINK "https://github.com/JClones/JSFXClones/blob/master/JClones_Molot.md"}}{\fldrslt{\ul
 Detailed Description
 }}}
 \par}
