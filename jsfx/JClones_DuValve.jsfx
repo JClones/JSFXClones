@@ -1,6 +1,7 @@
 desc:       JClones_DuValve
 version:    1.1.0
 author:     JClones
+license:    MIT
 tags:       saturation
 link:       https://github.com/JClones/JSFXClones
 screenshot: https://github.com/JClones/JSFXClones/blob/master/assets/screenshots/JClones_DuValve.png

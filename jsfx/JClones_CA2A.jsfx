@@ -1,6 +1,7 @@
 desc:       JClones_CA2A
 version:    1.1.0
 author:     JClones
+license:    MIT
 tags:       tube compressor
 link:       https://github.com/JClones/JSFXClones
 screenshot: https://github.com/JClones/JSFXClones/blob/master/assets/screenshots/JClones_CA2A.png

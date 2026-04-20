@@ -1,6 +1,7 @@
 desc:       JClones_Phoenix
 version:    1.1.0
 author:     JClones
+license:    MIT
 tags:       tape saturator
 link:       https://github.com/JClones/JSFXClones
 screenshot: https://github.com/JClones/JSFXClones/blob/master/assets/screenshots/JClones_Phoenix.png
