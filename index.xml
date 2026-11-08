@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<index version="1" name="JSFXClones" commit="5c5bae9016f611f665a8fb98c359a67b0e0b72e9">
+<index version="1" name="JSFXClones" commit="2f32c7d6bec0b277ac52367f34d34ba1c268c800">
   <category name="jsfx">
     <reapack name="JClones_AC1.jsfx" type="effect" desc="JClones_AC1">
       <metadata>
@@ -515,7 +515,7 @@
 {\pard \ql \f0 \sa180 \li0 \fi0 {\b Dark Essence:} Provides a darker, more saturated tone, emphasizing low-end warmth.\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 {\b Luster:} Combines tape saturation with compression, producing a smooth and cohesive sound.\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 {\b Usage:} Choose the mode that best suits the desired effect for the audio material. Experiment with different modes to find the perfect tonal character for your mix.\par}
-{\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel2 \b \fs28 Auto Gain:\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel2 \b \fs28 Auto Gain: (hidden under the triangle in the bottom left corner of the UI)\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 This function is added to JClones version to compensate gain boost in different tape modes.\par}
 }
 ]]></description>
@@ -530,6 +530,9 @@
       </version>
       <version name="1.1.1" author="JClones" time="2026-11-08T15:02:14Z">
         <source>https://github.com/JClones/JSFXClones/raw/5c5bae9016f611f665a8fb98c359a67b0e0b72e9/jsfx/JClones_Phoenix.jsfx</source>
+      </version>
+      <version name="1.1.2" author="JClones" time="2026-11-08T15:39:49Z">
+        <source>https://github.com/JClones/JSFXClones/raw/2f32c7d6bec0b277ac52367f34d34ba1c268c800/jsfx/JClones_Phoenix.jsfx</source>
       </version>
     </reapack>
     <reapack name="JClones_RS124.jsfx" type="effect" desc="JClones_RS124">
