@@ -395,10 +395,10 @@ knob.colors=169696;
 knob.angular=180496;
 knob.cuts=180509;
 knob.frames=180517;
-knob.positions=184117;
-knob.valid=184122;
-knob.brightness_positions=184127;
-knob.type_positions=184130;
+knob.positions=194917;
+knob.valid=194922;
+knob.brightness_positions=194927;
+knob.type_positions=194930;
 knob.size=60;
 knob.order=6;
 knob.terms=13;
@@ -596,14 +596,14 @@ local(delta co si lx ly lz i k c offset diffuse color width inset angle mx my
   mx=knob.marker_x+knob.marker_radius*cos(angle);
   my=knob.marker_y+knob.marker_radius*sin(angle);
   cell=0;
-  loop(180,
-    row=floor(cell/18); col=cell%18;
+  loop(720,
+    row=floor(cell/36); col=cell%36;
     r=0;g=0;b=0;opacity=0;sy=0;
     loop(4,
       sx=0;
       loop(4,
-        px=inset+(col+(sx+0.5)/4)*width/18;
-        py=(row+(sy+0.5)/4)*6;
+        px=inset+(col+(sx+0.5)/4)*width/36;
+        py=(row+(sy+0.5)/4)*3;
         alpha=knob_sample(knob.alpha,px,py,1,0);
         canonical_x=knob.center_x+co*(px-knob.center_x)+si*(py-knob.center_y);
         canonical_y=knob.center_y-si*(px-knob.center_x)+co*(py-knob.center_y);
@@ -615,7 +615,7 @@ local(delta co si lx ly lz i k c offset diffuse color width inset angle mx my
       sy+=1;
     );
     r/=16;g/=16;b/=16;opacity/=16;
-    white=circle_coverage(inset+col*width/18,row*6,inset+(col+1)*width/18,(row+1)*6,mx,my,knob.dot_radius);
+    white=circle_coverage(inset+col*width/36,row*3,inset+(col+1)*width/36,(row+1)*3,mx,my,knob.dot_radius);
     destination[cell*4]=r*(1-white)+opacity*white;
     destination[cell*4+1]=g*(1-white)+opacity*white;
     destination[cell*4+2]=b*(1-white)+opacity*white;
@@ -676,17 +676,17 @@ local(i count)
   );
 );
 
-// 2x2 colored subpixels per character, used by the reconstructed knobs.
-// Coordinates refer to the complete terminal: [0,cols*2) x [0,lines*2).
+// 4x4 colored subpixels per character, used by the reconstructed knobs.
+// Coordinates refer to the complete terminal: [0,cols*4) x [0,lines*4).
 function put_subpixel(x, y, r, g, b, opacity)
 instance(cols lines cell_w cell_h origin_x origin_y)
 local(left top right bottom)
 (
-  x >= 0 && x < cols*2 && y >= 0 && y < lines*2 ? (
-    left = floor(origin_x + x*cell_w*0.5);
-    top = floor(origin_y + y*cell_h*0.5);
-    right = floor(origin_x + (x+1)*cell_w*0.5);
-    bottom = floor(origin_y + (y+1)*cell_h*0.5);
+  x >= 0 && x < cols*4 && y >= 0 && y < lines*4 ? (
+    left = floor(origin_x + x*cell_w*0.25);
+    top = floor(origin_y + y*cell_h*0.25);
+    right = floor(origin_x + (x+1)*cell_w*0.25);
+    bottom = floor(origin_y + (y+1)*cell_h*0.25);
     gfx_set(r/255,g/255,b/255,opacity);
     gfx_rect(left,top,right-left,bottom-top);
   );
@@ -763,24 +763,24 @@ local(i start count code base bg fg)
   );
 );
 
-// Draw a cached 18x10 knob through the terminal's 2x subpixel backend.
+// Draw a cached 36x20 knob through the terminal's 4x subpixel backend.
 function ui_knob(index, position)
 local(destination cell alpha r g b column x y)
 (
   position=max(0,min(100,position));
-  destination=knob.frames+index*720;
+  destination=knob.frames+index*2880;
   !knob.valid[index] || abs(knob.positions[index]-position)>0.0000000001 ? (
     render_knob(position,destination);
     knob.positions[index]=position; knob.valid[index]=1;
   );
   column=knob_column(index)+ui.left; cell=0;
-  loop(180,
+  loop(720,
     alpha=destination[cell*4+3];
     alpha>=0.5 ? (
       r=linear_to_byte(destination[cell*4]/alpha);
       g=linear_to_byte(destination[cell*4+1]/alpha);
       b=linear_to_byte(destination[cell*4+2]/alpha);
-      x=column*2+cell%18; y=ui.knob_top+floor(cell/18);
+      x=column*4+cell%36; y=ui.knob_top*2+floor(cell/36);
       crt.put_subpixel(x,y,r,g,b,ui.opacity);
     );
     cell+=1;
@@ -1006,4 +1006,3 @@ crt.put_char(1,12,9658); // U+25BA: filled right-pointing pointer.
 ui.auto_expanded ? ui_text(-1,11,slider6>=0.5 ? "[x] Auto Gain" : "[ ] Auto Gain",41,63,89,ui.opacity);
 crt.set_fg(36,121,125,1); crt.set_bg(247,250,251,1); crt.put_text(75,12,"J");
 crt.set_fg(247,250,251,1); crt.set_bg(36,121,125,1); crt.put_text(76,12,"Clones");
-
