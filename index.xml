@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<index version="1" name="JSFXClones" commit="c7d1a1e9ebe0c6aaf187d1650054ac4f4043ce8e">
+<index version="1" name="JSFXClones" commit="5c5bae9016f611f665a8fb98c359a67b0e0b72e9">
   <category name="jsfx">
     <reapack name="JClones_AC1.jsfx" type="effect" desc="JClones_AC1">
       <metadata>
@@ -527,6 +527,9 @@
       </version>
       <version name="1.1.0" author="JClones" time="2026-04-12T19:06:18Z">
         <source>https://github.com/JClones/JSFXClones/raw/9486f9cb9bc7b929d8e5db2959db0b97326d1a18/jsfx/JClones_Phoenix.jsfx</source>
+      </version>
+      <version name="1.1.1" author="JClones" time="2026-11-08T15:02:14Z">
+        <source>https://github.com/JClones/JSFXClones/raw/5c5bae9016f611f665a8fb98c359a67b0e0b72e9/jsfx/JClones_Phoenix.jsfx</source>
       </version>
     </reapack>
     <reapack name="JClones_RS124.jsfx" type="effect" desc="JClones_RS124">
