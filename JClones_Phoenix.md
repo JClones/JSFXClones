@@ -57,6 +57,6 @@ JClones_Phoenix is a clone of a renowned audio plugin designed to emulate the so
 
 **Usage:** Choose the mode that best suits the desired effect for the audio material. Experiment with different modes to find the perfect tonal character for your mix.
 
-### Auto Gain:
+### Auto Gain: (hidden under the triangle in the bottom left corner of the UI)
 
 This function is added to JClones version to compensate gain boost in different tape modes.
