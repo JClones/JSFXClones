@@ -1,7 +1,6 @@
 desc:       JClones_OInflator
-version:    1.1.0
+version:    1.1.1
 author:     JClones
-license:    MIT
 tags:       waveshaper
 link:       https://github.com/JClones/JSFXClones
 screenshot: https://github.com/JClones/JSFXClones/blob/master/assets/screenshots/JClones_OInflator.png
@@ -52,18 +51,26 @@ about:
 
 // ----------------------------------------------------------------------------
 
-slider1:0<-6,12,0.1>Input, dB
-slider2:0<0,100,0.1>Effect, %
-slider3:0<-50,50,0.1>Curve
-slider4:1<0,1,1{Off,On}>Clip
-slider5:0<0,1,1{Off,On}>BandSplit
-slider6:0<-12,0,0.1>Output, dB
+slider1:0<-6,12,0.1>-Input, dB
+slider2:0<0,100,0.1>-Effect, %
+slider3:0<-50,50,0.1>-Curve
+slider4:1<0,1,1{Off,On}>-Clip
+slider5:0<0,1,1{Off,On}>-BandSplit
+slider6:0<-12,0,0.1>-Output, dB
+slider7:0<0,1,1{Off,On}>-Bypass
+
+options:no_meter
 
 @init
 
 function DB_TO_K(x)
 (
  10 ^ (x / 20)
+);
+
+function K_TO_DB(x)
+(
+  20 * log10(x)
 );
 
 /*
@@ -107,6 +114,8 @@ function OInflator_processSample(x) local(y, high, half_mid, mid, low_x, low)
 
   x = max(-this.clip_threshold, min(this.clip_threshold, x));
 
+  this.metering_x = x * 2.0;
+
   (!this.multiband) ? (
   
     y = this.OInflator_applyProcessing(x);
@@ -140,8 +149,14 @@ function OInflator_processSample(x) local(y, high, half_mid, mid, low_x, low)
 
     y = low + mid + high;
   );
+  
+  this.metering_y = y * 2.0;
 
-  y * this.output_gain;
+  y *= this.output_gain;
+  
+  this.metering_output = y;
+  
+  y;
 );
 
 function OInflator_setGains(input_gain, output_gain)
@@ -196,7 +211,175 @@ function OInflator_reset()
 left.OInflator_reset();
 right.OInflator_reset();
 
-@slider
+// meters
+meters.MIN_LEVEL_LIN = 0.0000001;
+meters.MIN_LEVEL_DB = K_TO_DB(meters.MIN_LEVEL_LIN);
+
+meters.fa = 1.0 - exp(-1.0 / (srate * 0.0005));
+meters.fr = 1.0 - exp(-1.0 / (srate * 0.869));
+meters.fp = 1.0 - exp(-1.0 / (srate * 0.085));
+
+meters.input_left = 0.0;
+meters.input_right = 0.0;
+meters.output_left = 0.0;
+meters.output_right = 0.0;
+
+meters.x_rms2_left = 0.0;
+meters.x_rms2_right = 0.0;
+meters.y_rms2_left = 0.0;
+meters.y_rms2_right = 0.0;
+
+meters.input_left_dB = meters.MIN_LEVEL_DB;
+meters.input_right_dB = meters.MIN_LEVEL_DB;
+meters.output_left_dB = meters.MIN_LEVEL_DB;
+meters.output_right_dB = meters.MIN_LEVEL_DB;
+meters.processing_left_dB = 0.0;
+meters.processing_right_dB = 0.0;
+
+meters.output_clip_left = 0;
+meters.output_clip_right = 0;
+
+// ======================= GUI init =======================
+
+// GUI constants and private memory. No runtime imports or assets.
+ui.columns=89;
+ui.rows=33;
+ui.cell_count=2937;
+ui.backgrounds=4096;
+ui.chars=7033;
+ui.foregrounds=9970;
+ui.dims=12907;
+ui.base_backgrounds=15844;
+ui.base_chars=18781;
+ui.base_foregrounds=21718;
+ui.base_dims=24655;
+ui.input_panel=10976616;
+ui.effect_panel=13347483;
+ui.output_panel=10383193;
+ui.header=11899520;
+ui.ink=4928806;
+ui.white=15528432;
+ui.window_bg=2695968;
+ui.rail=7098176;
+ui.value_ink=9233890;
+ui.value_bg=2825751;
+ui.unlit=8084808;
+ui.green=9097575;
+ui.yellow=7921637;
+ui.orange=4369651;
+ui.red=5393407;
+ui.gain_color=7196907;
+ui.clip_off=6307368;
+ui.button_text=3221280;
+ui.off_light=15985123;
+ui.off_dark=8282706;
+ui.off_top=13680048;
+ui.off_bottom=12164749;
+ui.off_face1=13218725;
+ui.off_face2=12823710;
+ui.input_recess=10187873;
+ui.effect_recess=12426896;
+ui.output_recess=9660243;
+ui.track_top=9.5;
+ui.track_bottom=29.5;
+ui.rail_top=9;
+ui.rail_bottom=29;
+ui.rail_width=2;
+ui.gain_top=6;
+ui.gain_bottom=19;
+ui.gain_max=6;
+ui.control_cols=27592;
+mem_set_values(ui.control_cols+0,7,34,55,69);
+ui.value_cols=27596;
+mem_set_values(ui.value_cols+0,2,29,50,64);
+ui.minimum=27600;
+mem_set_values(ui.minimum+0,-6,0,-50,-12);
+ui.maximum=27604;
+mem_set_values(ui.maximum+0,12,100,50,0);
+ui.defaults=27608;
+mem_set_values(ui.defaults+0,0,0,0,0);
+ui.input_clip_threshold=6.02;
+ui.rail_colors=27612;
+mem_set_values(ui.rail_colors+0,9200719,10057319,9859425,8540993);
+ui.parameter_ids=27616;
+mem_set_values(ui.parameter_ids+0,1,2,3,6);
+ui.has_zero=27620;
+mem_set_values(ui.has_zero+0,1,0,1,0);
+ui.button_rows=27624;
+mem_set_values(ui.button_rows+0,20,24,28);
+ui.button_ids=27627;
+mem_set_values(ui.button_ids+0,4,5,7);
+ui.button_lit=27630;
+mem_set_values(ui.button_lit+0,8026093,8906982,10541947);
+ui.clip_cols=27633;
+mem_set_values(ui.clip_cols+0,15,23,77,85);
+ui.tick_count=13;
+ui.input_ticks=27637;
+mem_set_values(ui.input_ticks+0,6,6,4,8,2,10,0,12,-2,14,-4,16,-6,18,-10,20,-14,22,-18,24,-26,26,-34,28,-42,30);
+ui.output_ticks=27663;
+mem_set_values(ui.output_ticks+0,0,6,-2,8,-4,10,-6,12,-8,14,-10,16,-12,18,-16,20,-20,22,-24,24,-28,26,-32,28,-40,30);
+ui.cap_width=20;
+ui.cap_height=20;
+ui.cap_rgb=27689;
+mem_set_values(ui.cap_rgb+0,10517096,10123886,10123886,10123886,10123886,10123886,10123886,10123886,10123886,10123886,10123886,10123886,10123886,10123886,10123886,10123886,10123886,10123886,10123885,9859939,11835017,12823199,12823199,12823199,12823199,12823199,12823199,12823199,12823199,12823199,12823199,12823199,12823199,12823199,12823199,12823199,12823199,12757407,12757406,11243909,13349801,15061706,15061706,15061706,15061706,15061706,15061706,15061706,15061706,15061706,15061706,15061706,15061706,15061706,15061706,15061706,15061706,15061706,15061706,12824230,8281678,6705221,6705221,6705221);
+mem_set_values(ui.cap_rgb+64,6705221,6705221,6705221,6705221,6573636,6047806,6113599,6310721,6705221,6705221,6705221,6705221,6705221,6705221,6705221,7295814,8544850,7231565,7231565,7231565,7231565,7231565,7231565,7166030,5916736,6968652,7166029,7100236,7692631,7231565,7231565,7231565,7231565,7231565,7231565,7559243,8808279,7889495,7889495,7889495,7889495,7889495,7889495,7823959,7758167,8416099,8745835,9074544,8679528,7823703,7889495,7889495,7889495,7889495,7889495,7888465,9203039,8547427,8547427,8547427,8547427,8547427,8547427,8547682);
+mem_set_values(ui.cap_rgb+128,7626840,7561304,7890011,7890267,8481891,8547427,8547427,8547427,8547427,8547427,8547427,8349017,9598056,9337200,9337200,9337200,9337200,9337200,9271664,9337201,8351077,9337200,9271664,9469043,10193538,9337200,9337200,9337200,9337200,9337200,9337200,8809826,10124657,10192510,10192510,10192510,10192510,10192510,10192510,10126974,10192766,10061695,10127747,10654089,10193024,10192510,10192510,10192510,10192510,10192510,10192510,9401964,10651258,10982540,10982540,10982540,10982540,10982540,10982540,10982540,9075315,10324868,10916746,10587782);
+mem_set_values(ui.cap_rgb+192,11048591,10982540,10982540,10982540,10982540,10982540,10982540,9928823,11243653,11903642,11903642,11903642,11903642,11903642,11903642,11903642,11509142,12167328,12299172,12496551,12430502,11903642,11903642,11903642,11903642,11903642,11903642,10586753,11836047,12824744,12824744,12824744,12824744,12824744,12824744,12759208,11838364,11312277,11772571,11838364,12693415,12824744,12824744,12824744,12824744,12824744,12824744,11179404,12362650,13680311,13680311,13680311,13680311,13680311,13680311,13614518,11904414,13680310,13680310,13680310,13943996,13680311,13680311,13680311);
+mem_set_values(ui.cap_rgb+256,13680311,13680311,13680311,11771799,12954787,14469827,14469827,14469827,14469827,14469827,14469827,14404291,14404035,14338755,14339012,14602184,14470341,14469827,14469827,14469827,14469827,14469827,14469827,12363936,13481387,15193550,15193550,15193550,15193550,15193550,15193550,15128014,12694445,13680826,14272962,14206913,14996685,15193550,15193550,15193550,15193550,15193550,15193550,12890281,13810867,15785944,15785944,15785944,15785944,15785944,15785944,15720408,14931149,15786201,15786201,15852251,15918044,15785944,15785944,15785944,15785944,15785944,15785944,13351088);
+mem_set_values(ui.cap_rgb+320,13942452,15917530,15917530,15917530,15917530,15917530,15917530,15917530,15917530,15983323,15983580,15917787,15917530,15917530,15917530,15917530,15917530,15917530,15917530,13482674,11505794,12362391,12362391,12362391,12362391,12362391,12362391,12362391,12362391,12362391,12362391,12362391,12362391,12362391,12362391,12362391,12362391,12362391,12362391,10848894,9597540,9270891,9270891,9270891,9270891,9270891,9270891,9270891,9270891,9270891,9270891,9270891,9270891,9270891,9270891,9270891,9270891,9270891,9270891,8743518,9201236,7230536,6902085,6770757);
+mem_set_values(ui.cap_rgb+384,6704964,6704964,6704964,6704964,6179392,6507586,6507586,6244928,6704964,6704964,6704965,6704964,6704964,6704964,6770500,7426885);
+ui.shadow_pad=10;
+ui.shadow_width=40;
+ui.shadow_height=40;
+ui.shadow_alpha=28089;
+mem_set_values(ui.shadow_alpha+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
+mem_set_values(ui.shadow_alpha+64,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
+mem_set_values(ui.shadow_alpha+128,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
+mem_set_values(ui.shadow_alpha+192,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
+mem_set_values(ui.shadow_alpha+256,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0.000001,0.000002,0.000004,0.000007,0.000011,0.000015,0.000018,0.000020,0.000021,0.000021,0.000021,0.000021,0.000021,0.000021,0.000021,0.000021,0.000021,0.000021,0.000021,0.000021,0.000021,0.000020,0.000018,0.000015,0.000011,0.000007,0.000004,0.000002,0.000001,0,0);
+mem_set_values(ui.shadow_alpha+320,0,0,0,0,0,0,0,0.000001,0.000005,0.000016,0.000042,0.000094,0.000173,0.000271,0.000369,0.000448,0.000499,0.000526,0.000537,0.000541,0.000542,0.000542,0.000542,0.000542,0.000542,0.000542,0.000542,0.000541,0.000537,0.000526,0.000499,0.000448,0.000369,0.000271,0.000173,0.000094,0.000042,0.000016,0.000005,0.000001,0,0,0,0,0,0.000001,0.000003,0.000016,0.000064,0.000206,0.000546,0.001202,0.002218,0.003483,0.004747,0.005763,0.006420,0.006760,0.006902,0.006949,0.006962,0.006965,0.006965,0.006965);
+mem_set_values(ui.shadow_alpha+384,0.006965,0.006965,0.006962,0.006949,0.006902,0.006760,0.006420,0.005763,0.004747,0.003483,0.002218,0.001202,0.000546,0.000206,0.000064,0.000016,0,0,0,0,0.000001,0.000004,0.000022,0.000108,0.000427,0.001381,0.003668,0.008075,0.014902,0.023396,0.031891,0.038717,0.043125,0.045412,0.046365,0.046684,0.046770,0.046789,0.046792,0.046792,0.046792,0.046789,0.046770,0.046684,0.046365,0.045412,0.043125,0.038717,0.031891,0.023396,0.014902,0.008075,0.003668,0.001381,0.000427,0.000108,0,0,0,0,0.000002,0.000014,0.000082,0.000397);
+mem_set_values(ui.shadow_alpha+448,0.001569,0.005071,0.013470,0.029660,0.054732,0.085931,0.117131,0.142203,0.158392,0.166792,0.170293,0.171466,0.171781,0.171849,0.171861,0.171862,0.171861,0.171849,0.171781,0.171466,0.170293,0.166792,0.158392,0.142203,0.117131,0.085931,0.054732,0.029660,0.013470,0.005071,0.001569,0.000397,0,0,0,0,0.000004,0.000030,0.000177,0.000859,0.003397,0.010976,0.029157,0.064200,0.118468,0.186000,0.253533,0.307801,0.342844,0.361025,0.368604,0.371142,0.371824,0.371971,0.371997,0.372000,0.371997,0.371971,0.371824,0.371142,0.368604,0.361025,0.342844,0.307801);
+mem_set_values(ui.shadow_alpha+512,0.253533,0.186000,0.118468,0.064200,0.029157,0.010976,0.003397,0.000859,0,0,0,0.000001,0.000006,0.000043,0.000255,0.001237,0.004891,0.015803,0.041982,0.092439,0.170578,0.267815,0.365052,0.443191,0.493648,0.519827,0.530739,0.534393,0.535375,0.535587,0.535624,0.535629,0.535624,0.535587,0.535375,0.534393,0.530739,0.519827,0.493648,0.443191,0.365052,0.267815,0.170578,0.092439,0.041982,0.015803,0.004891,0.001237,0,0,0,0.000001,0.000006,0.000048,0.000287,0.001395,0.005515,0.017818,0.047333,0.104221,0.192320,0.301951,0.411582,0.499681);
+mem_set_values(ui.shadow_alpha+576,0.556569,0.586084,0.598387,0.602507,0.603615,0.603854,0.603895,0.603901,0.603895,0.603854,0.603615,0.602507,0.598387,0.586084,0.556569,0.499681,0.411582,0.301951,0.192320,0.104221,0.047333,0.017818,0.005515,0.001395,0,0,0,0.000001,0.000007,0.000049,0.000294,0.001428,0.005647,0.018245,0.048467,0.106718,0.196927,0.309185,0.421443,0.511652,0.569903,0.600125,0.612723,0.616941,0.618076,0.618321,0.618363,0.618368,0.618363,0.618321,0.618076,0.616941,0.612723,0.600125,0.569903,0.511652,0.421443,0.309185,0.196927,0.106718,0.048467,0.018245,0.005647,0.001428);
+mem_set_values(ui.shadow_alpha+640,0,0,0,0.000001,0.000007,0.000049,0.000295,0.001432,0.005661,0.018290,0.048588,0.106985,0.197419,0.309958,0.422496,0.512931,0.571327,0.601625,0.614255,0.618483,0.619621,0.619866,0.619909,0.619914,0.619909,0.619866,0.619621,0.618483,0.614255,0.601625,0.571327,0.512931,0.422496,0.309958,0.197419,0.106985,0.048588,0.018290,0.005661,0.001432,0,0,0,0.000001,0.000007,0.000049,0.000295,0.001432,0.005661,0.018293,0.048595,0.106999,0.197446,0.309999,0.422552,0.512999,0.571403,0.601705,0.614336,0.618566,0.619703,0.619949,0.619991,0.619996);
+mem_set_values(ui.shadow_alpha+704,0.619991,0.619949,0.619703,0.618566,0.614336,0.601705,0.571403,0.512999,0.422552,0.309999,0.197446,0.106999,0.048595,0.018293,0.005661,0.001432,0,0,0,0.000001,0.000007,0.000049,0.000295,0.001432,0.005661,0.018293,0.048595,0.106999,0.197446,0.310000,0.422554,0.513001,0.571405,0.601707,0.614338,0.618568,0.619705,0.619951,0.619993,0.619999,0.619993,0.619951,0.619705,0.618568,0.614338,0.601707,0.571405,0.513001,0.422554,0.310000,0.197446,0.106999,0.048595,0.018293,0.005661,0.001432,0,0,0,0.000001,0.000007,0.000049,0.000295,0.001432);
+mem_set_values(ui.shadow_alpha+768,0.005662,0.018293,0.048595,0.106999,0.197446,0.310000,0.422554,0.513001,0.571405,0.601707,0.614338,0.618568,0.619705,0.619951,0.619993,0.619999,0.619993,0.619951,0.619705,0.618568,0.614338,0.601707,0.571405,0.513001,0.422554,0.310000,0.197446,0.106999,0.048595,0.018293,0.005662,0.001432,0,0,0,0.000001,0.000007,0.000049,0.000295,0.001432,0.005662,0.018293,0.048595,0.106999,0.197446,0.310000,0.422554,0.513001,0.571405,0.601707,0.614338,0.618568,0.619705,0.619951,0.619993,0.619999,0.619993,0.619951,0.619705,0.618568,0.614338,0.601707,0.571405,0.513001);
+mem_set_values(ui.shadow_alpha+832,0.422554,0.310000,0.197446,0.106999,0.048595,0.018293,0.005662,0.001432,0,0,0,0.000001,0.000007,0.000049,0.000295,0.001432,0.005662,0.018293,0.048595,0.106999,0.197446,0.310000,0.422554,0.513001,0.571405,0.601707,0.614338,0.618568,0.619705,0.619951,0.619993,0.619999,0.619993,0.619951,0.619705,0.618568,0.614338,0.601707,0.571405,0.513001,0.422554,0.310000,0.197446,0.106999,0.048595,0.018293,0.005662,0.001432,0,0,0,0.000001,0.000007,0.000049,0.000295,0.001432,0.005662,0.018293,0.048595,0.106999,0.197446,0.310000,0.422554,0.513001);
+mem_set_values(ui.shadow_alpha+896,0.571405,0.601707,0.614338,0.618568,0.619705,0.619951,0.619993,0.619999,0.619993,0.619951,0.619705,0.618568,0.614338,0.601707,0.571405,0.513001,0.422554,0.310000,0.197446,0.106999,0.048595,0.018293,0.005662,0.001432,0,0,0,0.000001,0.000007,0.000049,0.000295,0.001432,0.005662,0.018293,0.048595,0.106999,0.197446,0.310000,0.422554,0.513001,0.571405,0.601707,0.614338,0.618568,0.619705,0.619951,0.619993,0.619999,0.619993,0.619951,0.619705,0.618568,0.614338,0.601707,0.571405,0.513001,0.422554,0.310000,0.197446,0.106999,0.048595,0.018293,0.005662,0.001432);
+mem_set_values(ui.shadow_alpha+960,0,0,0,0.000001,0.000007,0.000049,0.000295,0.001432,0.005662,0.018293,0.048595,0.106999,0.197446,0.310000,0.422554,0.513001,0.571405,0.601707,0.614338,0.618568,0.619705,0.619951,0.619993,0.619999,0.619993,0.619951,0.619705,0.618568,0.614338,0.601707,0.571405,0.513001,0.422554,0.310000,0.197446,0.106999,0.048595,0.018293,0.005662,0.001432,0,0,0,0.000001,0.000007,0.000049,0.000295,0.001432,0.005662,0.018293,0.048595,0.106999,0.197446,0.310000,0.422554,0.513001,0.571405,0.601707,0.614338,0.618568,0.619705,0.619951,0.619993,0.619999);
+mem_set_values(ui.shadow_alpha+1024,0.619993,0.619951,0.619705,0.618568,0.614338,0.601707,0.571405,0.513001,0.422554,0.310000,0.197446,0.106999,0.048595,0.018293,0.005662,0.001432,0,0,0,0.000001,0.000007,0.000049,0.000295,0.001432,0.005661,0.018293,0.048595,0.106999,0.197446,0.310000,0.422553,0.513000,0.571405,0.601707,0.614338,0.618567,0.619705,0.619950,0.619993,0.619998,0.619993,0.619950,0.619705,0.618567,0.614338,0.601707,0.571405,0.513000,0.422553,0.310000,0.197446,0.106999,0.048595,0.018293,0.005661,0.001432,0,0,0,0.000001,0.000007,0.000049,0.000295,0.001432);
+mem_set_values(ui.shadow_alpha+1088,0.005661,0.018292,0.048593,0.106996,0.197439,0.309989,0.422539,0.512983,0.571385,0.601687,0.614317,0.618546,0.619684,0.619929,0.619972,0.619977,0.619972,0.619929,0.619684,0.618546,0.614317,0.601687,0.571385,0.512983,0.422539,0.309989,0.197439,0.106996,0.048593,0.018292,0.005661,0.001432,0,0,0,0.000001,0.000007,0.000049,0.000295,0.001431,0.005657,0.018277,0.048553,0.106906,0.197274,0.309729,0.422184,0.512552,0.570906,0.601182,0.613802,0.618027,0.619164,0.619409,0.619451,0.619457,0.619451,0.619409,0.619164,0.618027,0.613802,0.601182,0.570906,0.512552);
+mem_set_values(ui.shadow_alpha+1152,0.422184,0.309729,0.197274,0.106906,0.048553,0.018277,0.005657,0.001431,0,0,0,0.000001,0.000007,0.000049,0.000291,0.001416,0.005598,0.018087,0.048049,0.105797,0.195228,0.306517,0.417807,0.507237,0.564985,0.594947,0.607437,0.611618,0.612743,0.612986,0.613028,0.613033,0.613028,0.612986,0.612743,0.611618,0.607437,0.594947,0.564985,0.507237,0.417807,0.306517,0.195228,0.105797,0.048049,0.018087,0.005598,0.001416,0,0,0,0.000001,0.000006,0.000046,0.000273,0.001324,0.005234,0.016912,0.044928,0.098924,0.182545,0.286604,0.390663,0.474284);
+mem_set_values(ui.shadow_alpha+1216,0.528280,0.556296,0.567973,0.571884,0.572935,0.573162,0.573201,0.573206,0.573201,0.573162,0.572935,0.571884,0.567973,0.556296,0.528280,0.474284,0.390663,0.286604,0.182545,0.098924,0.044928,0.016912,0.005234,0.001324,0,0,0,0.000001,0.000005,0.000036,0.000213,0.001035,0.004092,0.013222,0.035125,0.077339,0.142715,0.224069,0.305423,0.370798,0.413013,0.434915,0.444045,0.447102,0.447924,0.448102,0.448132,0.448136,0.448132,0.448102,0.447924,0.447102,0.444045,0.434915,0.413013,0.370798,0.305423,0.224069,0.142715,0.077339,0.035125,0.013222,0.004092,0.001035);
+mem_set_values(ui.shadow_alpha+1280,0,0,0,0,0.000003,0.000020,0.000118,0.000573,0.002265,0.007317,0.019438,0.042800,0.078978,0.124000,0.169021,0.205200,0.228561,0.240682,0.245734,0.247426,0.247881,0.247979,0.247996,0.247999,0.247996,0.247979,0.247881,0.247426,0.245734,0.240682,0.228561,0.205200,0.169021,0.124000,0.078978,0.042800,0.019438,0.007317,0.002265,0.000573,0,0,0,0,0.000001,0.000007,0.000040,0.000195,0.000770,0.002489,0.006613,0.014561,0.026869,0.042185,0.057501,0.069810,0.077757,0.081881,0.083600,0.084175,0.084330,0.084363,0.084369,0.084370);
+mem_set_values(ui.shadow_alpha+1344,0.084369,0.084363,0.084330,0.084175,0.083600,0.081881,0.077757,0.069810,0.057501,0.042185,0.026869,0.014561,0.006613,0.002489,0.000770,0.000195,0,0,0,0,0,0.000001,0.000008,0.000037,0.000147,0.000475,0.001262,0.002778,0.005127,0.008049,0.010971,0.013320,0.014836,0.015623,0.015951,0.016061,0.016090,0.016097,0.016098,0.016098,0.016098,0.016097,0.016090,0.016061,0.015951,0.015623,0.014836,0.013320,0.010971,0.008049,0.005127,0.002778,0.001262,0.000475,0.000147,0.000037,0,0,0,0,0,0,0.000001,0.000004);
+mem_set_values(ui.shadow_alpha+1408,0.000015,0.000048,0.000128,0.000281,0.000519,0.000815,0.001111,0.001349,0.001502,0.001582,0.001615,0.001626,0.001629,0.001630,0.001630,0.001630,0.001630,0.001630,0.001629,0.001626,0.001615,0.001582,0.001502,0.001349,0.001111,0.000815,0.000519,0.000281,0.000128,0.000048,0.000015,0.000004,0,0,0,0,0,0,0,0,0.000001,0.000002,0.000007,0.000015,0.000027,0.000042,0.000058,0.000070,0.000078,0.000082,0.000084,0.000084,0.000085,0.000085,0.000085,0.000085,0.000085,0.000085,0.000085,0.000084,0.000084,0.000082,0.000078,0.000070);
+mem_set_values(ui.shadow_alpha+1472,0.000058,0.000042,0.000027,0.000015,0.000007,0.000002,0.000001,0,0,0,0,0,0,0,0,0,0,0,0,0,0.000001,0.000001,0.000002,0.000002,0.000002,0.000002,0.000002,0.000002,0.000002,0.000002,0.000002,0.000002,0.000002,0.000002,0.000002,0.000002,0.000002,0.000002,0.000002,0.000002,0.000002,0.000001,0.000001,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
+mem_set_values(ui.shadow_alpha+1536,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
+gfx_ext_retina=1;
+ui.ready=0;ui.drag=-1;ui.last_click=-1;ui.previous_down=0;ui.wheel_target=-1;ui.wheel_remainder=0;
+// Static glyph records: column, row, Unicode code point, RGB colour, bypass-dim flag.
+ui.static_glyph_count=160;
+ui.static_glyphs=29689;
+mem_set_values(ui.static_glyphs+0,3,1,74,3744277,0,4,1,32,3744277,0,5,1,67,3744277,0,6,1,32,3744277,0,7,1,108,3744277,0,8,1,32,3744277,0,9,1,111,3744277,0,10,1,32,3744277,0,11,1,110,3744277,0,12,1,32,3744277,0,13,1,101,3744277,0,14,1,32,3744277,0,15,1,115,3744277);
+mem_set_values(ui.static_glyphs+64,0,33,1,79,15528432,0,34,1,32,15528432,0,35,1,32,15528432,0,36,1,73,15528432,0,37,1,32,15528432,0,38,1,32,15528432,0,39,1,78,15528432,0,40,1,32,15528432,0,41,1,32,15528432,0,42,1,70,15528432,0,43,1,32,15528432,0,44,1,32,15528432,0,45,1,76);
+mem_set_values(ui.static_glyphs+128,15528432,0,46,1,32,15528432,0,47,1,32,15528432,0,48,1,65,15528432,0,49,1,32,15528432,0,50,1,32,15528432,0,51,1,84,15528432,0,52,1,32,15528432,0,53,1,32,15528432,0,54,1,79,15528432,0,55,1,32,15528432,0,56,1,32,15528432,0,57,1,82,15528432,0,9,3);
+mem_set_values(ui.static_glyphs+192,73,15528432,1,10,3,32,15528432,1,11,3,78,15528432,1,12,3,32,15528432,1,13,3,80,15528432,1,14,3,32,15528432,1,15,3,85,15528432,1,16,3,32,15528432,1,17,3,84,15528432,1,29,3,69,3022100,1,30,3,32,3022100,1,31,3,70,3022100,1,32,3,32,3022100,1,33);
+mem_set_values(ui.static_glyphs+256,3,70,3022100,1,34,3,32,3022100,1,35,3,69,3022100,1,36,3,32,3022100,1,37,3,67,3022100,1,38,3,32,3022100,1,39,3,84,3022100,1,50,3,67,3022100,1,51,3,32,3022100,1,52,3,85,3022100,1,53,3,32,3022100,1,54,3,82,3022100,1,55,3,32,3022100,1);
+mem_set_values(ui.static_glyphs+320,56,3,86,3022100,1,57,3,32,3022100,1,58,3,69,3022100,1,70,3,79,15528432,1,71,3,32,15528432,1,72,3,85,15528432,1,73,3,32,15528432,1,74,3,84,15528432,1,75,3,32,15528432,1,76,3,80,15528432,1,77,3,32,15528432,1,78,3,85,15528432,1,79,3,32,15528432);
+mem_set_values(ui.static_glyphs+384,1,80,3,84,15528432,1,3,22,62,5978920,1,11,22,60,5978920,1,51,19,62,5978920,1,59,19,60,5978920,1,18,6,32,15528432,0,19,6,43,15528432,0,20,6,54,15528432,0,18,8,32,15528432,0,19,8,43,15528432,0,20,8,52,15528432,0,18,10,32,15528432,0,19,10,43);
+mem_set_values(ui.static_glyphs+448,15528432,0,20,10,50,15528432,0,18,12,32,15528432,0,19,12,32,15528432,0,20,12,48,15528432,0,18,14,32,15528432,0,19,14,45,15528432,0,20,14,50,15528432,0,18,16,32,15528432,0,19,16,45,15528432,0,20,16,52,15528432,0,18,18,32,15528432,0,19,18,45,15528432,0,20,18);
+mem_set_values(ui.static_glyphs+512,54,15528432,0,18,20,45,15528432,0,19,20,49,15528432,0,20,20,48,15528432,0,18,22,45,15528432,0,19,22,49,15528432,0,20,22,52,15528432,0,18,24,45,15528432,0,19,24,49,15528432,0,20,24,56,15528432,0,18,26,45,15528432,0,19,26,50,15528432,0,20,26,54,15528432,0,18);
+mem_set_values(ui.static_glyphs+576,28,45,15528432,0,19,28,51,15528432,0,20,28,52,15528432,0,18,30,45,15528432,0,19,30,52,15528432,0,20,30,50,15528432,0,80,6,32,15528432,0,81,6,32,15528432,0,82,6,48,15528432,0,80,8,32,15528432,0,81,8,45,15528432,0,82,8,50,15528432,0,80,10,32,15528432,0);
+mem_set_values(ui.static_glyphs+640,81,10,45,15528432,0,82,10,52,15528432,0,80,12,32,15528432,0,81,12,45,15528432,0,82,12,54,15528432,0,80,14,32,15528432,0,81,14,45,15528432,0,82,14,56,15528432,0,80,16,45,15528432,0,81,16,49,15528432,0,82,16,48,15528432,0,80,18,45,15528432,0,81,18,49,15528432);
+mem_set_values(ui.static_glyphs+704,0,82,18,50,15528432,0,80,20,45,15528432,0,81,20,49,15528432,0,82,20,54,15528432,0,80,22,45,15528432,0,81,22,50,15528432,0,82,22,48,15528432,0,80,24,45,15528432,0,81,24,50,15528432,0,82,24,52,15528432,0,80,26,45,15528432,0,81,26,50,15528432,0,82,26,56);
+mem_set_values(ui.static_glyphs+768,15528432,0,80,28,45,15528432,0,81,28,51,15528432,0,82,28,50,15528432,0,80,30,45,15528432,0,81,30,52,15528432,0,82,30,48,15528432,0);
+
+
+// ========================================================
+
+@block
 
 input_gain = DB_TO_K(slider1);
 effect = slider2;
@@ -204,6 +387,7 @@ curve = slider3;
 clip = slider4;
 bandsplit = slider5;
 output_gain = DB_TO_K(slider6);
+is_bypass = slider7;
 
 left.OInflator_setGains(input_gain, output_gain);
 right.OInflator_setGains(input_gain, output_gain);
@@ -211,10 +395,432 @@ right.OInflator_setGains(input_gain, output_gain);
 left.OInflator_setMode(clip, bandsplit, effect / 100.0, curve);
 right.OInflator_setMode(clip, bandsplit, effect / 100.0, curve);
 
-@block
+// refresh meters in dB once per block
+meters.input_left_dB = K_TO_DB(max(meters.input_left, meters.MIN_LEVEL_LIN));
+meters.input_right_dB = K_TO_DB(max(meters.input_right, meters.MIN_LEVEL_LIN));
+meters.output_left_dB = K_TO_DB(max(meters.output_left, meters.MIN_LEVEL_LIN));
+meters.output_right_dB = K_TO_DB(max(meters.output_right, meters.MIN_LEVEL_LIN));
+
+// processing meters
+
+meters.processing_left = sqrt((meters.y_rms2_left + meters.MIN_LEVEL_LIN^2) / (meters.x_rms2_left + meters.MIN_LEVEL_LIN^2));
+meters.processing_right = sqrt((meters.y_rms2_right + meters.MIN_LEVEL_LIN^2) / (meters.x_rms2_right + meters.MIN_LEVEL_LIN^2));
+
+meters.processing_left_dB = K_TO_DB(meters.processing_left);
+meters.processing_right_dB = K_TO_DB(meters.processing_right);
 
 @sample
 
-spl0 = left.OInflator_processSample(spl0);
-spl1 = right.OInflator_processSample(spl1);
+(!is_bypass) ? (
 
+  spl0 = left.OInflator_processSample(spl0);
+  spl1 = right.OInflator_processSample(spl1);
+
+  // metering
+  meters.input_left += (abs(left.metering_x) - meters.input_left) * (abs(left.metering_x) > meters.input_left ? meters.fa : meters.fr);
+  meters.input_right += (abs(right.metering_x) - meters.input_right) * (abs(right.metering_x) > meters.input_right ? meters.fa : meters.fr);
+  meters.output_left += (abs(left.metering_output) - meters.output_left) * (abs(left.metering_output) > meters.output_left ? meters.fa : meters.fr);
+  meters.output_right += (abs(right.metering_output) - meters.output_right) * (abs(right.metering_output) > meters.output_right ? meters.fa : meters.fr);
+
+  // processing meters
+  meters.x_rms2_left += (left.metering_x * left.metering_x - meters.x_rms2_left) * meters.fp;
+  meters.x_rms2_right += (right.metering_x * right.metering_x - meters.x_rms2_right) * meters.fp;
+  meters.y_rms2_left += (left.metering_y * left.metering_y - meters.y_rms2_left) * meters.fp;
+  meters.y_rms2_right += (right.metering_y * right.metering_y - meters.y_rms2_right) * meters.fp;
+
+) : (
+
+  // metering
+  meters.input_left += (abs(spl0) - meters.input_left) * (abs(spl0) > meters.input_left ? meters.fa : meters.fr);
+  meters.input_right += (abs(spl1) - meters.input_right) * (abs(spl1) > meters.input_right ? meters.fa : meters.fr);
+  meters.output_left += (abs(spl0) - meters.output_left) * (abs(spl0) > meters.output_left ? meters.fa : meters.fr);
+  meters.output_right += (abs(spl1) - meters.output_right) * (abs(spl1) > meters.output_right ? meters.fa : meters.fr);
+
+  // processing meters
+  meters.x_rms2_left = 0.0;
+  meters.x_rms2_right = 0.0;
+  meters.y_rms2_left = 0.0;
+  meters.y_rms2_right = 0.0;
+);
+
+// clip indicator
+(abs(spl0) > 1.0) ? ( meters.output_clip_left = 1 );
+(abs(spl1) > 1.0) ? ( meters.output_clip_right = 1 );
+
+
+@gfx 801 594
+function setup_grid(columns, rows, width, height, x, y)
+instance(cols lines cell_w cell_h origin_x origin_y)
+(
+  cols = columns; lines = rows;
+  cell_w = width; cell_h = height; origin_x = x; origin_y = y;
+);
+function set_fg(r, g, b, opacity)
+instance(fr fg fb fa)
+(
+  fr = r/255; fg = g/255; fb = b/255; fa = opacity;
+);
+function set_bg(r, g, b, opacity)
+instance(br bg bb ba)
+(
+  br = r/255; bg = g/255; bb = b/255; ba = opacity;
+);
+function put_char(column, row, code)
+instance(cols lines cell_w cell_h origin_x origin_y fr fg fb fa br bg bb ba)
+local(x y right bottom width height)
+(
+  column >= 0 && column < cols && row >= 0 && row < lines ? (
+    x = floor(origin_x + column*cell_w);
+    y = floor(origin_y + row*cell_h);
+    right = floor(origin_x + (column+1)*cell_w);
+    bottom = floor(origin_y + (row+1)*cell_h);
+    ba > 0 ? (
+      gfx_set(br,bg,bb,ba);
+      gfx_rect(x,y,right-x,bottom-y);
+    );
+    code != 32 && code > 0 && fa > 0 ? (
+      gfx_measurechar(code,width,height);
+      gfx_set(fr,fg,fb,fa);
+      gfx_x=origin_x+column*cell_w+(cell_w-width)*0.5;
+      gfx_y=origin_y+row*cell_h+(cell_h-height)*0.5;
+      gfx_drawchar(code);
+    );
+  );
+);
+function put_text(column, row, text)
+local(i count)
+(
+  i = 0; count = strlen(text);
+  loop(count,
+    this.put_char(column+i,row,str_getchar(text,i,'cu'));
+    i += 1;
+  );
+);
+
+// 4x4 colored subpixels per character, used by the saved-profile knobs.
+// Coordinates refer to the complete terminal: [0,cols*4) x [0,lines*4).
+function put_subpixel(x, y, r, g, b, opacity)
+instance(cols lines cell_w cell_h origin_x origin_y)
+local(left top right bottom)
+(
+  x >= 0 && x < cols*4 && y >= 0 && y < lines*4 ? (
+    left = floor(origin_x + x*cell_w*0.25);
+    top = floor(origin_y + y*cell_h*0.25);
+    right = floor(origin_x + (x+1)*cell_w*0.25);
+    bottom = floor(origin_y + (y+1)*cell_h*0.25);
+    gfx_set(r/255,g/255,b/255,opacity);
+    gfx_rect(left,top,right-left,bottom-top);
+  );
+);
+
+// Fit measured glyph width and height to the cell across platform substitutions.
+// Re-evaluate only after a cell-size or display-scale change.
+function fit_terminal_font(width,height)
+instance(last_width last_height last_retina font_size measured_width measured_height)
+local(candidate w h score best_score)
+(
+  width!=last_width || height!=last_height || gfx_ext_retina!=last_retina || font_size==0 ? (
+    best_score=1000000;candidate=8;font_size=8;
+    loop(93,
+      gfx_setfont(1,"Courier New",candidate,'b');
+      gfx_measurestr("M",w,h);
+      score=abs(h-height)+abs(w-width);
+      score<best_score ? (best_score=score;font_size=candidate;);
+      candidate+=1;
+    );
+    gfx_setfont(1,"Courier New",font_size,'b');
+    gfx_measurestr("M",measured_width,measured_height);
+    last_width=width;last_height=height;last_retina=gfx_ext_retina;
+  ) : gfx_setfont(1);
+);
+
+
+// Character grid and parameter interaction follow ascii-ui-starter's backend.
+// All ui.* memory is private to the GUI; meters.* belongs to the supplied DSP.
+function ui_mix(a,b,t) local(r g v)
+(
+ r=floor((a&255)+((b&255)-(a&255))*t+0.5);
+ g=floor(((a>>8)&255)+(((b>>8)&255)-((a>>8)&255))*t+0.5);
+ v=floor(((a>>16)&255)+(((b>>16)&255)-((a>>16)&255))*t+0.5);
+ r+g*256+v*65536;
+);
+function ui_glyph(col,row,code,fg,bg,dim) local(i)
+(
+ col>=0 && col<ui.columns && row>=0 && row<ui.rows ? (
+  i=row*ui.columns+col;ui.chars[i]=code;ui.foregrounds[i]=fg;ui.dims[i]=dim;
+  bg>=0 ? ui.backgrounds[i]=bg;
+ );
+);
+function ui_text(col,row,str,fg,bg,dim) local(i n)
+(
+ i=0;n=strlen(str);loop(n,ui_glyph(col+i,row,str_getchar(str,i),fg,bg,dim);i+=1;);
+);
+function ui_rect(col,row,w,h,color) local(x y)
+(
+ y=row;loop(h,x=col;loop(w,ui.backgrounds[y*ui.columns+x]=color;x+=1;);y+=1;);
+);
+// Repeated rules are lines; other fixed glyphs come from the compact record array.
+function ui_line(col,row,dx,dy,count,code,fg) local(i)
+(
+ i=0;loop(count,ui_glyph(col+i*dx,row+i*dy,code,fg,-1,0);i+=1;);
+);
+function ui_prepare_base() local(x y i c)
+(
+ y=0;loop(ui.rows,x=0;loop(ui.columns,
+  i=y*ui.columns+x;
+  ui.backgrounds[i]=y<3 ? ui.header : x<27 ? ui.input_panel : x<62 ? ui.effect_panel : ui.output_panel;
+  ui.chars[i]=32;ui.foregrounds[i]=ui.ink;ui.dims[i]=0;x+=1;
+ );y+=1;);
+ ui_rect(5,7,5,25,ui.input_recess);
+ ui_rect(32,7,5,25,ui.effect_recess);
+ ui_rect(53,7,5,25,ui.effect_recess);
+ ui_rect(67,7,5,25,ui.output_recess);
+ ui_rect(14,5,11,27,ui.input_recess);
+ ui_rect(76,5,11,27,ui.output_recess);
+ ui_rect(41,5,7,15,ui.effect_recess);
+ ui_line(20,0,0,1,2,9474,ui.ink);
+ ui_line(0,2,1,0,ui.columns,9472,5191976);
+ ui_line(27,3,0,1,ui.rows-3,9474,ui.ink);
+ ui_line(62,3,0,1,ui.rows-3,9474,ui.ink);
+ i=0;loop(ui.static_glyph_count,
+  c=ui.static_glyphs+i*5;
+  ui_glyph(c[0],c[1],c[2],c[3],-1,c[4]);i+=1;
+ );
+ memcpy(ui.base_backgrounds,ui.backgrounds,ui.cell_count);
+ memcpy(ui.base_chars,ui.chars,ui.cell_count);
+ memcpy(ui.base_foregrounds,ui.foregrounds,ui.cell_count);
+ memcpy(ui.base_dims,ui.dims,ui.cell_count);
+ ui.ready=1;
+);
+function ui_parameter(index) (slider(ui.parameter_ids[index]););
+function ui_set_parameter_id(id,value) local(mask)
+(
+ slider(id)=value;
+ // @gfx edits must update the derived DSP values as well as notify the host.
+ input_gain=DB_TO_K(slider1);output_gain=DB_TO_K(slider6);is_bypass=slider7;effect_multiplier=slider2/100;
+ mask=2^(id-1);sliderchange(mask);
+);
+function ui_set_parameter(index,value)
+(
+ value=max(ui.minimum[index],min(ui.maximum[index],floor(value*10+0.5)/10));
+ ui_set_parameter_id(ui.parameter_ids[index],value);
+);
+function ui_linear_row(index,value)
+(
+ ui.track_bottom-(value-ui.minimum[index])/(ui.maximum[index]-ui.minimum[index])*(ui.track_bottom-ui.track_top);
+);
+function ui_zero_row(index) (floor(ui_linear_row(index,0))+0.5;);
+function ui_center(index) local(value z)
+(
+ value=ui_parameter(index);
+ ui.has_zero[index] ? (
+  z=ui_zero_row(index);
+  value<=0 ? ui.track_bottom+(z-ui.track_bottom)*(value-ui.minimum[index])/(0-ui.minimum[index])
+   : z+(ui.track_top-z)*value/ui.maximum[index];
+ ) : ui_linear_row(index,value);
+);
+function ui_value_at_row(index,row) local(z)
+(
+ ui.has_zero[index] ? (
+  z=ui_zero_row(index);
+  row>=z ? ui.minimum[index]+(ui.track_bottom-row)/(ui.track_bottom-z)*(0-ui.minimum[index])
+   : (z-row)/(z-ui.track_top)*ui.maximum[index];
+ ) : ui.minimum[index]+(ui.track_bottom-row)/(ui.track_bottom-ui.track_top)*(ui.maximum[index]-ui.minimum[index]);
+);
+function ui_button_on(index)
+(
+ index==2 ? !slider7 : slider(ui.button_ids[index])>=0.5;
+);
+function ui_toggle_button(index) local(id)
+(
+ id=ui.button_ids[index];ui_set_parameter_id(id,1-slider(id));
+);
+function ui_hit_rect(x,y,left,top,width,height)
+(
+ x>=left && x<left+width && y>=top && y<top+height;
+);
+function ui_hit(x,y) local(target i col)
+(
+ target=-1;i=0;
+ loop(4,
+  abs(x-(ui.control_cols[i]+0.5))<=3.5 && y>=ui.track_top-3 && y<=ui.track_bottom+3 ? target=i;
+  i+=1;
+ );
+ i=0;loop(3,ui_hit_rect(x,y,40,ui.button_rows[i],9,4) ? target=10+i;i+=1;);
+ i=2;loop(2,col=ui.clip_cols[i];ui_hit_rect(x,y,col-1,5,3,1) ? target=20+i;i+=1;);
+ target;
+);
+function ui_clear_output_clips()
+(
+ meters.output_clip_left=0;
+ meters.output_clip_right=0;
+);
+function ui_handle_mouse() local(x y target down pressed now index value steps mask)
+(
+ x=(mouse_x-crt.origin_x)/crt.cell_w;y=(mouse_y-crt.origin_y)/crt.cell_h;
+ target=ui_hit(x,y);down=mouse_cap&1;pressed=down && !ui.previous_down;now=time_precise();
+ pressed ? (
+  target>=20 ? ui_clear_output_clips() : target>=10 ? ui_toggle_button(target-10) : target>=0 ? (
+   (mouse_cap&4) || (ui.last_click==target && now-ui.last_time<0.35) ? (
+    ui_set_parameter(target,ui.defaults[target]);ui.last_click=-1;
+   ) : (
+    ui.drag=target;ui.drag_y=y;ui.drag_row=ui_center(target);ui.last_click=target;ui.last_time=now;
+   );
+  );
+ );
+ ui.drag>=0 && down ? ui_set_parameter(ui.drag,ui_value_at_row(ui.drag,ui.drag_row+(y-ui.drag_y)*((mouse_cap&8) ? 0.1 : 1)));
+ !down && ui.drag>=0 ? (ui.drag=-1;);
+ mouse_wheel!=0 && target>=0 && target<4 ? (
+  ui.wheel_target!=target ? (ui.wheel_remainder=0;ui.wheel_target=target;);
+  ui.wheel_remainder+=mouse_wheel/120;
+  steps=ui.wheel_remainder>=0 ? floor(ui.wheel_remainder) : ceil(ui.wheel_remainder);
+  steps!=0 ? (
+   ui_set_parameter(target,ui_parameter(target)+steps*0.1);ui.wheel_remainder-=steps;
+   
+  );
+ );
+ mouse_wheel=0;ui.previous_down=down;
+ gfx_setcursor(target>=0 && target<4 ? 32645 : target>=10 ? 32649 : 32512);
+);
+function ui_meter_row(db,ticks) local(hi next y ny i lo yl result found)
+(
+ hi=ticks[0];y=ticks[1];
+ db>=hi ? (
+  next=ticks[2];ny=ticks[3];max(y,y+0.5-(db-hi)/(hi-next)*(ny-y));
+ ) : (
+  result=ticks[(ui.tick_count-1)*2+1]+1;found=0;i=1;
+  loop(ui.tick_count-1,
+   !found && db>=ticks[i*2] ? (
+    hi=ticks[(i-1)*2];y=ticks[(i-1)*2+1];lo=ticks[i*2];yl=ticks[i*2+1];
+    result=y+0.5+(hi-db)/(hi-lo)*(yl-y);found=1;
+   );i+=1;
+  );result;
+ );
+);
+function ui_db_at_row(row,ticks) local(i found result hi y lo yl)
+(
+ row-=0.5;
+ row<=ticks[1] ? ticks[0] : (
+  result=ticks[(ui.tick_count-1)*2];found=0;i=1;
+  loop(ui.tick_count-1,
+   !found && row<=ticks[i*2+1] ? (
+    hi=ticks[(i-1)*2];y=ticks[(i-1)*2+1];lo=ticks[i*2];yl=ticks[i*2+1];
+    result=hi+(lo-hi)*(row-y)/(yl-y);found=1;
+   );i+=1;
+  );result;
+ );
+);
+function ui_draw_meter(kind,col,db) local(top bottom level row ticks value color upper lower code)
+(
+ kind==1 ? (
+  top=ui.gain_top;bottom=ui.gain_bottom;level=bottom-max(0,min(ui.gain_max,db))/ui.gain_max*(bottom-top);
+ ) : (
+  ticks=kind==0 ? ui.input_ticks : ui.output_ticks;
+  top=6;bottom=ticks[(ui.tick_count-1)*2+1]+1;level=ui_meter_row(db,ticks);
+ );
+ row=top;loop(bottom-top,
+  upper=row+0.25>=level;lower=row+0.75>=level;
+  kind==1 ? color=ui.gain_color : (
+   value=ui_db_at_row(row+0.5,ticks);
+   color=kind==0 ? (value<=-6 ? ui.green : abs(value)<0.000001 ? ui.red : ui.yellow)
+    : value<=-12 ? ui.green : value<=-6 ? ui.yellow : ui.orange;
+  );
+  code=!upper && !lower ? 46 : upper && lower ? 9608 : 9604;
+  ui_glyph(col,row,code,code==46 ? ui.unlit : color,-1,0);row+=1;
+ );
+);
+function ui_draw_value(index) local(value width)
+(
+ value=ui_parameter(index);abs(value)<0.05 ? value=0;
+ index==2 ? sprintf(#ui_value,"%7.1f   ",value)
+  : index==1 ? sprintf(#ui_value,"%6.1f %%  ",value)
+  : sprintf(#ui_value,"%6.1f dB ",value);
+ ui_text(ui.value_cols[index],5,#ui_value,ui.value_ink,ui.value_bg,1);
+);
+function ui_button_line(col,row,str,fg,bg,dim)
+(
+ ui_glyph(col,row,9474,ui.button_left,bg,dim);
+ ui_text(col+1,row,str,fg,bg,dim);
+ ui_glyph(col+8,row,9474,ui.button_right,bg,dim);
+);
+function ui_draw_button(index) local(on dim row fg i bg left right)
+(
+ on=ui_button_on(index);dim=index!=2;row=ui.button_rows[index];
+ fg=on ? ui.button_text : 0;
+ ui.button_left=on ? ui_mix(ui.button_lit[index],0,0.45) : ui.off_light;
+ ui.button_right=on ? ui_mix(ui.button_lit[index],16777215,0.65) : ui.off_dark;
+ left=ui.button_left;right=ui.button_right;
+ bg=on ? ui.button_lit[index] : ui.off_top;
+ ui_glyph(40,row,9484,left,bg,dim);i=1;loop(7,ui_glyph(40+i,row,9472,left,bg,dim);i+=1;);ui_glyph(48,row,9488,left,bg,dim);
+ bg=on ? ui.button_lit[index] : ui.off_bottom;
+ ui_glyph(40,row+3,9492,right,bg,dim);i=1;loop(7,ui_glyph(40+i,row+3,9472,right,bg,dim);i+=1;);ui_glyph(48,row+3,9496,right,bg,dim);
+ bg=on ? ui.button_lit[index] : ui.off_face1;
+ ui_button_line(40,row+1,index==0 ? " CLIP  " : index==1 ? " BAND  " : "EFFECT ",fg,bg,dim);
+ bg=on ? ui.button_lit[index] : ui.off_face2;
+ ui_button_line(40,row+2,index==0 ? " 0 dB  " : index==1 ? " SPLIT " : "  IN   ",fg,bg,dim);
+);
+function ui_draw_clips() local(i lit col)
+(
+ i=0;loop(4,
+  // INPUT follows the current measured level; OUTPUT uses the DSP peak latches.
+  lit=i==0 ? meters.input_left_dB>ui.input_clip_threshold
+   : i==1 ? meters.input_right_dB>ui.input_clip_threshold
+   : i==2 ? meters.output_clip_left : meters.output_clip_right;
+  col=ui.clip_cols[i];
+  ui_glyph(col-1,5,91,lit ? ui.red : ui.clip_off,-1,0);
+  ui_glyph(col,5,lit ? 9632 : 32,lit ? ui.red : ui.clip_off,-1,0);
+  ui_glyph(col+1,5,93,lit ? ui.red : ui.clip_off,-1,0);i+=1;
+ );
+);
+function ui_present() local(i col row fg bg dim)
+(
+ i=0;row=0;loop(ui.rows,col=0;loop(ui.columns,
+  fg=ui.foregrounds[i];bg=ui.backgrounds[i];dim=slider7>=0.5 && ui.dims[i];
+  dim ? (fg=ui_mix(fg,ui.base_backgrounds[i],0.5);bg=ui_mix(bg,ui.base_backgrounds[i],0.5););
+  crt.set_fg(fg&255,(fg>>8)&255,(fg>>16)&255,1);
+  crt.set_bg(bg&255,(bg>>8)&255,(bg>>16)&255,1);
+  crt.put_char(col,row,ui.chars[i]);i+=1;col+=1;
+ );row+=1;);
+);
+// Continuous rail centred in its character column, on the 4x4 subpixel grid.
+function ui_draw_rail(index) local(left y x rgb)
+(
+ rgb=ui.rail_colors[index];
+ left=ui.control_cols[index]*4+2-ui.rail_width/2;
+ y=ui.rail_top*4;loop((ui.rail_bottom-ui.rail_top+1)*4,
+  x=0;loop(ui.rail_width,crt.put_subpixel(left+x,y,rgb&255,(rgb>>8)&255,(rgb>>16)&255,1);x+=1;);
+  y+=1;
+ );
+);
+function ui_draw_cap(index) local(left top i x y alpha rgb opacity)
+(
+ left=ui.control_cols[index]+0.5-ui.cap_width/8;
+ top=floor((ui_center(index)-ui.cap_height/8)*4+0.5)/4;
+ opacity=slider7>=0.5 ? 0.5 : 1;
+ i=0;loop(ui.shadow_width*ui.shadow_height,
+  alpha=ui.shadow_alpha[i]*opacity;
+  alpha>=0.002 ? (
+   x=left*4+i%ui.shadow_width-ui.shadow_pad;y=top*4+floor(i/ui.shadow_width)-ui.shadow_pad;
+   crt.put_subpixel(x,y,0,0,0,alpha);
+  );i+=1;
+ );
+ i=0;loop(ui.cap_width*ui.cap_height,
+  rgb=ui.cap_rgb[i];
+  crt.put_subpixel(left*4+i%ui.cap_width,top*4+floor(i/ui.cap_width),rgb&255,(rgb>>8)&255,(rgb>>16)&255,opacity);i+=1;
+ );
+);
+
+// Match the starter: physical context dimensions drive the measured font fit.
+ui.cell_w=min(gfx_w/ui.columns,gfx_h/(ui.rows*2));ui.cell_h=ui.cell_w*2;
+crt.setup_grid(ui.columns,ui.rows,ui.cell_w,ui.cell_h,(gfx_w-ui.columns*ui.cell_w)*0.5,(gfx_h-ui.rows*ui.cell_h)*0.5);
+crt.fit_terminal_font(ui.cell_w,ui.cell_h);
+gfx_clear=ui.window_bg;gfx_getchar();ui_handle_mouse();
+!ui.ready ? ui_prepare_base();
+memcpy(ui.backgrounds,ui.base_backgrounds,ui.cell_count);memcpy(ui.chars,ui.base_chars,ui.cell_count);
+memcpy(ui.foregrounds,ui.base_foregrounds,ui.cell_count);memcpy(ui.dims,ui.base_dims,ui.cell_count);
+ui.i=0;loop(4,ui_draw_value(ui.i);ui.i+=1;);
+ui_draw_meter(0,15,meters.input_left_dB);ui_draw_meter(0,23,meters.input_right_dB);
+ui_draw_meter(1,42,meters.processing_left_dB);ui_draw_meter(1,46,meters.processing_right_dB);
+ui_draw_meter(2,77,meters.output_left_dB);ui_draw_meter(2,85,meters.output_right_dB);
+ui_draw_clips();ui.i=0;loop(3,ui_draw_button(ui.i);ui.i+=1;);
+ui_present();ui.i=0;loop(4,ui_draw_rail(ui.i);ui.i+=1;);ui.i=0;loop(4,ui_draw_cap(ui.i);ui.i+=1;);
