@@ -842,7 +842,7 @@ local(mask quantized)
   mask=2^index;
   slider(index+1)!=quantized ? (
     slider(index+1)=quantized;
-    slider_automate(mask);
+    sliderchange(mask);
   );
 );
 function inside(x,y,left,top,width,height)
@@ -904,9 +904,9 @@ local(x y hover option option_index target i column label left down pressed rele
   fine=cap&8 ? 0.1 : 1;
   pressed ? (
     target ? (
-      target==1 ? (slider7=1-slider7;slider_automate(64);) :
+      target==1 ? (slider7=1-slider7;sliderchange(64);) :
       target==2 ? ui.auto_expanded=!ui.auto_expanded :
-      (slider6=1-slider6;slider_automate(32););
+      (slider6=1-slider6;sliderchange(32););
       mouse.last_click=-1;
     ) : hover>=0 ? (
       click_id=hover;
