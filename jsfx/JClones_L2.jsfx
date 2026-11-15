@@ -1,7 +1,6 @@
 desc:       JClones_L2
-version:    1.1.0
+version:    1.1.1
 author:     JClones
-license:    MIT
 tags:       limiter
 link:       https://github.com/JClones/JSFXClones
 screenshot: https://github.com/JClones/JSFXClones/blob/master/assets/screenshots/JClones_L2.png
@@ -75,19 +74,25 @@ about:
     **Usage:** Choose the level of noise shaping based on the final output medium and the need to minimize audible noise. “Normal” is generally effective, but for critical mastering, “Ultra” might be preferable.
 
 // ----------------------------------------------------------------------------
+options:no_meter
 
 // limiter parameters:
-slider1:0<-30,0,0.1>Threshold, dB
-slider2:0<-30,0,0.1>Ceiling, dB
-slider3:1<0,1,1{Off,On}>Auto Release
-slider4:2<0,5,1{0.01,0.1,1.0,10.0,100,1000}>Release, ms
+slider1:0<-30,0,0.1>-Threshold, dB
+slider2:0<-30,0,0.1>-Ceiling, dB
+slider3:1<0,1,1{Off,On}>-Auto Release
+slider4:2<0,5,0.1>-Release, ms
 
 // dithering parameters:
-slider5:4<0,4,1{16,18,20,22,24}>Quantize
-slider6:1<0,2,1{None,Type1,Type2}>Dither
-slider7:2<0,3,1{None,Moderate,Normal,Ultra}>Shaping
+slider5:4<0,4,1{16,18,20,22,24}>-Quantize
+slider6:1<0,2,1{None,Type1,Type2}>-Dither
+slider7:2<0,3,1{None,Moderate,Normal,Ultra}>-Shaping
+
+// extra parameters
+slider8:0<0,1,1{Off,On}>-Bypass
+slider9:0<0,1,1{Off,On}>-Link
 
 @init
+gfx_ext_retina=1;
 
 ext_gr_meter = 0.0;
 
@@ -698,7 +703,49 @@ pdc_delay = lookahead_size;
 pdc_bot_ch = 0;
 pdc_top_ch = 2; // delays the first two channels (spl0/spl1).
 
-@slider
+// meters
+meters.MIN_LEVEL_LIN = 0.0000001;
+meters.MIN_LEVEL_DB = K_TO_DB(meters.MIN_LEVEL_LIN);
+
+meters.fa = 1.0 - exp(-1.0 / (srate * 0.0005));
+meters.fr = 1.0 - exp(-1.0 / (srate * 0.300));
+
+meters.input_left = 0.0;
+meters.input_right = 0.0;
+meters.output_left = 0.0;
+meters.output_right = 0.0;
+meters.gr = 1.0;
+
+meters.input_left_peak_hold = 0.0;
+meters.input_right_peak_hold = 0.0;
+meters.output_left_peak_hold = 0.0;
+meters.output_right_peak_hold = 0.0;
+meters.gr_peak_hold = 1.0;
+
+// Published peaks remain stable for each 0.5-second measurement window.
+meters.input_left_peak_hold_display = 0.0;
+meters.input_right_peak_hold_display = 0.0;
+meters.output_left_peak_hold_display = 0.0;
+meters.output_right_peak_hold_display = 0.0;
+
+meters.input_left_dB = meters.MIN_LEVEL_DB;
+meters.input_right_dB = meters.MIN_LEVEL_DB;
+meters.output_left_dB = meters.MIN_LEVEL_DB;
+meters.output_right_dB = meters.MIN_LEVEL_DB;
+meters.gr_dB = 0.0;
+
+meters.input_left_peak_hold_dB = meters.MIN_LEVEL_DB;
+meters.input_right_peak_hold_dB = meters.MIN_LEVEL_DB;
+meters.output_left_peak_hold_dB = meters.MIN_LEVEL_DB;
+meters.output_right_peak_hold_dB = meters.MIN_LEVEL_DB;
+meters.gr_peak_hold_dB = 0.0;
+
+meters.peak_hold_counter = 0;
+meters.peak_hold_counter_max = floor(srate * 0.5);   // shared 0.5 second hold interval
+
+@block
+
+is_bypass = (slider8 == 1);
 
 // boost input
 input_gain_k = 1.0 / DB_TO_K(slider1);
@@ -719,13 +766,49 @@ shaping = slider7;
 
 dither.IDRDither_setMode(16 + quantize * 2, dither, shaping);
 
-@block
+!is_bypass ? (
+  // refresh meters in dB once per block
+  meters.input_left_dB = K_TO_DB(max(meters.input_left, meters.MIN_LEVEL_LIN));
+  meters.input_right_dB = K_TO_DB(max(meters.input_right, meters.MIN_LEVEL_LIN));
+  meters.output_left_dB = K_TO_DB(max(meters.output_left, meters.MIN_LEVEL_LIN));
+  meters.output_right_dB = K_TO_DB(max(meters.output_right, meters.MIN_LEVEL_LIN));
+  meters.gr_dB = K_TO_DB(meters.gr);
+  
+  meters.gr_peak_hold_dB = K_TO_DB(meters.gr_peak_hold);
+  
+  (meters.peak_hold_counter >= meters.peak_hold_counter_max) ? (
+    // Publish the completed window before resetting its accumulators.
+    meters.input_left_peak_hold_display = meters.input_left_peak_hold;
+    meters.input_right_peak_hold_display = meters.input_right_peak_hold;
+    meters.output_left_peak_hold_display = meters.output_left_peak_hold;
+    meters.output_right_peak_hold_display = meters.output_right_peak_hold;
+  
+    meters.peak_hold_counter = 0;
+  
+    meters.input_left_peak_hold = 0.0;
+    meters.input_right_peak_hold = 0.0;
+    meters.output_left_peak_hold = 0.0;
+    meters.output_right_peak_hold = 0.0;
+    meters.gr_peak_hold = 1.0;
+  );
+  
+  meters.input_left_peak_hold_dB = K_TO_DB(max(meters.input_left_peak_hold_display, meters.MIN_LEVEL_LIN));
+  meters.input_right_peak_hold_dB = K_TO_DB(max(meters.input_right_peak_hold_display, meters.MIN_LEVEL_LIN));
+  meters.output_left_peak_hold_dB = K_TO_DB(max(meters.output_left_peak_hold_display, meters.MIN_LEVEL_LIN));
+  meters.output_right_peak_hold_dB = K_TO_DB(max(meters.output_right_peak_hold_display, meters.MIN_LEVEL_LIN));
+);
 
+// Reaper's GR meter:
 ext_gr_meter = K_TO_DB(hold_max_gr);
-
 hold_max_gr = 1.0;
 
 @sample
+
+// True dry bypass: no signal processing or meter/counter updates.
+!is_bypass ? (
+
+input_level_left = abs(spl0);
+input_level_right = abs(spl1);
 
 spl0 *= input_gain_k;
 spl1 *= input_gain_k;
@@ -825,3 +908,291 @@ dither.IDRDither_processSample(spl0, spl1);
 spl0 = dither.sample_left;
 spl1 = dither.sample_right;
 
+output_level_left = abs(spl0);
+output_level_right = abs(spl1);
+
+// input meters
+meters.input_left += (input_level_left - meters.input_left) * (input_level_left > meters.input_left ? meters.fa : meters.fr);
+meters.input_right += (input_level_right - meters.input_right) * (input_level_right > meters.input_right ? meters.fa : meters.fr);
+meters.input_left_peak_hold = max(meters.input_left_peak_hold, input_level_left);
+meters.input_right_peak_hold = max(meters.input_right_peak_hold, input_level_right);
+
+// output meters
+meters.output_left += (output_level_left - meters.output_left) * (output_level_left > meters.output_left ? meters.fa : meters.fr);
+meters.output_right += (output_level_right - meters.output_right) * (output_level_right > meters.output_right ? meters.fa : meters.fr);
+meters.output_left_peak_hold = max(meters.output_left_peak_hold, output_level_left);
+meters.output_right_peak_hold = max(meters.output_right_peak_hold, output_level_right);
+
+// gr meter
+meters.gr = (gr < meters.gr) ? gr : (meters.gr + (gr - meters.gr) * meters.fr);
+meters.gr > 0.999 ? meters.gr = 1.0;
+meters.gr_peak_hold = min(meters.gr_peak_hold, meters.gr);
+
+meters.peak_hold_counter += 1;
+
+) : (
+// soft bypass mode: feed delay lines for clickless bypass switch
+delay_min_gr.DelayLineMin_pushSample(1.0);
+
+spl0 = delay_line_left.DelayLine_pushSample(spl0 * input_gain_k) / input_gain_k;
+spl1 = delay_line_right.DelayLine_pushSample(spl1 * input_gain_k) / input_gain_k;
+
+);
+
+@gfx 840 480
+// 84 x 24 character terminal, 10 x 20 logical pixels; 4 x 4 samples per cell.
+// ui.* is GUI-only. Parameter values and meters belong to the supplied engine.
+function ui_color(rgb,alpha) (
+ gfx_set(((rgb>>16)&255)/255,((rgb>>8)&255)/255,(rgb&255)/255,alpha);
+);
+function ui_rect(x,y,w,h,color,alpha) (
+ ui_color(color,alpha);
+ gfx_rect(floor(ui.ox+x*ui.cw+0.5),floor(ui.oy+y*ui.ch+0.5),
+ floor(ui.ox+(x+w)*ui.cw+0.5)-floor(ui.ox+x*ui.cw+0.5),
+ floor(ui.oy+(y+h)*ui.ch+0.5)-floor(ui.oy+y*ui.ch+0.5));
+);
+// Warm metal background palette.
+// Every character receives one flat background color; no subpixel gradient.
+function ui_background_color(row) (
+ row<1?0xb4a998 :
+ row<2?0xb6ac9a :
+ row<3?0xb7ad9c :
+ row<4?0xb7ad9b :
+ row<5?0xb7ae9d :
+ row<6?0xb9ae9f :
+ row<7?0xbbb2a1 :
+ row<8?0xbdb4a4 :
+ row<9?0xbdb5a4 :
+ row<10?0xc0b9a8 :
+ row<11?0xc5bfaf :
+ row<12?0xc7c1b2 :
+ row<13?0xcbc4b7 :
+ row<14?0xcdc6ba :
+ row<15?0xcec7bb :
+ row<16?0xcdc6ba :
+ row<17?0xc3bdac :
+ row<18?0xbdb5a4 :
+ row<19?0xbbb1a1 :
+ row<20?0xb8b0a0 :
+ row<21?0xb9ae9f :
+ row<22?0xb8af9f :
+ row<23?0xb9b09f : 0xb8ae9c;
+);
+function ui_background() local(row,col,color) (
+ row=0;loop(24,color=ui_background_color(row);col=0;
+ loop(84,ui_rect(col,row,1,1,color,1);col+=1;);row+=1;);
+);
+function ui_prepare_background() local(w,h) (
+ gfx_getimgdim(1,w,h);
+ w!=gfx_w||h!=gfx_h||ui.background_cw!=ui.cw ? (
+ gfx_setimgdim(1,gfx_w,gfx_h);gfx_dest=1;
+ ui_color(0xb3ab96,1);gfx_rect(0,0,gfx_w,gfx_h);ui_background();
+ ui.background_cw=ui.cw;
+ );
+);
+function ui_char(x,y,code,color,alpha) local(w,h) (
+ gfx_measurechar(code,w,h);ui_color(color,alpha);
+ gfx_x=ui.ox+x*ui.cw;gfx_y=ui.oy+y*ui.ch+(ui.ch-h)*0.5;
+ gfx_drawchar(code);
+);
+function ui_text(x,y,str,color,alpha) local(i) (
+ i=0;loop(strlen(str),ui_char(x+i,y,str_getchar(str,i),color,alpha);i+=1;);
+);
+function ui_fill(x,y,w,h,color,alpha) (ui_rect(x,y,w,h,color,alpha););
+function ui_fit_font() local(candidate,w,h,error,best) (
+ ui.last_cw!=ui.cw || ui.last_ch!=ui.ch || ui.last_retina!=gfx_ext_retina || !ui.font ? (
+ best=1000000000;candidate=8;
+ loop(93,gfx_setfont(1,"Courier New",candidate,'b');gfx_measurestr("M",w,h);
+ error=abs(w-ui.cw)+abs(h-ui.ch);
+ error<best ? (best=error;ui.font=candidate;);candidate+=1;);
+ ui.last_cw=ui.cw;ui.last_ch=ui.ch;ui.last_retina=gfx_ext_retina;
+ );gfx_setfont(1,"Courier New",ui.font,'b');
+);
+function ui_release_text(value) local(ms) (
+ ms=10^(value-2);
+ ms<0.1 ? sprintf(#ui.release,"%.2f",ms) :
+ ms<100 ? sprintf(#ui.release,"%.1f",ms) : sprintf(#ui.release,"%.0f",ms);
+);
+function ui_frame(x,y,w,str,on,dark,lit) local(a,b,i) (
+ a=(on||dark)?0x554f40:0xe5dbc1;b=(on||dark)?0xe5dbc1:0x554f40;
+ ui_char(x,y,9484,a,1);ui_char(x+w-1,y,9488,a,1);
+ ui_char(x,y+2,9492,b,1);ui_char(x+w-1,y+2,9496,b,1);
+ i=1;loop(w-2,ui_char(x+i,y,9472,a,1);ui_char(x+i,y+2,9472,b,1);i+=1;);
+ ui_char(x,y+1,9474,a,1);ui_char(x+w-1,y+1,9474,b,1);
+ on&&!lit ? ui_fill(x+1,y+1,w-2,1,0x7395df,1);
+ ui_text(x+(w-strlen(str))/2,y+1,str,dark?0xe4dfce:lit?(on?0xff9600:0x29261b):on?0x07080c:0x29261b,1);
+);
+function ui_meter(x,value,range,down) local(i,t,fill,lit,color) (
+ ui_fill(x-0.25,3.75,1.5,15.5,0x746d57,1);
+ ui_fill(x,4,1,15,0x302c1c,1);
+ fill=max(0,min(1,down?-value/range:(range+value)/range));
+ // Round all meters to the nearest subpixel; light a row at half coverage.
+ lit=floor(fill*60+0.5);i=0;
+ loop(60,
+ (down ? i<lit : i>=60-lit) ? (
+ t=i/59;color=(floor(226+29*t+0.5)<<16)|(floor(59+151*t+0.5)<<8);
+ ui_fill(x,4+i/4,1,0.25,color,1);
+ );i+=1;);
+);
+function ui_peak(x,value) (
+ ui_fill(x,20,5,1,0x37321f,1);
+ value<=meters.MIN_LEVEL_DB ? #ui.peak="-inf" : value<=-100 ? sprintf(#ui.peak,"%.0f",value) : sprintf(#ui.peak,"%.1f",value);
+ ui_text(x+(5-strlen(#ui.peak))/2,20,#ui.peak,0xff9600,1);
+);
+// Bitmap shape adapters retain their colored-cell design, with real-pixel motion.
+function ui_cap_color(x,y) local(side,result) (
+ result=-1;
+ x<3||x>28 ? (
+ side=x<3?x:31-x;
+ y>=2&&y<=5&&side>=((y==2||y==5)?2:0) ?
+ result=side==0?0x393526:y<=3?0xeee5cc:0x91866a;
+ ) : (
+ result=y==0||y==7?0x322d20:x==3?0x4a4431:x==28?0x302b20:
+ y==1?0xe5ddc5:x==27?0xd7cdb2:x==4?0x8e8261:y==6?0x827452:
+ x==5||x==26?0x62583d:y==2?0x373020:y==5?0x48402d:0x17130c;
+ );result;
+);
+function ui_cap(x,value) local(y,i,j,color) (
+ y=4.5+(-max(-28,min(0,value)))/2-1;
+ j=0;loop(8,i=0;loop(32,color=ui_cap_color(i,j);
+ color>=0 ? ui_fill(x+0.5+i/4,y+j/4,0.25,0.25,color,1);i+=1;);j+=1;);
+ sprintf(#ui.value,"%.1f",value);ui_text(x+(9-strlen(#ui.value))/2,y+0.5,#ui.value,0xe7e1d4,1);
+);
+function ui_release_color(x,y) local(v) (
+ x==0||y==0 ? 0xd4c9af : x==13||y==11 ? 0x4b4434 :
+ y==5 ? 0x393125 : y==6 ? 0xe0d4b8 : (
+ v=floor(135+65*sin(y/12*$pi)+0.5);(v<<16)|((v-9)<<8)|(v-28);
+ );
+);
+function ui_release() local(alpha,i,j,y,color,inside) (
+ alpha=slider3>=0.5?0.5:1;
+ ui_fill(43,4,7,1,0x37321f,alpha);ui_release_text(slider4);
+ sprintf(#ui.padded,"%6s",#ui.release);ui_text(43,4,#ui.padded,0xeee7d3,alpha);
+ // The rail is painted before the opaque handle; ARC blends the cap over it.
+ i=0;loop(11,ui_char(44,6+i,9474,0x302b20,alpha);i+=1;);
+ i=0;loop(6,
+ i==0?#ui.tick="1000":i==1?#ui.tick="100":i==2?#ui.tick="10.0":
+ i==3?#ui.tick="1.0":i==4?#ui.tick="0.1":#ui.tick="0.01";
+ ui_text(46,6+i*2,"-",0x655e4b,alpha);ui_text(48,6+i*2,#ui.tick,0x29261b,alpha);i+=1;);
+ y=floor((15-2*slider4)*4+0.5)/4;
+ j=0;loop(12,i=0;loop(14,color=ui_release_color(i,j);
+ ui_fill(42.75+i/4,y+j/4,0.25,0.25,color,alpha);i+=1;);j+=1;);
+);
+function ui_button(id,y,label) (
+ ui_text(69+(10-strlen(label))/2,y-2,label,0x29261b,1);
+ ui_fill(69,y,10,3,0x242219,1);
+ id==5 ? (slider5<0.5?#ui.choice="16 Bits":slider5<1.5?#ui.choice="18 Bits":slider5<2.5?#ui.choice="20 Bits":slider5<3.5?#ui.choice="22 Bits":#ui.choice="24 Bits";) :
+ id==6 ? (slider6<0.5?#ui.choice="NONE":slider6<1.5?#ui.choice="TYPE 1":#ui.choice="TYPE 2";) :
+ (slider7<0.5?#ui.choice="NONE":slider7<1.5?#ui.choice="MODERATE":slider7<2.5?#ui.choice="NORMAL":#ui.choice="ULTRA";);
+ ui_frame(69,y,10,#ui.choice,0,1,0);
+);
+// Linking applies relative dB changes; slider9 stores the Link state.
+function ui_set_linked(id,value,base_threshold,base_ceiling) local(delta,lo,hi,next_threshold,next_ceiling,mask) (
+ base_threshold=max(-28,min(0,base_threshold));base_ceiling=max(-28,min(0,base_ceiling));
+ delta=value-(id==1?base_threshold:base_ceiling);
+ lo=max(-28-base_threshold,-28-base_ceiling);hi=min(-base_threshold,-base_ceiling);
+ delta=floor(max(lo,min(hi,delta))*10+0.5)/10;
+ next_threshold=floor((base_threshold+delta)*10+0.5)/10;
+ next_ceiling=floor((base_ceiling+delta)*10+0.5)/10;
+ mask=0;
+ slider1!=next_threshold ? (slider1=next_threshold;mask|=1;);
+ slider2!=next_ceiling ? (slider2=next_ceiling;mask|=2;);
+ mask ? sliderchange(mask);
+);
+function ui_set(id,value) local(next) (
+ (slider9>=0.5)&&id<=2 ? ui_set_linked(id,value,slider1,slider2) : (
+
+ next=id<=2 ? floor(max(-28,min(0,value))*10+0.5)/10 :
+ id==4 ? floor(max(0,min(5,value))*10+0.5)/10 : value;
+ slider(id)!=next ? (slider(id)=next;sliderchange(2^(id-1)););
+ );
+);
+// Native popup lists use the same zero-based values as the host parameters.
+function ui_popup(id) local(i,count,choice) (
+ #ui.menu="";i=0;count=id==5?5:id==6?3:4;
+ loop(count,
+ i>0 ? strcat(#ui.menu,"|");
+ floor(slider(id)+0.5)==i ? strcat(#ui.menu,"!");
+ id==5 ? sprintf(#ui.menuitem,"%d Bits",16+2*i) :
+ id==6 ? (#ui.menuitem=i==0?"NONE":i==1?"TYPE 1":"TYPE 2";) :
+ (#ui.menuitem=i==0?"NONE":i==1?"MODERATE":i==2?"NORMAL":"ULTRA";);
+ strcat(#ui.menu,#ui.menuitem);i+=1;
+ );
+ gfx_x=mouse_x;gfx_y=mouse_y;
+ choice=gfx_showmenu(#ui.menu);
+ choice>0 ? ui_set(id,choice-1);
+);
+function ui_hit(x,y,left,top,width,height) (x>=left&&x<left+width&&y>=top&&y<top+height;);
+function ui_mouse() local(x,y,down,right,pressed,target,cy,change) (
+ x=(mouse_x-ui.ox)/ui.cw;y=(mouse_y-ui.oy)/ui.ch-1;
+ down=mouse_cap&1;right=mouse_cap&2;pressed=down&&!ui.was_down;target=0;
+ cy=4.5+(-max(-28,min(0,slider1)))/2;
+ ui_hit(x,y,7,cy-1,9,2)?target=1;
+ cy=4.5+(-max(-28,min(0,slider2)))/2;
+ ui_hit(x,y,28,cy-1,9,2)?target=2;
+ ui_hit(x,y,42,6,4.5,12)?target=4;
+ ui_hit(x,y,44,19,6,3)?target=3;
+ ui_hit(x,y,69,6,10,3)?target=5;
+ ui_hit(x,y,69,12,10,3)?target=6;
+ ui_hit(x,y,69,18,10,3)?target=7;
+ ui_hit(x,y+1,81,0,3,1)?target=8;
+ ui_hit(x,y,20,10,5,3)?target=9;
+ right&&!ui.was_right&&!down&&target>=5&&target<=7 ? ui_popup(target);
+ pressed ? (
+ ui.drag=0;
+ target==1||target==2||target==4 ? (
+ ui.drag=target;ui.drag_y=y;ui.drag_value=slider(target);
+ ui.drag_threshold=slider1;ui.drag_ceiling=slider2;
+ (slider9>=0.5)&&target<=2 ? ui.drag_value=max(-28,min(0,ui.drag_value));
+ ) :
+ target==9 ? ui_set(9,1-slider9) :
+ target==3||target==8 ? ui_set(target,1-slider(target)) :
+ target>=5&&target<=7 ? ui_set(target,(slider(target)+1)%(target==5?5:target==6?3:4));
+ );
+ down&&ui.drag>0 ? (
+ change=(ui.drag_y-y)*(ui.drag==4?0.5:2);
+ // Keep host automation below -28 intact until a real GUI movement occurs.
+ abs(y-ui.drag_y)>0.00001 ? (
+ (slider9>=0.5)&&ui.drag<=2 ? ui_set_linked(ui.drag,ui.drag_value+change,ui.drag_threshold,ui.drag_ceiling) :
+ ui_set(ui.drag,ui.drag_value+change);
+ );
+ );
+ !down?ui.drag=0;
+ mouse_wheel!=0&&target>0 ? (
+ target==1||target==2||target==4 ? ui_set(target,slider(target)+(mouse_wheel>0?0.1:-0.1));mouse_wheel=0;
+ );
+ gfx_setcursor(target==1||target==2||target==4?32645:target>0?32649:32512);
+ ui.was_down=down;ui.was_right=right;
+);
+function ui_draw() local(i,y) (
+ ui_text(33,1,"J C l o n e s  L 2",0x29261b,1);
+ ui_text(7,3,"THRESHOLD",0x29261b,1);ui_text(27,3,"OUT CEILING",0x29261b,1);
+ ui_text(43,3,"RELEASE",0x29261b,1);ui_text(57,3,"ATTEN",0x29261b,1);
+ ui.oy+=ui.ch;
+ ui_meter(6,meters.input_left_dB,28,0);ui_meter(16,meters.input_right_dB,28,0);
+ ui_meter(27,meters.output_left_dB,28,0);ui_meter(37,meters.output_right_dB,28,0);
+ ui_meter(60,meters.gr_dB,21,1);
+ i=0;loop(7,y=5+2*i;
+ ui_text(9,y,"-",0x655e4b,1);ui_text(14,y,"-",0x655e4b,1);
+ ui_text(30,y,"-",0x655e4b,1);ui_text(35,y,"-",0x655e4b,1);i+=1;);
+ i=0;loop(8,sprintf(#ui.scale,"%2d",i*3);ui_text(55,4+i*2,#ui.scale,0x29261b,1);ui_text(58,4+i*2,"-",0x655e4b,1);i+=1;);
+ ui_cap(7,slider1);ui_cap(28,slider2);ui_release();
+ ui_frame(44,19,6,"ARC",slider3>=0.5,0,0);
+ ui_frame(20,10,5,"< >",slider9>=0.5,0,1);
+ ui_button(5,6,"QUANTIZE");ui_button(6,12,"DITHER");ui_button(7,18,"SHAPING");
+ ui_peak(6,meters.input_left_peak_hold_dB);ui_peak(12,meters.input_right_peak_hold_dB);
+ ui_peak(27,meters.output_left_peak_hold_dB);ui_peak(33,meters.output_right_peak_hold_dB);
+ ui_peak(57,meters.gr_peak_hold_dB);
+ ui.oy-=ui.ch;
+);
+ui.cw=min(gfx_w/84,gfx_h/48);ui.ch=ui.cw*2;
+ui.ox=(gfx_w-84*ui.cw)/2;ui.oy=(gfx_h-24*ui.ch)/2;
+ui_fit_font();gfx_getchar();ui_mouse();
+// Compose once, then dim the complete display as a group, preserving ARC's 50%.
+gfx_getimgdim(0,ui.image_w,ui.image_h);
+ui.image_w!=gfx_w||ui.image_h!=gfx_h ? gfx_setimgdim(0,gfx_w,gfx_h);
+ui_prepare_background();
+gfx_dest=0;gfx_a=1;gfx_x=0;gfx_y=0;gfx_blit(1,1,0);ui_draw();
+gfx_dest=-1;gfx_a=1;gfx_x=0;gfx_y=0;gfx_blit(1,1,0);
+gfx_a=slider8>=0.5?0.5:1;gfx_x=0;gfx_y=0;gfx_blit(0,1,0);
+ui_text(81,0,slider8>=0.5?"[ ]":"[x]",0x584d3d,1);
