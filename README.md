@@ -43,7 +43,7 @@ Also you may use [ysfx](https://github.com/jpcima/ysfx) or [ReaJS](https://www.r
   - [DuValve](#jclones_duvalve)
 
 # JClones_L2
-
+![screenshot](assets/screenshots/JClones_L2.png)
 JClones_L2 is a clone of a highly regarded audio plugin known for its capabilities in mastering and dynamic range control. Featuring a state-of-the-art brickwall limiter with look-ahead technology, it ensures peak control and prevents clipping. Its intelligent release control adapts to the audio signal, providing smooth and transparent limiting without manual adjustments. The plugin also includes advanced dithering and noise shaping options to preserve audio quality when reducing bit depth.
 
 [Detailed Description](https://github.com/JClones/JSFXClones/blob/master/JClones_L2.md)
